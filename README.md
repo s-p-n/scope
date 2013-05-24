@@ -9,7 +9,7 @@ Installation:
 
 Then procede to writing this test scope-file: (example.sc)
 
-    // Setting a var is just like JS:
+    // Setting a variable is just like JS:
     var foo = "Hello, ";
 
     // Ask the user a question:
