@@ -8,12 +8,14 @@ module.exports = function extensions(data) {
             return;
         }
         var extName = fileName.substr(0,fileName.indexOf('.'));
+
         notLoaded.push(extName);
         extContainer[extName] = function() {
+            var cppExt = __dirname + '/../build/Release/' + extName + '.node';
             if (notLoaded.indexOf(extName) !== -1) // not data.loaded
             {
-                if (fs.existsSync(extensionsDir + extName + '.node')) {
-                    data.deps.push(extensionsDir + extName + '.node');
+                if (fs.existsSync(cppExt)) {
+                    data.deps.push(cppExt);
                 }
                 data.loaded += fs.readFileSync(extensionsDir + extName + '.js', 'utf8');
                 notLoaded.splice(notLoaded.indexOf(extName), 1);
