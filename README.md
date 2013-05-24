@@ -8,6 +8,7 @@ Installation:
     npm install scope-lang -g
 
 Then procede to writing this test scope-file: (example.sc)
+
     // Setting a var is just like JS:
     var foo = "Hello, ";
 
