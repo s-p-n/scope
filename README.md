@@ -24,9 +24,11 @@ Then procede to writing this test scope-file: (example.sc)
     Console.write(foo & bar);
 
 Usage:
+
     $ scope example.sc && ./example.js
 
 Possible Expected Result:
+
     What is your name?
 
      > Tim
