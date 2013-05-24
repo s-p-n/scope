@@ -25,12 +25,13 @@ Then procede to writing this test scope-file: (example.sc)
 
 Usage:
 
-    $ scope example.sc && ./example.js
+    $ scope example.sc
+    $ ./example.js
 
 Possible Expected Result:
 
     What is your name?
-
+    
      > Tim
-
+     
     Hello, Tim
