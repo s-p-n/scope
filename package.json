@@ -1,0 +1,40 @@
+{
+    "name":"scope-lang",
+    "description":"Scope is a programming language designed to revolutionize web application development for both the back-end and front-end developer.",
+    "homepage": "http://scope-lang.org/",
+    "version":"0.0.1-0-guineapig",
+    "bugs": {
+        "url": "http://github.com/s-p-n/scope/issues",
+        "email": "bugs@scope-lang.org"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": ">=v0.4.0"
+    },
+    "author": "Spencer A. Lockhart",
+    "keywords": ["programming language", "scope", "altjs"],
+    "contributors": ["Spencer A. Lockhart", "TimeBomb"],
+    "main": "compile.js",
+    "files": [
+        "compiler",
+        "cpp",
+        "error",
+        "extensions",
+        "lexer",
+        "rules",
+        "tests",
+        "compile.js",
+        "scope.js"
+    ],
+    "directories": ["compiler", "cpp", "error", "extensions", "lexer", "rules", "tests"],
+    "bin": {"scope": "compile.js"},
+    "dependencies": {
+        "uglify-js": ">=2.x",
+        "js-beautify": ">=1.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/s-p-n/scope.git"
+    },
+    "preferGlobal": true
+}
