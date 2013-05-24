@@ -375,6 +375,11 @@ invoke
             $1, $2
         ]);
     }
+    | invoke '.' identifier {
+        $$ = new yy.scopeAst(yy,"invoke",[
+            $1, $2, $3
+        ]);
+    }
     ;
 
 invokeParam
@@ -476,7 +481,7 @@ term
     }
     | '(' attrConflictTerm ')' {
         $$ = new yy.scopeAst(yy,"term",[
-            $1, $2, $3
+            $2
         ]);
     }
     | assignment {
@@ -551,7 +556,7 @@ term
     }
     | '(' term ')' {
         $$ = new yy.scopeAst(yy,"term",[
-            $2
+            $1, $2, $3
         ]);
     }
     ;

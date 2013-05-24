@@ -16,6 +16,8 @@ module.exports = function term (a, b, c) {
             '}())';
         case '-':
             return '-' + b;
+        case '(':
+            return '(' + b + ')';
     }
     switch (b) {
         case '+':

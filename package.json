@@ -2,7 +2,7 @@
     "name":"scope-lang",
     "description":"Scope is a programming language designed to revolutionize web application development for both the back-end and front-end developer.",
     "homepage": "http://scope-lang.org/",
-    "version":"0.0.1-0-guineapig",
+    "version":"0.0.1-1-guineapig",
     "bugs": {
         "url": "http://github.com/s-p-n/scope/issues",
         "email": "bugs@scope-lang.org"
@@ -28,6 +28,10 @@
     ],
     "directories": ["compiler", "cpp", "error", "extensions", "lexer", "rules", "tests"],
     "bin": {"scope": "compile.js"},
+    "scripts": {
+        "install": "cd cpp && node-gyp configure && node-gyp build && cp build/Release/Console.node ../extensions/Console.node && rm -rf ./build && cd ..",
+        "prepublish": "rm -f extensions/*.node && rm -f tests/*/*.node"
+    },
     "dependencies": {
         "uglify-js": ">=2.x",
         "js-beautify": ">=1.x"
