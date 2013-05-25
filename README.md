@@ -1,15 +1,39 @@
-scope
-=====
-
+#scope#
 Scope is a programming language designed to revolutionize web application development for both the back-end and front-end developer.
 
-Installation:
+####Pre-installation:####
+Note: You do not need to install node-gyp, only Python2.7 and a C++ compiler than works with node-gyp. NPM includes node-gyp so we don't have to. ;)
+
+(From node-gyp: https://github.com/TooTallNate/node-gyp)
+> You will also need to install:
+>
+>  * On Unix:
+>    * `python` (`v2.7` recommended, `v3.x.x` is __*not*__ supported)
+>    * `make`
+>    * A proper C/C++ compiler toolchain, like GCC
+>  * On Windows:
+>    * [Python][windows-python] ([`v2.7.3`][windows-python-v2.7.3] recommended, `v3.x.x` is __*not*__ supported)
+>    * Windows XP/Vista/7:
+>      * Microsoft Visual Studio C++ 2010 ([Express][msvc2010] version works well)
+>      * For 64-bit builds of node and native modules you will _**also**_ need the [Windows 7 64-bit SDK][win7sdk]
+>        * If the install fails, try uninstalling any C++ 2010 x64&x86 Redistributable that you have installed first.
+>      * If you get errors that the 64-bit compilers are not installed you may also need the [compiler update for the Windows SDK 7.1]
+>    * Windows 7/8:
+>      * Microsoft Visual Studio C++ 2012 for Windows Desktop ([Express][msvc2012] version works well)
+>
+> Note that OS X is just a flavour of Unix and so needs `python`, `make`, and C/C++.
+> An easy way to obtain these is to install XCode from Apple,
+> and then use it to install the command line tools (under Preferences -> Downloads).
+
+
+------
+####Installation:####
 
     npm install scope-lang -g
 
-Then procede to writing this test scope-file: (example.sc)
+------
+####Creating Your first Scope Program (example.sc)####
 
-    // Setting a variable is just like JS:
     var foo = "Hello, ";
 
     // Ask the user a question:
@@ -17,21 +41,26 @@ Then procede to writing this test scope-file: (example.sc)
 
     // Get a line of input:
     var bar = Console.read();
-    // waiting for the user to press <return>
+    
+    // concatenate (combine) foo and bar:
+    var baz = foo & bar;
+    
+    // print to the console:
+    Console.write(baz);
 
-    // The below line should read: "Hello, <user-input>"
-    // where <user-input> is the user's answer to: "What is your name?"
-    Console.write(foo & bar);
-
-Usage:
+------
+####Compile and run:####
 
     $ scope example.sc
     $ ./example.js
 
-Possible Expected Result:
+------
+####Possible Result:####
 
     What is your name?
     
      > Tim
      
     Hello, Tim
+
+------
