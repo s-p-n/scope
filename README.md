@@ -102,33 +102,53 @@ Result: (nothing)
 
 ------
 ####Boolean####
-some text
-- a
-- e
-- i
+Booleans are either true or false. They are frequently used by conditional-statements in computer-programs, in turn giving humans a way to tell machines how to think/react based on data.
+These are the possible values for boolean (case-sensitive):
+- true
+- false
 
 #####Example:#####
 
-    a
-    e
-    i
-    o
-    u
+    var a = true;
+    
+    var b = if (a):
+        "red";
+    else:
+        "blue";
+    end;
+    
+    Console.write(b, "pill");
+
+Result:
+
+    "red pill"
 
 ------
 ####Number####
-some text
-- a
-- e
-- i
+This much is true about scope from this painful-for-JavaScript-coders-to-hear yet informative article on numbers in JavaScript:
+http://www.hunlock.com/blogs/The_Complete_Javascript_Number_Reference
+
+Essentially, the good parts we saw are these:
+> Numbers can be either integer or decimal, negative or positive, or 0.
+> Javascript is not a typed language so it should come as no surprise that there are no specific integer or floating-point types, no short, long, byte, double, or any other type other languages use to define numbers. All numbers in Javascript are 64bit (8 bytes) floating point numbers which yields an effective range of 5e-324 (negative) to 1.7976931348623157e+308 (positive).
+> 
+> This reference will cover Javascript numeric literals and objects as well as the default Javascript Operators which manipulate those numbers.
+>
+> #####Precision#####
+> All numbers in Javascript are 64bit (8 bytes) floating point numbers which yields an effective range of 5e-324 (negative) to 1.7976931348623157e+308 (positive) at the time this article was written (this may eventually change to 128 bits in the future as 64 bit processors become commonplace and the ECMA standards evolve).
+>
+> Integers are considered reliable (numbers without a period or exponent notation) to 15 digits (9e15) [1]. Floating point numbers are considered only as reliable as possible and no more! This is an especially important concept to understand for currency manipulation as 0.06 + 0.01 resolves to 0.06999999999999999 instead of 0.07.
+
+You can make a number in scope just like this. When JavaScript returns infinity or NaN, or tries to implicitly concatenate them as strings-- Scope results in a runtime-error displaying "what happened" instead- so that tracking bugs is easier to do.
 
 #####Example:#####
 
-    a
-    e
-    i
-    o
-    u
+    var n = 8 + 120 * 2 / !(5);
+    Console.write(n);
+
+Result:
+    
+    10
 
 ------
 ####Text####
