@@ -64,3 +64,109 @@ Note: You do not need to install node-gyp, only Python2.7 and a C++ compiler tha
     Hello, Tim
 
 ------
+## Scope 0.0.1 Specifications ##
+
+------
+####Comments####
+some text
+- a
+- e
+- i
+
+#####Example:#####
+
+    a
+    e
+    i
+    o
+    u
+
+------
+####Boolean####
+some text
+- a
+- e
+- i
+
+#####Example:#####
+
+    a
+    e
+    i
+    o
+    u
+
+------
+####Number####
+some text
+- a
+- e
+- i
+
+#####Example:#####
+
+    a
+    e
+    i
+    o
+    u
+
+------
+####Text####
+some text
+- a
+- e
+- i
+
+#####Example:#####
+
+    a
+    e
+    i
+    o
+    u
+
+------
+####Array####
+some text
+- a
+- e
+- i
+
+#####Example:#####
+
+    a
+    e
+    i
+    o
+    u
+
+------
+####Scope####
+some text
+- a
+- e
+- i
+
+#####Example:#####
+
+    a
+    e
+    i
+    o
+    u
+
+------
+####Instance####
+some text
+- a
+- e
+- i
+
+#####Example:#####
+
+    a
+    e
+    i
+    o
+    u
