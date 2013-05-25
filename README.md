@@ -68,18 +68,37 @@ Note: You do not need to install node-gyp, only Python2.7 and a C++ compiler tha
 
 ------
 ####Comments####
-some text
-- a
-- e
-- i
+The program is to ignore everything from where the comment begins until it is terminated. Comments are intended to help the programmer maintain code.
 
-#####Example:#####
+#####Comment Rules#####
+Line Comment:
+- `//` terminated by a line-break
 
-    a
-    e
-    i
-    o
-    u
+Block Comment:
+- `/*` terminated by `*/`
+
+#####Examples:#####
+The result of `a` is `"jam"` because `var a = "foo";` is ignored due to the line-comments `//`.
+
+    var a = "jam";
+    // var a = "foo";
+    Console.write(a);
+
+Result:
+    
+    "jam"
+
+
+`b()` is not defined or printed because of the `block-comment:` `/* */`
+
+    /*
+    var b = {
+        return "this scope is ignored!";
+    };
+    Console.write( b() );
+    */
+    
+Result: (nothing)
 
 ------
 ####Boolean####
