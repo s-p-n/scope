@@ -5,7 +5,7 @@ module.exports = function identifier (id, name, isArr) {
                 name  = '$' + name;
         }
         if (isArr !== void 0) {
-            return id + '[' + name + ']';
+            return id + name;
         }
         this.ext['$$$runtimeError']();
         this.ext['Type']();

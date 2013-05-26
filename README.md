@@ -41,10 +41,10 @@ Note: You do not need to install node-gyp, only Python2.7 and a C++ compiler tha
 
     // Get a line of input:
     var bar = Console.read();
-    
+
     // concatenate (combine) foo and bar:
     var baz = foo & bar;
-    
+
     // print to the console:
     Console.write(baz);
 
@@ -58,9 +58,9 @@ Note: You do not need to install node-gyp, only Python2.7 and a C++ compiler tha
 ####Possible Result:####
 
     What is your name?
-    
+
      > Tim
-     
+
     Hello, Tim
 
 ------
@@ -85,7 +85,7 @@ The result of `a` is `"jam"` because `var a = "foo";` is ignored due to the line
     Console.write(a);
 
 Result:
-    
+
     "jam"
 
 
@@ -97,7 +97,7 @@ Result:
     };
     Console.write( b() );
     */
-    
+
 Result: (nothing)
 
 ------
@@ -110,13 +110,13 @@ These are the possible values for boolean (case-sensitive):
 #####Example:#####
 
     var a = true;
-    
+
     var b = if (a):
         "red";
     else:
         "blue";
     end;
-    
+
     Console.write(b, "pill");
 
 Result:
@@ -131,7 +131,7 @@ http://www.hunlock.com/blogs/The_Complete_Javascript_Number_Reference
 Essentially, the good parts we saw are these:
 > Numbers can be either integer or decimal, negative or positive, or 0.
 > Javascript is not a typed language so it should come as no surprise that there are no specific integer or floating-point types, no short, long, byte, double, or any other type other languages use to define numbers. All numbers in Javascript are 64bit (8 bytes) floating point numbers which yields an effective range of 5e-324 (negative) to 1.7976931348623157e+308 (positive).
-> 
+>
 > This reference will cover Javascript numeric literals and objects as well as the default Javascript Operators which manipulate those numbers.
 >
 > #####Precision#####
@@ -147,7 +147,7 @@ You can make a number in scope just like this. When JavaScript returns infinity 
     Console.write(n);
 
 Result:
-    
+
     10
 
 ------
@@ -158,11 +158,11 @@ Texts are 0 or more characters enclosed in a set of either the “ character or 
 
     var a = "hello,";
     var b = 'world!';
-    
+
     Console.write(a, b);
 
 Result:
-    
+
     hello, world!
 
 ------
@@ -171,20 +171,40 @@ Arrays are enclosed in [ and ] characters. Arrays are either ordered terms separ
 
 To reference items in a term-list array, you do so using their order. Each item is given an index, starting at 0.
 
-#####Not Yet Implemented:#####
 You can also reference a range of items- which results in another list containing the range of items. You do so by using two integers seperated by a `:` operator.
 
 #####Examples:#####
+
     var termList = [1,"too", "tree"];
     Console.write(termList[0]);
     Console.write(termList[1]);
     Console.write(termList[2]);
-    
+
 Result:
 
     1
     too
     tree
+
+Here's an example using a range  as an accessor:
+
+    var terms = ["Start with 0", 1,"too", "tree", "floor", 5];
+    Console.write(terms[:1]);
+    Console.write(terms[1:]);
+    Console.write(terms[2:4]);
+    // Console.write(terms[:]); // Syntax Error.
+    Console.write(terms[0:]);
+
+If you want the functionalify of `terms[:]` - copy an array - use `terms[0:]`
+
+Result:
+
+    [ 'Start with 0', 1 ]
+    [ 1, 'too', 'tree', 'floor', 5 ]
+    [ 'too', 'tree', 'floor' ]
+    [ 'Start with 0', 1, 'too', 'tree', 'floor', 5 ]
+
+
 
 ------
 ####Scope####
