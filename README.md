@@ -152,33 +152,39 @@ Result:
 
 ------
 ####Text####
-some text
-- a
-- e
-- i
+Texts are 0 or more characters enclosed in a set of either the “ character or the ' character. \ is the escape character. To write a single \ character in a text, you must write \\ (that is two \ characters to produce one single \ character).
 
 #####Example:#####
 
-    a
-    e
-    i
-    o
-    u
+    var a = "hello,";
+    var b = 'world!';
+    
+    Console.write(a, b);
+
+Result:
+    
+    hello, world!
 
 ------
 ####Array####
-some text
-- a
-- e
-- i
+Arrays are enclosed in [ and ] characters. Arrays are either ordered terms separated by commas, or associated terms separated by commas. Ordered terms are referenced using integer indices and associated terms are referenced using the text-form of their corresponding name.
 
-#####Example:#####
+To reference items in a term-list array, you do so using their order. Each item is given an index, starting at 0.
 
-    a
-    e
-    i
-    o
-    u
+#####Not Yet Implemented:#####
+You can also reference a range of items- which results in another list containing the range of items. You do so by using two integers seperated by a `:` operator.
+
+#####Examples:#####
+    var termList = [1,"too", "tree"];
+    Console.write(termList[0]);
+    Console.write(termList[1]);
+    Console.write(termList[2]);
+    
+Result:
+
+    1
+    too
+    tree
 
 ------
 ####Scope####
