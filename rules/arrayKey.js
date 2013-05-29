@@ -1,6 +1,9 @@
 module.exports = function arrayKey (a, b, c) {
     // [a]
     if (b === void 0) {
+        if (a.substr(0,9) === 'selector:') {
+            return 'replace:' + a.substr(9);
+        }
         return '[' + a + ']';
     }
 

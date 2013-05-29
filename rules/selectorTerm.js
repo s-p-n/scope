@@ -1,5 +1,4 @@
-module.exports = function term (a, b, c) {
-    //console.log("term (context):", this.context);
+module.exports = function selectorTerm (a, b, c) {
     switch (a) {
         case 'not':
             return '!' + b;
@@ -29,16 +28,10 @@ module.exports = function term (a, b, c) {
             return a + b + c;
         case '/':
             return a + b + c;
-        case 'and':
-            return a + '&&' + c;
-        case 'or':
-            return a + '||' + c;
         case 'is':
-            this.ext['$$$compare']();
-            return '$$$compare('+a+', '+c+')';
+            return a + '===' + c;
         case 'isnt':
-            this.ext['$$$compare']();
-            return '!$$$compare('+a+', '+c+')';
+            return a + '!==' + c;
         case '&':
             this.ext['$$$concat']();
             this.ext['$$$runtimeError']();

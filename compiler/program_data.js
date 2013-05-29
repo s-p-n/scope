@@ -3,8 +3,13 @@ module.exports = function (extensions) {
         curParent: -1,
         parentId: -1,
         lastParent: [-1],
+        simple: [],
+        context: [],
+        prevContext: [],
+        contextDepth: 0,
         ext: extensions,
         codePrefix: '',
-        codeSuffix: ''
+        codeSuffix: '',
+        ast: null
     };
 }

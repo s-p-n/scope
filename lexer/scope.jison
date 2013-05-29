@@ -9,7 +9,7 @@
 '+'         return '+'
 '-'         return '-'
 '*'         return '*'
-'/'         return '/'
+//'/'         return '/'
 '%'         return '%'
 '^'         return '^'
 '!'         return '!'
@@ -26,6 +26,7 @@
 '&'         return '&'
 '|'         return '|'
 ','         return ','
+'`'         return '`'
 'end'       {return 'END';}
 'if'        {return 'IF';}
 'for'       {return 'FOR';}
@@ -48,16 +49,19 @@
 'false'     {return 'FALSE';}
 '<='        {return '<=';}
 '>='        {return '>=';}
-(?!end|if|for|while|else|use|as|return|var|public|protected|private|is|isnt|and|or|not|true|false)[a-zA-Z_][a-zA-Z0-9_]*  {return 'NAME';}
+[a-zA-Z_][a-zA-Z0-9_]*  {return 'NAME';} // check later for: (?!end|if|for|while|else|use|as|return|var|public|protected|private|is|isnt|and|or|not|true|false)
+/*[a-zA-Z_][a-zA-Z0-9_]*  {return 'ASSOCNAME';}*/
+'$'+[a-zA-Z0-9_]*   {return 'SELECTNAME';}
 [0-9]+(\.[0-9]+)?\b    {return 'NUMBER';}
 \"[^\"]*\"  {return 'QSTRING';}
 \'[^\']*\'  {return 'ASTRING';}
-\`[^\`]*\`  {return 'BSTRING';}
+"/"[^\/]+"/"[egim]{0,4}  {return 'REGEXP';}
 <<EOF>>     {return 'EOF';}
 .           {return 'INVALID';}
 
 /lex
 
+//%token ASSOCNAME
 %token NAME
 %token RETURN
 %token PUB
@@ -78,6 +82,7 @@
 %token QSTRING
 %token ASTRING
 %token BSTRING
+%token REGEXP
 %token EOF
 %token TAGSHORTCLOSE
 %token TAGLONGCLOSE
@@ -93,7 +98,7 @@
 %left IS ISNT
 %left '<' '>' '<=' '>='
 %left '+' '-' '&' '|'
-%left '*' '/' '%'
+%left '*' '%'
 %left '^'
 %left '!'
 %left NOT
@@ -134,7 +139,7 @@ array
     }
     | '[' arrayStatement ']' '[' arrayKey']' {
         $$ = new yy.scopeAst(yy,"array",[
-            $2, $6
+            $2, $5
         ]);
     }
     | '[' ']' {
@@ -166,12 +171,12 @@ arrayKey
     ;
 
 arrayStatement
-    : termList {
+    : associativeList {
         $$ = new yy.scopeAst(yy,"arrayStatement",[
             $1
         ]);
     }
-    | associativeList {
+    | termList {
         $$ = new yy.scopeAst(yy,"arrayStatement",[
             $1
         ]);
@@ -307,6 +312,11 @@ declareProperty
             $1, $3
         ]);
     }
+    | selectorIdentifier '=' term {
+        $$ = new yy.scopeAst(yy,"declareProperty",[
+            $1, $3
+        ]);
+    }
     ;
 
 declareVariable
@@ -423,11 +433,6 @@ string
             $1
         ]);
     }
-    | BSTRING {
-        $$ = new yy.scopeAst(yy,"string",[
-            $1
-        ]);
-    }
     ;
 
 subTerm
@@ -467,6 +472,16 @@ subTerm
         ]);
     }
     | node          {
+        $$ = new yy.scopeAst(yy,"subTerm",[
+            $1
+        ]);
+    }
+    | selector {
+        $$ = new yy.scopeAst(yy,"subTerm",[
+            $1
+        ]);
+    }
+    | selectorIdentifier {
         $$ = new yy.scopeAst(yy,"subTerm",[
             $1
         ]);
@@ -514,11 +529,11 @@ term
             $1, $2, $3
         ]);
     }
-    | term '/' term {
-        $$ = new yy.scopeAst(yy,"term",[
-            $1, $2, $3
-        ]);
-    }
+    //| term '/' term {
+    //    $$ = new yy.scopeAst(yy,"term",[
+    //        $1, $2, $3
+    //    ]);
+    //}
     | term '%' term {
         $$ = new yy.scopeAst(yy,"term",[
             $1, $2, $3
@@ -535,6 +550,16 @@ term
         ]);
     }
     | term ISNT term {
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, $2, $3
+        ]);
+    }
+    | term AND term {
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, $2, $3
+        ]);
+    }
+    | term OR term {
         $$ = new yy.scopeAst(yy,"term",[
             $1, $2, $3
         ]);
@@ -734,6 +759,92 @@ return
             $3, $4
         ]);
     }
+    ;
+
+selector
+    : '`' selectorStatement '`' {
+        $$ = new yy.scopeAst(yy,"selector",[
+            $2
+        ]);
+    }
+    ;
+
+selectorExpression
+    : '(' selectorTerm ')' {
+        $$ = new yy.scopeAst(yy,"selectorExpression",[
+            $2
+        ]);
+    }
+    | REGEXP {
+        $$ = new yy.scopeAst(yy,"selectorExpression",[
+            $1
+        ]);
+    }
+    | '*' {
+        $$ = new yy.scopeAst(yy,"selectorExpression",[
+            '*'
+        ]);
+    }
+    | text {
+        $$ = new yy.scopeAst(yy,"selectorExpression",[
+            $1
+        ]);
+    }
+    ;
+
+selectorIdentifier
+    : SELECTNAME {
+        $$ = new yy.scopeAst(yy,"selectorIdentifier",[
+            $1
+        ]);
+    }
+    | selectorIdentifier '.' SELECTNAME {
+        $$ = new yy.scopeAst(yy,"selectorIdentifier",[
+            $1, $3
+        ]);
+    }
+    | selectorIdentifier '[' arrayKey ']' {
+        $$ = new yy.scopeAst(yy,"selectorIdentifier",[
+            $1, $3, $2
+        ]);
+    }
+    ;
+
+selectorStatement
+    : selectorExpression {
+        $$ = new yy.scopeAst(yy,"selectorStatement",[
+            $1
+        ]);
+    }
+    | selectorStatement '>' selectorExpression {
+        $$ = new yy.scopeAst(yy,"selectorStatement",[
+            $1, $2, $3
+        ]);
+    }
+    | selectorStatement '^' selectorExpression {
+        $$ = new yy.scopeAst(yy,"selectorStatement",[
+            $1, $2, $3
+        ]);
+    }
+    | selectorStatement ',' selectorExpression {
+        $$ = new yy.scopeAst(yy,"selectorStatement",[
+            $1, $2, $3
+        ]);
+    }
+    | selectorStatement '&' selectorExpression {
+        $$ = new yy.scopeAst(yy,"selectorStatement",[
+            $1, $2, $3
+        ]);
+    }
+    | selectorStatement '|' selectorExpression {
+        $$ = new yy.scopeAst(yy,"selectorStatement",[
+            $1, $2, $3
+        ]);
+    }
+    ;
+
+selectorTerm
+    : term
     ;
 
 shortTagEnd

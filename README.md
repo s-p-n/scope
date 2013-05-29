@@ -204,7 +204,28 @@ Result:
     [ 'too', 'tree', 'floor' ]
     [ 'Start with 0', 1, 'too', 'tree', 'floor', 5 ]
 
+Here's an example of an associative array:
 
+    var assoc = [
+        name      : "fred",
+        age       : 23,
+        hairColor : "brown"
+    ];
+    var key = 'hairColor';
+
+    Console.write(assoc.name);
+    Console.write(assoc['age']);
+    Console.write(assoc[key]);
+
+Result:
+
+    fred
+    23
+    brown
+
+Associative arrays in Scope are not stored in any particular order. You
+cannot access the items with a numeric index, and you may not grab chunks
+out of the associative array using the [n:n] syntax.
 
 ------
 ####Scope####
