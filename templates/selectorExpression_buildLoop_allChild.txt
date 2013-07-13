@@ -1,0 +1,11 @@
+	function loop ($$) {
+		var i;
+		for (i in $$) {
+			if($$.hasOwnProperty(i) && %condition%) {
+				%buildList%
+			} else if(typeof $$[i] === "object"){
+				loop($$[i])
+	}}};
+	loop($$);
+	%returnRet%;
+}(%context%))

@@ -1,0 +1,4 @@
+(function ($$) {
+	%varRet%, i,
+	regexp = %regExp%;
+%buildLoop%

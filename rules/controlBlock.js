@@ -6,5 +6,8 @@ module.exports = function controlBlock (controlBlock, stmt) {
     if (stmt === "") {
         controlBlock = 'return ' + controlBlock;
     }
-    return controlBlock + ';' + stmt;
+    return this.loadTemplate('controlBlock', {
+    	controlBlock: controlBlock,
+    	statement: stmt
+    });
 }

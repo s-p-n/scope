@@ -1,7 +1,8 @@
 var msg = "What is your name?";
 Console.write(msg);
-var name = Console.read();
-Console.write("Well hello there,", name);
+Console.read((name: ""){
+    Console.write("Well hello there,", name);
+});
 /**
  * Expect:
  *

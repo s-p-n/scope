@@ -4,20 +4,29 @@ module.exports = function arrayKey (a, b, c) {
         if (a.substr(0,9) === 'selector:') {
             return 'replace:' + a.substr(9);
         }
-        return '[' + a + ']';
+        return this.loadTemplate('arrayKey_selector', {
+            selector: a
+        });
     }
 
     this.ext['$$$ArraySubstr']();
     // [a:c]
     if (c !== void 0) {
         this.ext['$$$ArraySubstr']();
-        return '.substr(' + a + ', ' + c + ' + 1)';
+        return this.loadTemplate('arrayKey_range', {
+            start: a,
+            end: c
+        });
     }
     // [b:]
     if (b === ':') {
-        return '.substr(' + a + ')';
+        return this.loadTemplate('arrayKey_range_startOnly', {
+            start: a,
+        });
     }
 
     // [:b]
-    return '.substr(0,' + b + ' + 1)';
+    return this.loadTemplate('arrayKey_range_endOnly', {
+        end: b,
+    });
 }

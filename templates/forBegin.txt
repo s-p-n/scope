@@ -1,0 +1,5 @@
+(function () {
+	var %name%, $$$list = %list%;
+	for (%name% in $$$list) {
+		if ($$$list.hasOwnProperty(%name%)) {
+			(function () {

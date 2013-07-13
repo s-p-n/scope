@@ -1,19 +1,13 @@
 module.exports = function scope (start, controlCode, args) {
-    var arg, i = 0, first = true, ret = start + "(function () {var ";
+    var new_args = '', arg, i = 0, first = true;
     this.curParent = this.lastParent.pop();
 
-    controlCode += "return (function () {" +
-    "var i, ret = {};"+
-    "for (i in selfProps.access) {"+
-    "    if (selfProps.access[i] === 'public') {"+
-    "        ret[i] = selfProps[i];"+
-    "    }"+
-    "}"+
-    "return ret;"+
-    "}())";
-
     if (args === void 0) {
-        return start + '(function () {' + controlCode + '})';
+        return this.loadTemplate('scope_noArgs', {
+            scopeStart: start,
+            controlCode: controlCode,
+            id: this.parentId
+        });
     }
     args = eval('(function () { return ' + args + ';}())');
     for (arg in args) {
@@ -24,13 +18,16 @@ module.exports = function scope (start, controlCode, args) {
         if (first) {
             first = !first
         } else {
-            ret += ",";
+            new_args += ",";
         }
 
-        ret += arg + "= ((arguments[" + i + "] === void 0) ? (" + (args[arg] || "void 0") + ") : arguments[" + i + "])";
+        new_args += arg + "= ((arguments[" + i + "] === void 0) ? (" + (args[arg] || "void 0") + ") : arguments[" + i + "])";
         i += 1;
     }
-    ret += ';' + controlCode + '})';
-    //console.log("scope:", ret);
-    return ret;
+    return this.loadTemplate('scope_args', {
+        scopeStart: start,
+        args: new_args,
+        controlCode: controlCode,
+        id: this.parentId
+    });
 }

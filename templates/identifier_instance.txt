@@ -1,0 +1,7 @@
+(	
+	(
+		Type(%id%) !== 'instance'
+	) ?
+        %error% :
+        %id%
+).%name%

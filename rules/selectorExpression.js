@@ -8,15 +8,21 @@ module.exports = function selectorExpression (expr) {
     };
 
     var buildLoop = function buildLoop (operator, condition) {
-        var loop = 'for (i in $$) {if($$.hasOwnProperty(i) && '+condition+') {'+build_list+'}';
-
-        //console.log("Operator in buildLoop:", operator);
-
         switch (operator) {
             case '>':
-                return loop + '};' + return_ret+';}('+context+'))';
+                return that.loadTemplate('selectorExpression_buildLoop_firstChild', {
+                    condition: condition,
+                    buildList: build_list,
+                    returnRet: return_ret,
+                    context: context
+                });
             case '^':
-                return 'function loop ($$) {var i;'+loop+' else if(typeof $$[i] === "object"){loop($$[i])}}};loop($$);' + return_ret+';}('+context+'))';
+                return that.loadTemplate('selectorExpression_buildLoop_allChild', {
+                    condition: condition,
+                    buildList: build_list,
+                    returnRet: return_ret,
+                    context: context
+                });
             case ',':
                 //console.log("Case is comma");
                 return '';
@@ -55,26 +61,41 @@ module.exports = function selectorExpression (expr) {
         return context;
         //return ''
     }
-    var_ret = 'var ret = (($$ instanceof Array) ? [] : {})';
-    build_list = 'if($$ instanceof Array) { ret.push($$[i]); } else { ret[i] = $$[i]; }';
+    var_ret = that.loadTemplate('selectorExpression_varRet');
+    build_list = that.loadTemplate('selectorExpression_buildList');
     return_ret = 'return $$$array(ret)';
     if (expr[0] === '/') {
-        var modifiers = expr.substr(expr.lastIndexOf('/') + 1);
-
-        ret = '(function ($$) {'+var_ret+',i, regexp = ' + (new RegExp('^' + expr.substr(1, expr.lastIndexOf('/') - 1).replace(/\\/gm, '\\\\') + '$', modifiers)) + ';';
-        ret += buildLoop(operator, 'regexp.test(i)');
-        return ret;
+        return that.loadTemplate('selectorExpression_regex', {
+            varRet: var_ret,
+            regExp: (
+                // Generate RegExp which must match from beginning to end:
+                new RegExp(
+                    '^' +
+                        expr.substr(1,
+                            expr.lastIndexOf('/') - 1
+                        ).replace(/\\/gm, '\\\\') +
+                        '$',
+                    // RegExp Modifiers:
+                    expr.substr(expr.lastIndexOf('/') + 1)
+            )),
+            buildLoop: buildLoop(operator, 'regexp.test(i)')
+        });
     }
     if (expr[0] === '"' || expr[0] === "'") {
         switch (operator) {
             case ',':
-                return '(function ($$$context) {return ' + context + ';}('+context+'))'
-
+                return that.loadTemplate('selectorExpression_text_comma', {
+                    context: context
+                });
         }
-        return context + '[' + expr + ']';
+        return that.loadTemplate('selectorExpression_text', {
+            context: context,
+            expr: expr
+        });
     }
     // must be scope-code.
-
-    ret = '(function ($$){'+var_ret+', i;' + buildLoop(operator, expr);
-    return ret;
+    return that.loadTemplate('selectorExpression_code', {
+        varRet: var_ret,
+        buildLoop: buildLoop(operator, expr)
+    });
 }

@@ -1,0 +1,3 @@
+(function () {
+	if (%condition%) {
+		return (function () {

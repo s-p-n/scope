@@ -7,7 +7,9 @@ var prevContext = [];
 var simpleArr = [];
 module.exports = function (program_data) {
     program_data.error = error;
+    //console.log("Program data:", program_data);
     return function compile (ast) {
+        //console.log("AST:", ast);
         if (quit) {
             return "";
         }
@@ -55,8 +57,8 @@ module.exports = function (program_data) {
         } catch (e) {
             quit = true;
             //console.log("Data:", ast.data, "\ndone.");
-            console.log(e);
-            //throw (e);
+            //console.log(e);
+            throw (e);
 
         }
     };

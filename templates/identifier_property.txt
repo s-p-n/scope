@@ -1,0 +1,7 @@
+(
+	(
+		typeof %id% === "undefined" || root.%id% === %id%
+	) ?
+		$$$self%parentId%("%id%", %line%) :
+		%id%
+)

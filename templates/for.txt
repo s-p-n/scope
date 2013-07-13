@@ -1,0 +1,4 @@
+%forBegin%
+	%controlBlock%
+%loopElse%
+}());}}}())

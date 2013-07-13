@@ -5,5 +5,7 @@ module.exports = function scopeStart() {
     } else {
         this.curParent = this.parentId;
     }
-    return '/*Starting Scope:' + this.curParent +'*/';
+    return this.loadTemplate('scopeStart', {
+    	id: this.curParent
+    });
 }

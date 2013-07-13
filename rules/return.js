@@ -1,7 +1,11 @@
-module.exports = function (a, b) {
+module.exports = function _return (a, b) {
     if (b === void 0) {
-        return "return " + a;
+        return this.loadTemplate('return', {
+        	value: a
+        });
     } else {
-        return "return " + b;
+        return this.loadTemplate('return', {
+        	value: b
+        });
     }
 }

@@ -3,8 +3,8 @@ use "nav.sc" as nav;
 use "footer.sc" as footer;
 use "headerImg.sc" as headerImg;
 use "data.sc" as data;
-
-return <html>
+use "style.sc" as style;
+return <<
     <head
         author = data.author
         keywords = data.keywords
@@ -26,4 +26,4 @@ return <html>
             <footer url=data.footer.url text=data.footer.text />;
         </div>;
     </body>;
-</html>;
+>>.css(style);

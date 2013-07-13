@@ -1,7 +1,12 @@
-module.exports = function termList (set, more) {
+module.exports = function associativeList (set, more) {
     if (more === void 0) {
-        return 'obj'+set;//"obj"+set+",length:1"
+        return this.loadTemplate('associativeList_first', {
+        	list: set
+        });
     } else {
-        return set + ',' + more; //+ ",length:"+(1+Number(set.substr(set.lastIndexOf(':')+1 ,set.length)));
+        return this.loadTemplate('associativeList_remaining', {
+        	list: set,
+        	rest: more
+        }); 
     }
 }

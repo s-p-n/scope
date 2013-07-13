@@ -1,0 +1,7 @@
+	for (i in $$) {
+		if($$.hasOwnProperty(i) && %condition%) {
+			%buildList%
+		}
+	}
+	%returnRet%;
+}(%context%))

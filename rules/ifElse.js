@@ -2,7 +2,13 @@ module.exports = function ifElse (ifBegin, controlBlock, ifElse) {
     var conditionEnd = '}())';
     var ifEnd = '}());}';
     if (controlBlock === void 0) {
-        return ifBegin + ifEnd + conditionEnd;
+        return this.loadTemplate('ifElse_noElse', {
+        	ifBegin: ifBegin
+        });
     }
-    return ifEnd + ' else ' + ifBegin + controlBlock + ifElse;
+    return this.loadTemplate('ifElse', {
+    	ifBegin: ifBegin,
+    	controlBlock: controlBlock,
+    	ifElse: ifElse
+    });
 }

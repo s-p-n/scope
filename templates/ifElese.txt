@@ -1,0 +1,3 @@
+}());} else %ifBegin%
+	%controlBlock%
+%ifElse%

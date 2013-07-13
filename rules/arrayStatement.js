@@ -1,10 +1,14 @@
 module.exports = function arrayStatement(arr) {
     var ret;
     this.ext['$$$array']();
-    if (arr.substr(0,3) === 'obj') {
-        ret = '$$$array({'+arr.substr(3,arr.length)+'})'//'{' + arr.substr(3,arr.length) + '}';
+    if (arr.substr(0,6) === '$$$obj') {
+        ret = this.loadTemplate('arrayStatement_associative', {
+        	array: arr.substr(6, arr.length)
+        });
     } else {
-        ret = '$$$array([' + arr + '])';
+        ret = this.loadTemplate('arrayStatement_linear', {
+        	array: arr
+        });
     }
     return ret;
 }

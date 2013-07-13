@@ -1,9 +1,17 @@
 module.exports = function invoke (func, args, id) {
     if (args === void 0) {
-        return '(' + func + '())';
+        return this.loadTemplate('invoke_noArgs', {
+        	func: func
+        });
     }
     if (args === '.') {
-        return func + '.' + id;
+        return this.loadTemplate('invoke_instance', {
+        	func: func,
+        	identifier: id
+        });
     }
-    return '(' + func + '(' + args + '))';
+    return this.loadTemplate('invoke_args', {
+    	func: func,
+    	args: args
+    });
 }

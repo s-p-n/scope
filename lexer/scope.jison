@@ -202,6 +202,11 @@ associativeTerm
             $1, $3
         ]);
     }
+    | text ':' term {
+        $$ = new yy.scopeAst(yy,"associativeTerm",[
+            $1, $3
+        ]);
+    }
     ;
 
 associativeList

@@ -18,8 +18,8 @@ return Node((items = [{
     // two nodes- the placeholder and the nav- and we cannot
     // store them in a parent element.
     // Null nodes are not inserted into the DOM.
-    return <null>
+    return <<
         <div class="span12 navPlaceholder" />;
         navList;
-    </null>;
+    >>;
 });

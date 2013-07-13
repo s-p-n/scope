@@ -1,3 +1,5 @@
 module.exports = function ifBegin (condition) {
-    return "(function () {;if (" + condition + "){return (function () {";
+    return this.loadTemplate('ifBegin', {
+    	condition: condition
+    });
 }

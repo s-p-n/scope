@@ -1,48 +1,75 @@
 module.exports = function term (a, b, c) {
-    //console.log("term (context):", this.context);
     switch (a) {
         case 'not':
-            return '!' + b;
+            return this.loadTemplate('term_not', {
+                term: b
+            });
         case '!':
-            return '(function (){' +
-                'var i;' +
-                'var r = ' + b + ';' +
-                ((b[0] === '-') ?
-                    'for(i=-1;i>' + b + ';i-=1){':
-                    'for(i=1;i<' + b + ';i+=1){'
-                ) +
-                    'r*=i;' +
-                '}' +
-                'return r;' +
-            '}())';
+            return this.loadTemplate('term_factorial', {
+                'int': b
+            });
         case '-':
-            return '-' + b;
+            return this.loadTemplate('term_negate', {
+                num: b
+            });
         case '(':
-            return '(' + b + ')';
+            return this.loadTemplate('term_parens', {
+                term: b
+            });
     }
     switch (b) {
         case '+':
-            return a + b + c;
+            return this.loadTemplate('term_mirror', {
+                termA: a,
+                operator: b,
+                termB: c
+            });
         case '-':
-            return a + b + c;
+            return this.loadTemplate('term_mirror', {
+                termA: a,
+                operator: b,
+                termB: c
+            });
         case '*':
-            return a + b + c;
+            return this.loadTemplate('term_mirror', {
+                termA: a,
+                operator: b,
+                termB: c
+            });
         case '/':
-            return a + b + c;
+            return this.loadTemplate('term_mirror', {
+                termA: a,
+                operator: b,
+                termB: c
+            });
         case 'and':
-            return a + '&&' + c;
+            return loadTemplate('term_and', {
+                termA: a,
+                termB: c
+            });
         case 'or':
-            return a + '||' + c;
+            return loadTemplate('term_or', {
+                termA: a,
+                termB: c
+            });
         case 'is':
-            this.ext['$$$compare']();
-            return '$$$compare('+a+', '+c+')';
+            return this.loadTemplate('term_is', {
+                termA: a,
+                termB: c
+            });
         case 'isnt':
-            this.ext['$$$compare']();
-            return '!$$$compare('+a+', '+c+')';
+            return this.loadTemplate('term_isnt', {
+                termA: a,
+                termB: c
+            });
         case '&':
             this.ext['$$$concat']();
             this.ext['$$$runtimeError']();
-            return '$$$concat(' + a + ',' + c + ',' + this.line + ')';
+            return this.loadTemplate('term_concat', {
+                termA: a,
+                termB: c,
+                line: this.line
+            });
     }
     return a;
 }

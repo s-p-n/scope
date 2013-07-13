@@ -1,3 +1,5 @@
 module.exports = function scopeArgs (assocList) {
-    return '{' + assocList.substr(3,assocList.length) + '}';
+    return this.loadTemplate('scopeArgs', {
+    	args: assocList.substr(6,assocList.length)
+    });
 }

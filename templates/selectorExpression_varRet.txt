@@ -1,0 +1,1 @@
+var ret = (($$ instanceof Array) ? [] : {})

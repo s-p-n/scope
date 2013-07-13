@@ -1,4 +1,4 @@
-var scopeAst = function scopeAst (data, name, x) {
+var ast = function ast (data, name, x) {
     this.name = name;
     this.x = x;
     //console.log("\n\nMatched: ", data.lexer.parseError.toString(), "\n\n");
@@ -23,13 +23,13 @@ function indentString(l) {
     return r;
 }
 
-scopeAst.prototype.get = function get (indent) {
+ast.prototype.get = function get (indent) {
     var r = indentString(indent) + "(" + this.name;
     var rem = this.x;
-    if(rem.length == 1 && !(rem[0] instanceof scopeAst)) {
+    if(rem.length == 1 && !(rem[0] instanceof ast)) {
         r += " '"+rem[0]+"'";
     } else for( i in rem ) {
-        if( rem[i] instanceof scopeAst ) {
+        if( rem[i] instanceof ast ) {
             r += "\n" + rem[i].get(indent+1);
         } else {
             r += "\n" + indentString(indent+1);
@@ -39,4 +39,4 @@ scopeAst.prototype.get = function get (indent) {
     return r + /*"\n" + indentString(indent) +*/ ")";
 }
 
-module.exports = scopeAst;
+module.exports = ast;

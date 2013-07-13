@@ -1,0 +1,5 @@
+if($$ instanceof Array) {
+	ret.push($$[i]);
+} else {
+	ret[i] = $$[i];
+}

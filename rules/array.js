@@ -5,5 +5,5 @@ module.exports = function array(arr, arrayKey) {
         }
         return arr + arrayKey;
     }
-    return arr || "[]";
+    return arr || this.loadTemplate('array_empty');
 }
