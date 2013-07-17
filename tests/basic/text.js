@@ -1,29 +1,86 @@
 #!/usr/bin/env node
-var Console = function() {
-    var readline = require('readline');
-    var sleep = require('sleep').usleep;
-    var rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
+/// < Shims
+Function.prototype.bind = (function(origBind) {
+    return function bind() {
+        var fn = origBind.apply(this.unbind(), arguments);
+        fn.__origFn__ = this.__origFn__ || this;
+        return fn;
+    }
+}(Function.prototype.bind));
+Function.prototype.unbind = function unbind() {
+    return this.__origFn__ || this;
+};
+if (typeof Object.create === 'undefined') {
+    Object.create = function(o) {
+        function F() {};
+        F.prototype = 0;
+        return new F();
+    }
+};
+/// > Shims
 
-    function callback(fn) {
-        return function cb(data) {
-            fn(data.replace(/\n/g, ""));
-            rl.pause();
+function $self(access, name, value) {
+    if (name === void 0) {
+        name = access;
+        if (typeof this[name] !== "undefined") {
+            return this[name];
+        } else if (typeof this.$property[name] !== "undefined") {
+            return this.$property[name];
+        }
+        throw "Undefined variable/property: " + access;
+    }
+    if (value === void 0) {
+        value = name;
+        name = access;
+        if (typeof this[name] !== "undefined") {
+            return this[name] = value;
+        } else if (typeof this.$property[name] !== "undefined") {
+            return this.$property[name] = value;
         }
     }
-    return {
-        write: function write() {
-            console.log.apply(null, Array.prototype.slice.call(arguments, arguments));
+    if (access === "var") {
+        return this[name] = value;
+    }
+    this.$access[name] = access;
+    return this.$property[name] = value;
+};
+
+function $arg(name, $default, value) {
+    if (value === void 0) {
+        value = $default;
+    }
+    return this.$self("protected", name, value);
+};
+
+function $newParent(parent) {
+    var result = {
+        $access: {},
+        $property: {
+            $public: {},
+            $protected: {},
+            $private: {}
         },
-        read: function read(fn) {
-            rl.on('line', callback(fn));
-            rl.resume();
-        }
+        $parent: parent
     };
-}();
-var $$$runtimeError = function(line, msg, what) {
+    result.$self = $self.bind(result);
+    result.$arg = $arg.bind(result);
+    return result;
+};
+
+function $enforceType(type, term, line) {
+    if (Type(term) === type) {
+        return term;
+    }
+    $runtimeError(line, "Expected " + type + " and got %what%.");
+};
+var $root = $newParent(this);
+this.$access = $root.access;
+this.$self = $root.$self;
+this.$property = $root.$property;
+this.$parent = $root.$parent;
+this.$self = $root.$self;
+this.$arg = $root.$arg;
+var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
@@ -42,42 +99,35 @@ var Type = function Type(primitive) {
             return "instance";
     }
     return typeof primitive;
-};
-(function() {
-    function self(o, e, f) {
-        return void 0 === f ? selfProps[o] || (($$$runtimeError(e, '%default%Reference to undefined property or variable %red%%what%%default%', o))) : (selfProps.access[e] = o, selfProps[e] = f, f)
-    };
-    var selfProps = {
-        access: {
-            parent: "private"
-        },
-        parent: null
-    };
-    var $$$parent0 = selfProps;
-    var msg = "What is your name?";
-    (((Type(Console) !== 'instance') ? ($$$runtimeError(2, '%default%Only the %green%instance%default% type may contain properties, %red%' + Type(Console) + '%default% given', Console)) : Console).write(((typeof msg === "undefined" || root.msg === msg) ? self("msg", 2) : msg)));
-    (((Type(Console) !== 'instance') ? ($$$runtimeError(3, '%default%Only the %green%instance%default% type may contain properties, %red%' + Type(Console) + '%default% given', Console)) : Console).read( /*Starting Scope:0*/ (function() {
-        var name = ((arguments[0] === void 0) ? (void 0) : arguments[0]);
+}
+var Console = function() {
+    var readline = require('readline');
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    rl.pause();
 
-        function self(o, e, f) {
-            return void 0 === f ? selfProps[o] || (($$$runtimeError(e, '%default%Reference to undefined property or variable %red%%what%%default%', o))) : (selfProps.access[e] = o, selfProps[e] = f, f)
-        };
-        var selfProps = {
-            access: {
-                parent: "private"
-            },
-            parent: $$$parent0
-        };
-        var $$$parent1 = selfProps;
-        (((Type(Console) !== 'instance') ? ($$$runtimeError(4, '%default%Only the %green%instance%default% type may contain properties, %red%' + Type(Console) + '%default% given', Console)) : Console).write("Well hello there,", ((typeof name === "undefined" || root.name === name) ? self("name", 4) : name)));
-        return (function() {
-            var i, ret = {};
-            for (i in selfProps.access) {
-                if (selfProps.access[i] === 'public') {
-                    ret[i] = selfProps[i];
-                }
-            }
-            return ret;
-        }())
-    })));
-}());
+    function callback(fn) {
+        return function cb(data) {
+            rl.pause();
+            fn(data.replace(/\n/g, ""));
+        }
+    }
+    return {
+        write: function write() {
+            console.log.apply(null, Array.prototype.slice.call(arguments, arguments));
+        },
+        read: function read(fn) {
+            rl.on('line', callback(fn));
+            rl.resume();
+        }
+    };
+}();; /* Begin ControlCode: 0 */
+this.$self("var", "msg", "What is your name?");
+(Console.write(this.$self("msg")));
+(Console.read( /* Starting Scope:1 */ function() {
+    this.$arg("name", "", arguments[0]);
+    /* Begin ControlCode: 1 */ (Console.write("Well hello there,", this.$self("name")));
+    return this;
+}.bind($newParent(this))));

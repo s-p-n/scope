@@ -9,7 +9,7 @@
 '+'         return '+'
 '-'         return '-'
 '*'         return '*'
-//'/'         return '/'
+'/'         return '/'
 '%'         return '%'
 '^'         return '^'
 '!'         return '!'
@@ -98,7 +98,7 @@
 %left IS ISNT
 %left '<' '>' '<=' '>='
 %left '+' '-' '&' '|'
-%left '*' '%'
+%left '*' '%' '/'
 %left '^'
 %left '!'
 %left NOT
@@ -534,11 +534,11 @@ term
             $1, $2, $3
         ]);
     }
-    //| term '/' term {
-    //    $$ = new yy.scopeAst(yy,"term",[
-    //        $1, $2, $3
-    //    ]);
-    //}
+    | term '/' term {
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, $2, $3
+        ]);
+    }
     | term '%' term {
         $$ = new yy.scopeAst(yy,"term",[
             $1, $2, $3

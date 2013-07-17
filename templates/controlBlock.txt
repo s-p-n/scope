@@ -1,2 +1,2 @@
-%controlBlock%;
-%statement%
+%controlBlock%
+%statement%;

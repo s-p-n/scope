@@ -9,10 +9,10 @@ module.exports = function arrayKey (a, b, c) {
         });
     }
 
-    this.ext['$$$ArraySubstr']();
+    this.ext['$arraySubstr']();
     // [a:c]
     if (c !== void 0) {
-        this.ext['$$$ArraySubstr']();
+        this.ext['$arraySubstr']();
         return this.loadTemplate('arrayKey_range', {
             start: a,
             end: c

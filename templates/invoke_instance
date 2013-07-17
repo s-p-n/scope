@@ -1,1 +1,1 @@
-%func%.%identifier%
+%func%.$self("%identifier%")

@@ -3,7 +3,7 @@ module.exports = function extensions(data) {
     var extensionsDir = __dirname + '/../extensions/',
     notLoaded = [],
     extContainer = {};
-   fs.readdirSync(extensionsDir).forEach(function(fileName) {
+    fs.readdirSync(extensionsDir).forEach(function(fileName) {
         if (fileName.indexOf('.js') === -1) {
             return;
         }

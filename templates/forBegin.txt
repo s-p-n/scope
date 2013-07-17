@@ -1,5 +1,6 @@
 (function () {
-	var %name%, $$$list = %list%;
+	this.$self("var", "%name%", "");
+	var $$$list = %list%;
 	for (%name% in $$$list) {
 		if ($$$list.hasOwnProperty(%name%)) {
 			(function () {

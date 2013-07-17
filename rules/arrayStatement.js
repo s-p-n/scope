@@ -1,6 +1,6 @@
 module.exports = function arrayStatement(arr) {
     var ret;
-    this.ext['$$$array']();
+    this.ext['$array']();
     if (arr.substr(0,6) === '$$$obj') {
         ret = this.loadTemplate('arrayStatement_associative', {
         	array: arr.substr(6, arr.length)

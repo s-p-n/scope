@@ -1,2 +1,235 @@
 #!/usr/bin/env node
-"undefined"==typeof Object.create&&(Object.create=function(){function e(){}return e.prototype=0,new e});var $$$array=function(){var e=function(){var e={};return Object.defineProperty(e,"length",{enumerable:!1,value:0,configurable:!1,writable:!0}),e};return function(n){var r,t;if(n instanceof Array)return n;r=e();for(t in n)r[t]=n[t],r.length+=1;return r}}(),root="undefined"!=typeof window?window:"undefined"!=typeof root?root:{},Console=function(){function e(e){return function(n){e(n.replace(/\n/g,"")),r.pause()}}var n=require("readline");require("sleep").usleep;var r=n.createInterface({input:process.stdin,output:process.stdout});return{write:function(){console.log.apply(null,Array.prototype.slice.call(arguments,arguments))},read:function(n){r.on("line",e(n)),r.resume()}}}(),$$$runtimeError=function(e,n,r){throw new Error("[31m[1m Runtime Error:[0m[1m "+n.replace(/%what%/g,r).replace(/%red%/g,"[31m").replace(/%default%/g,"[0m[1m").replace(/%green%/g,"[32m")+"[1m on line: [31m"+e+"[0m")},Type=function(e){if(e instanceof Array)return"array";switch(typeof e){case"string":return"text";case"function":return"scope";case"object":return"instance"}return typeof e};!function(){function n(n,t,a){return void 0===a?r[n]||$$$runtimeError(e,"%default%Reference to undefined property or variable %red%%what%%default%",o):(r.access[t]=n,r[t]=a,a)}var r={access:{parent:"private"},parent:null},t=$$$array({a:1,b:2,c:3});!function(){var e,r,o="undefined"==typeof t||root.array===t?n("array",2):t;for(e in o)o.hasOwnProperty(e)&&(r=o[e],function(){return("instance"!==Type(Console)?$$$runtimeError(3,"%default%Only the %green%instance%default% type may contain properties, %red%"+Type(Console)+"%default% given",Console):Console).write("undefined"==typeof e||root.name===e?n("name",3):e,"is","undefined"==typeof r||root.val===r?n("val",3):r)}())}(),("instance"!==Type(Console)?$$$runtimeError(6,"%default%Only the %green%instance%default% type may contain properties, %red%"+Type(Console)+"%default% given",Console):Console).write(function(){var e;return e=("undefined"==typeof t||root.array===t?n("array",6):t).b}()),("instance"!==Type(Console)?$$$runtimeError(9,"%default%Only the %green%instance%default% type may contain properties, %red%"+Type(Console)+"%default% given",Console):Console).write("Say something and press enter.."),("instance"!==Type(Console)?$$$runtimeError(11,"%default%Only the %green%instance%default% type may contain properties, %red%"+Type(Console)+"%default% given",Console):Console).read(function(){function n(n,r,t){return void 0===t?a[n]||$$$runtimeError(e,"%default%Reference to undefined property or variable %red%%what%%default%",o):(a.access[r]=n,a[r]=t,t)}var t=void 0===arguments[0]?void 0:arguments[0],a={access:{parent:"private"},parent:r};return function(){return""===("undefined"==typeof t||root.data===t?n("data",13):t)?function(){return("instance"!==Type(Console)?$$$runtimeError(14,"%default%Only the %green%instance%default% type may contain properties, %red%"+Type(Console)+"%default% given",Console):Console).write("You didn't say nothin :(")}():function(){return("instance"!==Type(Console)?$$$runtimeError(16,"%default%Only the %green%instance%default% type may contain properties, %red%"+Type(Console)+"%default% given",Console):Console).write("data:","undefined"==typeof t||root.data===t?n("data",16):t)}()}(),function(){var e,n={};for(e in a.access)"public"===a.access[e]&&(n[e]=a[e]);return n}()})}();
+var $array = (function() {
+    var assocArray = function() {
+        var obj = {};
+        Object.defineProperty(obj, 'length', {
+            enumerable: false,
+            value: 0,
+            configurable: false,
+            writable: true
+        });
+        return obj;
+    };
+    return function $$$array(arr) {
+        var n, i;
+        if (arr instanceof Array) {
+            return arr;
+        }
+        n = assocArray();
+        for (i in arr) {
+            n[i] = arr[i];
+            n.length += 1;
+        }
+        return n;
+    }
+}());
+/// < Shims
+Function.prototype.bind = (function(origBind) {
+    return function bind() {
+        var fn = origBind.apply(this.unbind(), arguments);
+        fn.__origFn__ = this.__origFn__ || this;
+        return fn;
+    }
+}(Function.prototype.bind));
+Function.prototype.unbind = function unbind() {
+    return this.__origFn__ || this;
+};
+if (typeof Object.create === 'undefined') {
+    Object.create = function(o) {
+        function F() {};
+        F.prototype = 0;
+        return new F();
+    }
+};
+/// > Shims
+
+function $self(access, name, value) {
+    if (name === void 0) {
+        name = access;
+        if (typeof this[name] !== "undefined") {
+            return this[name];
+        } else if (typeof this.$property[name] !== "undefined") {
+            return this.$property[name];
+        }
+        throw "Undefined variable/property: " + access;
+    }
+    if (value === void 0) {
+        value = name;
+        name = access;
+        if (typeof this[name] !== "undefined") {
+            return this[name] = value;
+        } else if (typeof this.$property[name] !== "undefined") {
+            return this.$property[name] = value;
+        }
+    }
+    if (access === "var") {
+        return this[name] = value;
+    }
+    this.$access[name] = access;
+    return this.$property[name] = value;
+};
+
+function $arg(name, $default, value) {
+    if (value === void 0) {
+        value = $default;
+    }
+    return this.$self("protected", name, value);
+};
+
+function $newParent(parent) {
+    var result = {
+        $access: {},
+        $property: {
+            $public: {},
+            $protected: {},
+            $private: {}
+        },
+        $parent: parent
+    };
+    result.$self = $self.bind(result);
+    result.$arg = $arg.bind(result);
+    return result;
+};
+
+function $enforceType(type, term, line) {
+    if (Type(term) === type) {
+        return term;
+    }
+    $runtimeError(line, "Expected " + type + " and got %what%.");
+};
+var $root = $newParent(this);
+this.$access = $root.access;
+this.$self = $root.$self;
+this.$property = $root.$property;
+this.$parent = $root.$parent;
+this.$self = $root.$self;
+this.$arg = $root.$arg;
+var $runtimeError = function $runtimeError(line, msg, what) {
+    throw new Error(
+        "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
+        msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
+        "\033[1m on line: \033[31m" + line + '\033[0m');
+}
+var Type = function Type(primitive) {
+    if (primitive instanceof Array) {
+        return "array";
+    }
+    switch (typeof primitive) {
+        case "string":
+            return "text";
+        case "function":
+            return "scope";
+        case "object":
+            return "instance";
+    }
+    return typeof primitive;
+}
+var Console = function() {
+    var readline = require('readline');
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    rl.pause();
+
+    function callback(fn) {
+        return function cb(data) {
+            rl.pause();
+            fn(data.replace(/\n/g, ""));
+        }
+    }
+    return {
+        write: function write() {
+            console.log.apply(null, Array.prototype.slice.call(arguments, arguments));
+        },
+        read: function read(fn) {
+            rl.on('line', callback(fn));
+            rl.resume();
+        }
+    };
+}();
+var $compare = function $compare(a, b) {
+    if ((typeof a) !== (typeof b)) {
+        return false;
+    }
+
+    var equals = function(x) {
+        var p;
+        for (p in this) {
+            if (typeof(x[p]) == 'undefined') {
+                return false;
+            }
+            if (this[p]) {
+                switch (typeof(this[p])) {
+                    case 'object':
+                        if (!equals.call(this[p], x[p])) {
+                            return false;
+                        }
+                        break;
+                    case 'function':
+                        if (typeof(x[p]) == 'undefined' ||
+                            (p != 'equals' && this[p].toString() != x[p].toString()))
+                            return false;
+                        break;
+                    default:
+                        if (this[p] !== x[p]) {
+                            return false;
+                        }
+                }
+            } else if (x[p]) {
+                return false;
+            }
+        }
+
+        for (p in x) {
+            if (typeof(this[p]) == 'undefined') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return (typeof a === 'object') ? equals.call(a, b) : a === b;
+};; /* Begin ControlCode: 0 */
+this.$self("var", "array", $array({
+    "a": 1,
+    "b": 2,
+    "c": 3
+}));
+(function() {
+    this.$self("var", "name", "");
+    this.$self("var", "val", null);
+    var name, $$$list = this.$self("array");
+    for (name in $$$list) {
+        this.$self("name", name);
+        if ($$$list.hasOwnProperty(name)) {
+            this.$self("val", $$$list[name]);
+            (function() {
+                return (Console.write(this.$self("name"), "is", this.$self("val")));
+
+            }.bind(this)());
+        }
+    }
+}.bind(this)());
+(Console.write((function() {
+    var ret;
+    ret = this.$self("array")['b'];
+    return ret;
+}.bind(this)())));
+(Console.write("Say something and press enter.."));
+this.$self("var", "data", (Console.read( /* Starting Scope:1 */ function() {
+    this.$arg("data", "", arguments[0]);
+    /* Begin ControlCode: 1 */ (function() {
+        if ($compare(this.$self("data"), "")) {
+            return (function() {
+                return (Console.write("You didn't say nothin :("));
+            }.bind(this)());
+        } else {
+            return (function() {
+                return (Console.write("data:", this.$self("data")));
+            }.bind(this)());
+        }
+    }.bind(this)());
+    return this;
+}.bind($newParent(this)))));

@@ -4,4 +4,4 @@
 		}
 	}
 	%returnRet%;
-}(%context%))
+}.bind(this)(%context%))

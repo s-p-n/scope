@@ -1,8 +1,13 @@
 var Console = function () {
     var readline = require('readline');
-    
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    rl.pause();
     function callback(fn) {
         return function cb(data) {
+            rl.pause();
             fn(data.replace(/\n/g, ""));
         }
     }
@@ -11,10 +16,6 @@ var Console = function () {
             console.log.apply(null, Array.prototype.slice.call(arguments, arguments));
         },
         read: function read (fn) {
-            var rl = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout
-            });
             rl.on('line', callback(fn));
             rl.resume();
         }

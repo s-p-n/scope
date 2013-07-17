@@ -1,1 +1,1 @@
-$$$concat(%termA%, %termB%, %line%)
+$concat(%termA%, %termB%, %line%)

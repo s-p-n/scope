@@ -5,7 +5,7 @@
 				%buildList%
 			} else if(typeof $$[i] === "object"){
 				loop($$[i])
-	}}};
+	}}}.bind(this);
 	loop($$);
 	%returnRet%;
-}(%context%))
+}.bind(this)(%context%))

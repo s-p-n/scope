@@ -1,5 +1,17 @@
 #!/usr/bin/env node
-/// < Shims
+var $factorial = function $factorial(n) {
+    var i, result = n;
+    if (n < 0) {
+        for (i = -1; i > n; i -= 1) {
+            result *= i;
+        }
+    } else if (n > 0) {
+        for (i = 1; i < n; i += 1) {
+            result *= i;
+        }
+    }
+    return result;
+} /// < Shims
 Function.prototype.bind = (function(origBind) {
     return function bind() {
         var fn = origBind.apply(this.unbind(), arguments);
@@ -123,30 +135,97 @@ var Console = function() {
             rl.resume();
         }
     };
-}();; /* Begin ControlCode: 0 */
-( /* Starting Scope:1 */ function() {
-    this.$arg("some", "", arguments[0]);
-    this.$arg("args", "", arguments[1]);
-    this.$arg("here", "", arguments[2]);
-    /* Begin ControlCode: 1 */ (Console.write(this.$self("some"), this.$self("args"), this.$self("here")));
-    return this;
-}.bind($newParent(this))("foo", "bar", "baz"));
-this.$self("var", "Foo", /* Starting Scope:1 */ function() {
-    /* Begin ControlCode: 1 */
-    this.$self("private", "baz", "woohoo!");
-    this.$self("public", "bar", "testing properties..");
-    this.$self("public", "getBaz", /* Starting Scope:2 */ function() {
-        /* Begin ControlCode: 2 */
-        return $enforceType("instance", this.$parent, 11).$self("baz");
-        return this;
-    }.bind($newParent(this)));
-    return this;
-}.bind($newParent(this)));
-this.$self("var", "bar", /* Starting Scope:1 */ function() {
-    /* Begin ControlCode: 1 */ (Console.write("What is your name?"));
-    return "Name is " + (Console.read());
-    return this;
-}.bind($newParent(this)));
-this.$self("var", "foo", (this.$self("Foo")()));
-(Console.write("foo is an", (Type(this.$self("foo"))), "of Foo."));
-(Console.write("foo.baz is:", ($enforceType("instance", this.$self("foo"), 25).$self("getBaz")())));
+}();
+var $compare = function $compare(a, b) {
+    if ((typeof a) !== (typeof b)) {
+        return false;
+    }
+
+    var equals = function(x) {
+        var p;
+        for (p in this) {
+            if (typeof(x[p]) == 'undefined') {
+                return false;
+            }
+            if (this[p]) {
+                switch (typeof(this[p])) {
+                    case 'object':
+                        if (!equals.call(this[p], x[p])) {
+                            return false;
+                        }
+                        break;
+                    case 'function':
+                        if (typeof(x[p]) == 'undefined' ||
+                            (p != 'equals' && this[p].toString() != x[p].toString()))
+                            return false;
+                        break;
+                    default:
+                        if (this[p] !== x[p]) {
+                            return false;
+                        }
+                }
+            } else if (x[p]) {
+                return false;
+            }
+        }
+
+        for (p in x) {
+            if (typeof(this[p]) == 'undefined') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return (typeof a === 'object') ? equals.call(a, b) : a === b;
+};
+var Text = function Text(primitive) {
+    return primitive.toString();
+}
+var $concat = function $concat(a, b, line) {
+    var result, shortest, i;
+    if (!(Type(a) === "text" && Type(b) === "text") && !(Type(a) === "array" && Type(b) === "array")) {
+        $runtimeError(line, "Both types must be the same (either string or array), got: %what%", Type(a) + " and " + Type(b));
+    }
+    if (Type(a) === "text") {
+        result = a + b;
+    } else {
+        if (a instanceof Array) {
+            for (i = 0; i < b.length; i += 1) {
+                a.push(b[i]);
+            }
+            result = a;
+        } else {
+            if (a.length > b.length) {
+                result = a;
+                shortest = b;
+            } else {
+                result = b;
+                shortest = a;
+            }
+            for (i in shortest) {
+                if (i !== "length" && shortest.hasOwnProperty(i)) {
+                    result[i] = shortest[i];
+                    result.length += 1;
+                }
+            }
+        }
+    }
+    return result;
+};; /* Begin ControlCode: 0 */
+this.$self("var", "foo", function foo() {
+    /* Begin ControlCode: 0 */
+    return 8 + 120 * 2 / $factorial((5));
+}.bind($newParent(this))());
+(Console.write("foo is 10?", (function() {
+    if ($compare(this.$self("foo"), 10)) {
+        return (function() {
+            return "yes";
+        }.bind(this)());
+    } else {
+        return (function() {
+            return $concat("no, foo is ", (Text(this.$self("foo"))), 5);
+        }.bind(this)());
+    }
+}.bind(this)())));

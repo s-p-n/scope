@@ -1,34 +1,32 @@
 module.exports = function identifier (id, name, isArr) {
-    this.ext['$$$root']();
+    this.ext['$init']();
+    this.ext['$runtimeError']();
+    this.ext['Type']();
     if (name !== void 0) {
         if (name === "__proto__" ||
             name === "prototype") {
                 name = this.loadTemplate('identifier_blacklist', {
                     name: name
-                });
-        }
+        })}
         if (isArr !== void 0) {
             if (name.substr(0, 8) === 'replace:') {
                 return name.substr(8);
             }
             return id + name;
         }
-        this.ext['$$$runtimeError']();
-        this.ext['Type']();
+        if (id.substr(id.lastIndexOf('.') + 1).substr(0,1) !== '$') {
+            return this.loadTemplate('identifier_extended', {
+                id: id,
+                name: name
+        })}
         return  this.loadTemplate('identifier_instance', {
             id: id,
             name: name,
             line: this.line,
-            error: this.error(
-                this.line,
-                'runtime',
-                'no properties',
-                id
-        )});
-    }
+    })}
     var ret;
     if (id === "parent") {
-        return '$$$parent' + this.curParent;
+        return this.loadTemplate('identifier_parent');
     }
     if (id in this.ext) {
         ret = this.ext[id]();
@@ -37,8 +35,6 @@ module.exports = function identifier (id, name, isArr) {
             id: id,
             line: this.line,
             parentId: this.parentId
-        });
-    }
-
+    })}
     return ret;
 }

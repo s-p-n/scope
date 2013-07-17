@@ -1,7 +1,1 @@
-(	
-	(
-		Type(%id%) !== 'instance'
-	) ?
-        %error% :
-        %id%
-).%name%
+$enforceType("instance", %id%, %line%).$self("%name%")

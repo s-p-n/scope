@@ -1,1 +1,1 @@
-var %name% = %value%
+this.$self("var", "%name%", %value%)

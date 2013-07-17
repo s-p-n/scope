@@ -16,21 +16,15 @@ module.exports = function scope (start, controlCode, args) {
         if (arg === "length") {
             continue;
         }
-
-        if (first) {
-            first = !first
-        } else {
-            new_args += ",";
-        }
         if (typeof args[arg] === "string") {
             args[arg] = '"' + args[arg] + '"';
         }
         //console.log("arg:", args[arg], typeof args[arg]);
-        new_args += '$$$$$$self' + id + '("protected", "' + arg + '",' + "((arguments[" + i + "] === void 0) ? (" + (args[arg]) + ") : arguments[" + i + "]));";
+        new_args += 'this.$arg("' + arg + '", ' + args[arg] + ', arguments[' + i + ']);';
         i += 1;
     }
-    new_args = "/*@argumentStart" + id + "@*/\n" + new_args;
-    controlCode = controlCode.replace("/*@argumentStart" + id + "@*/", new_args);
+    //new_args = "/*@argumentStart" + id + "@*/\n" + new_args;
+    //controlCode = controlCode.replace("/*@argumentStart" + id + "@*/", new_args);
     return this.loadTemplate('scope_args', {
         scopeStart: start,
         args: new_args,

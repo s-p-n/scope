@@ -1,1 +1,1 @@
-%termA% !== %termB%
+!$compare(%termA%, %termB%)

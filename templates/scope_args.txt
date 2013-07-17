@@ -1,12 +1,5 @@
-%scopeStart%(function () {
+%scopeStart% function () {
+	%args%
 	%controlCode%
-	return (function () {
-		var i, ret = {};
-		for (i in $$$parent%id%.access) {
-			if ($$$parent%id%.access[i] === 'public') {
-				ret[i] = $$$parent%id%[i];
-			}
-		}
-		return ret;
-	}());
-})
+	return this;
+}.bind($newParent(this))

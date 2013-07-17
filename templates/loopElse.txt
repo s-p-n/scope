@@ -1,3 +1,3 @@
-}());} else { 
+}.bind(this)());} else { 
 	return (function () {
 		%controlBlock%

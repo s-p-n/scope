@@ -5,6 +5,7 @@ module.exports = function term (a, b, c) {
                 term: b
             });
         case '!':
+            this.ext['$factorial']();
             return this.loadTemplate('term_factorial', {
                 'int': b
             });
@@ -53,18 +54,20 @@ module.exports = function term (a, b, c) {
                 termB: c
             });
         case 'is':
+            this.ext['$compare']();
             return this.loadTemplate('term_is', {
                 termA: a,
                 termB: c
             });
         case 'isnt':
+            this.ext['$compare']();
             return this.loadTemplate('term_isnt', {
                 termA: a,
                 termB: c
             });
         case '&':
-            this.ext['$$$concat']();
-            this.ext['$$$runtimeError']();
+            this.ext['$concat']();
+            this.ext['$runtimeError']();
             return this.loadTemplate('term_concat', {
                 termA: a,
                 termB: c,
