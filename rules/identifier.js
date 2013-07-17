@@ -27,6 +27,9 @@ module.exports = function identifier (id, name, isArr) {
         )});
     }
     var ret;
+    if (id === "parent") {
+        return '$$$parent' + this.curParent;
+    }
     if (id in this.ext) {
         ret = this.ext[id]();
     } else {

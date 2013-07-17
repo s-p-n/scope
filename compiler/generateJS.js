@@ -30,12 +30,12 @@ module.exports = function (args,
     }
 
     program_data.parse = scope.parse;
-    code = ';(function () {' + compile(ast) + '}());';
+    code = ';' + compile(ast)
     code = extData.loaded +
         program_data.codePrefix +
         code +
         program_data.codeSuffix;
-
+/*
     if (options['code'] === "pretty") {
         code = pretty(code);
     } else if (options['code'] === "bloated") {
@@ -43,5 +43,6 @@ module.exports = function (args,
     } else {
         code = ugly(code);
     }
-    return code;
+    */
+    return pretty(code);
 }

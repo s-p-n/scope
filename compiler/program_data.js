@@ -2,7 +2,9 @@ module.exports = function (extensions) {
     return {
         curParent: -1,
         parentId: -1,
-        lastParent: [-1],
+        lastParent: [],
+        scopeId: 0,
+        scopeList: [],
         simple: [],
         context: [],
         prevContext: [],

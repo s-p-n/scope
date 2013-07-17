@@ -1,1 +1,1 @@
-$$$self%id%(%access%, %name%, %value%)
+$$$self%id%("%access%", "%name%", %value%)

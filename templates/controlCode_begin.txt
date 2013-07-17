@@ -2,7 +2,7 @@ function $$$self%id% (access, name, value) {
         return void 0 === value ?
                 ($$$parent%id%[access] || %error%) : (
                         $$$parent%id%.access[name] = access,
-                        $$$parent%id%[name]=value,
+                        $$$parent%id%[name] = value,
                         value
 )};
 var $$$parent%id% = {
@@ -11,3 +11,5 @@ var $$$parent%id% = {
         },
         parent: %value%
 };
+/*@argumentStart%id%@*/
+/*@argumentEnd%id%@*/
