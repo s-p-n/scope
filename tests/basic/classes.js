@@ -27,7 +27,14 @@ function $self(access, name, value) {
         } else if (typeof this.$property[name] !== "undefined") {
             return this.$property[name];
         }
-        throw "Undefined variable/property: " + access;
+        var parent = this;
+        while (parent !== null) {
+            if (typeof parent[name] !== "undefined") {
+                return parent[name];
+            }
+            parent = parent.$parent;
+        }
+        throw "Undefined variable/property: " + name;
     }
     if (value === void 0) {
         value = name;
@@ -73,18 +80,17 @@ function $enforceType(type, term, line) {
     }
     $runtimeError(line, "Expected " + type + " and got %what%.");
 };
-var $root = $newParent(this);
-this.$access = $root.access;
-this.$self = $root.$self;
-this.$property = $root.$property;
-this.$parent = $root.$parent;
-this.$self = $root.$self;
-this.$arg = $root.$arg;
+var $root = $newParent(null);
+var $i;
+for ($i in $root) {
+    this[$i] = $root[$i];
+}
 var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = function Type(primitive) {
     if (primitive instanceof Array) {
@@ -100,9 +106,8 @@ var Type = function Type(primitive) {
     }
     return typeof primitive;
 }
-var Console = function() {
-    var readline = require('readline');
-    var rl = readline.createInterface({
+var Console = function Console() {
+    var rl = require('readline').createInterface({
         input: process.stdin,
         output: process.stdout
     });
@@ -116,11 +121,11 @@ var Console = function() {
     }
     return {
         write: function write() {
-            console.log.apply(null, Array.prototype.slice.call(arguments, arguments));
+            console.log.apply(null, Array.prototype.slice.call(arguments));
         },
         read: function read(fn) {
-            rl.on('line', callback(fn));
             rl.resume();
+            rl.on('line', callback(fn));
         }
     };
 }();
@@ -182,35 +187,38 @@ var Scope = (function() {
         }
     }
 }());; /* Begin ControlCode: 0 */
-this.$self("var", "Animal", /* Starting Scope:1 */ function() {
+$root.$self("var", "Animal", /* Starting Scope:1 */ function() {
     this.$arg("name", "", arguments[0]);
     /* Begin ControlCode: 1 */
     this.$self("protected", "move", /* Starting Scope:2 */ function() {
         this.$arg("meters", 0, arguments[0]);
-        /* Begin ControlCode: 2 */ (Console.write($concat($concat($concat($enforceType("instance", this.$parent, 3).$self("name"), " moved ", 3), (Text(this.$self("meters"))), 3), "m.", 3)));
+        /* Begin ControlCode: 2 */
+        (Console.write($concat($concat($concat($enforceType("instance", this.$parent, 3).$self("name"), " moved ", 3), (Text(this.$self("meters"))), 3), "m.", 3)));
         return this;
     }.bind($newParent(this)));
     return this;
-}.bind($newParent(this)));
-this.$self("var", "Snake", (Scope.extend(this.$self("Animal"), /* Starting Scope:1 */ function() {
+}.bind($newParent($root)));
+$root.$self("var", "Snake", (Scope.extend(this.$self("Animal"), /* Starting Scope:1 */ function() {
     /* Begin ControlCode: 1 */
     this.$self("public", "move", /* Starting Scope:2 */ function() {
-        /* Begin ControlCode: 2 */ (Console.write("Slithering..."));
+        /* Begin ControlCode: 2 */
+        (Console.write("Slithering..."));
         ($enforceType("instance", $enforceType("instance", this.$parent, 9).$self("extended"), 9).$self("move")(5));
         return this;
     }.bind($newParent(this)));
     return this;
-}.bind($newParent(this)))));
-this.$self("var", "Horse", (Scope.extend(this.$self("Animal"), /* Starting Scope:1 */ function() {
+}.bind($newParent($root)))));
+$root.$self("var", "Horse", (Scope.extend(this.$self("Animal"), /* Starting Scope:1 */ function() {
     /* Begin ControlCode: 1 */
     this.$self("public", "move", /* Starting Scope:2 */ function() {
-        /* Begin ControlCode: 2 */ (Console.write("Galloping..."));
+        /* Begin ControlCode: 2 */
+        (Console.write("Galloping..."));
         ($enforceType("instance", $enforceType("instance", this.$parent, 15).$self("extended"), 15).$self("move")(45));
         return this;
     }.bind($newParent(this)));
     return this;
-}.bind($newParent(this)))));
-this.$self("var", "sam", (this.$self("Snake")('Sammy the Python')));
-this.$self("var", "tom", (this.$self("Horse")('Tommy the Palomino')));
+}.bind($newParent($root)))));
+$root.$self("var", "sam", (this.$self("Snake")('Sammy the Python')));
+$root.$self("var", "tom", (this.$self("Horse")('Tommy the Palomino')));
 ($enforceType("instance", this.$self("sam"), 20).$self("move")());
 ($enforceType("instance", this.$self("tom"), 21).$self("move")());

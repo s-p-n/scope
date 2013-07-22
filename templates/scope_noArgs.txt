@@ -1,4 +1,4 @@
 %scopeStart% function () {
 	%controlCode%
 	return this;
-}.bind($newParent(this))
+}.bind($newParent(%this%))

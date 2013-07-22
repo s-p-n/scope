@@ -1,17 +1,5 @@
 #!/usr/bin/env node
-var $factorial = function $factorial(n) {
-    var i, result = n;
-    if (n < 0) {
-        for (i = -1; i > n; i -= 1) {
-            result *= i;
-        }
-    } else if (n > 0) {
-        for (i = 1; i < n; i += 1) {
-            result *= i;
-        }
-    }
-    return result;
-} /// < Shims
+/// < Shims
 Function.prototype.bind = (function(origBind) {
     return function bind() {
         var fn = origBind.apply(this.unbind(), arguments);
@@ -141,53 +129,6 @@ var Console = function Console() {
         }
     };
 }();
-var $compare = function $compare(a, b) {
-    if ((typeof a) !== (typeof b)) {
-        return false;
-    }
-
-    var equals = function(x) {
-        var p;
-        for (p in this) {
-            if (typeof(x[p]) == 'undefined') {
-                return false;
-            }
-            if (this[p]) {
-                switch (typeof(this[p])) {
-                    case 'object':
-                        if (!equals.call(this[p], x[p])) {
-                            return false;
-                        }
-                        break;
-                    case 'function':
-                        if (typeof(x[p]) == 'undefined' ||
-                            (p != 'equals' && this[p].toString() != x[p].toString()))
-                            return false;
-                        break;
-                    default:
-                        if (this[p] !== x[p]) {
-                            return false;
-                        }
-                }
-            } else if (x[p]) {
-                return false;
-            }
-        }
-
-        for (p in x) {
-            if (typeof(this[p]) == 'undefined') {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    return (typeof a === 'object') ? equals.call(a, b) : a === b;
-};
-var Text = function Text(primitive) {
-    return primitive.toString();
-}
 var $concat = function $concat(a, b, line) {
     var result, shortest, i;
     if (!(Type(a) === "text" && Type(b) === "text") && !(Type(a) === "array" && Type(b) === "array")) {
@@ -219,13 +160,11 @@ var $concat = function $concat(a, b, line) {
     }
     return result;
 };; /* Begin ControlCode: 0 */
-this.$self("var", "foo", function foo() {
-    /* Begin ControlCode: 0 */
-    return 8 + 120 * 2 / $factorial((5));
-}.bind($newParent(this))());
-(Console.write("Is foo the number 10?", $compare(this.$self("foo"), 10)));
-(Console.write($concat("foo is ", (Text(this.$self("foo"))), 4)));
-this.$self("public", "bar", "hello, properties!");
-$root.$self("var", "foo", "test");
-(Console.write($concat("bar is ", this.$self("bar"), 9)));
-(Console.write("foo is now:", this.$self("foo")));
+$root.$self("var", "foo", "Hello, ");
+(Console.write("What is your name?"));
+(Console.read( /* Starting Scope:1 */ function() {
+    this.$arg("bar", "", arguments[0]);
+    /* Begin ControlCode: 1 */
+    (Console.write($concat(this.$self("foo"), this.$self("bar"), 10)));
+    return this;
+}.bind($newParent($root))));

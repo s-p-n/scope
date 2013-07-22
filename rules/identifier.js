@@ -2,6 +2,7 @@ module.exports = function identifier (id, name, isArr) {
     this.ext['$init']();
     this.ext['$runtimeError']();
     this.ext['Type']();
+
     if (name !== void 0) {
         if (name === "__proto__" ||
             name === "prototype") {

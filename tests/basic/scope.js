@@ -27,7 +27,14 @@ function $self(access, name, value) {
         } else if (typeof this.$property[name] !== "undefined") {
             return this.$property[name];
         }
-        throw "Undefined variable/property: " + access;
+        var parent = this;
+        while (parent !== null) {
+            if (typeof parent[name] !== "undefined") {
+                return parent[name];
+            }
+            parent = parent.$parent;
+        }
+        throw "Undefined variable/property: " + name;
     }
     if (value === void 0) {
         value = name;
@@ -73,18 +80,17 @@ function $enforceType(type, term, line) {
     }
     $runtimeError(line, "Expected " + type + " and got %what%.");
 };
-var $root = $newParent(this);
-this.$access = $root.access;
-this.$self = $root.$self;
-this.$property = $root.$property;
-this.$parent = $root.$parent;
-this.$self = $root.$self;
-this.$arg = $root.$arg;
+var $root = $newParent(null);
+var $i;
+for ($i in $root) {
+    this[$i] = $root[$i];
+}
 var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = function Type(primitive) {
     if (primitive instanceof Array) {
@@ -100,9 +106,8 @@ var Type = function Type(primitive) {
     }
     return typeof primitive;
 }
-var Console = function() {
-    var readline = require('readline');
-    var rl = readline.createInterface({
+var Console = function Console() {
+    var rl = require('readline').createInterface({
         input: process.stdin,
         output: process.stdout
     });
@@ -116,11 +121,11 @@ var Console = function() {
     }
     return {
         write: function write() {
-            console.log.apply(null, Array.prototype.slice.call(arguments, arguments));
+            console.log.apply(null, Array.prototype.slice.call(arguments));
         },
         read: function read(fn) {
-            rl.on('line', callback(fn));
             rl.resume();
+            rl.on('line', callback(fn));
         }
     };
 }();; /* Begin ControlCode: 0 */
@@ -128,10 +133,11 @@ var Console = function() {
     this.$arg("some", "", arguments[0]);
     this.$arg("args", "", arguments[1]);
     this.$arg("here", "", arguments[2]);
-    /* Begin ControlCode: 1 */ (Console.write(this.$self("some"), this.$self("args"), this.$self("here")));
+    /* Begin ControlCode: 1 */
+    (Console.write(this.$self("some"), this.$self("args"), this.$self("here")));
     return this;
-}.bind($newParent(this))("foo", "bar", "baz"));
-this.$self("var", "Foo", /* Starting Scope:1 */ function() {
+}.bind($newParent($root))("foo", "bar", "baz"));
+$root.$self("var", "Foo", /* Starting Scope:1 */ function() {
     /* Begin ControlCode: 1 */
     this.$self("private", "baz", "woohoo!");
     this.$self("public", "bar", "testing properties..");
@@ -141,12 +147,13 @@ this.$self("var", "Foo", /* Starting Scope:1 */ function() {
         return this;
     }.bind($newParent(this)));
     return this;
-}.bind($newParent(this)));
-this.$self("var", "bar", /* Starting Scope:1 */ function() {
-    /* Begin ControlCode: 1 */ (Console.write("What is your name?"));
+}.bind($newParent($root)));
+$root.$self("var", "bar", /* Starting Scope:1 */ function() {
+    /* Begin ControlCode: 1 */
+    (Console.write("What is your name?"));
     return "Name is " + (Console.read());
     return this;
-}.bind($newParent(this)));
-this.$self("var", "foo", (this.$self("Foo")()));
+}.bind($newParent($root)));
+$root.$self("var", "foo", (this.$self("Foo")()));
 (Console.write("foo is an", (Type(this.$self("foo"))), "of Foo."));
 (Console.write("foo.baz is:", ($enforceType("instance", this.$self("foo"), 25).$self("getBaz")())));

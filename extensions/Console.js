@@ -1,6 +1,5 @@
-var Console = function () {
-    var readline = require('readline');
-    var rl = readline.createInterface({
+var Console = function Console () {
+    var rl = require('readline').createInterface({
         input: process.stdin,
         output: process.stdout
     });
@@ -13,11 +12,11 @@ var Console = function () {
     }
     return {
         write: function write () {
-            console.log.apply(null, Array.prototype.slice.call(arguments, arguments));
+            console.log.apply(null, Array.prototype.slice.call(arguments));
         },
         read: function read (fn) {
-            rl.on('line', callback(fn));
             rl.resume();
+            rl.on('line', callback(fn));
         }
     };
 }();

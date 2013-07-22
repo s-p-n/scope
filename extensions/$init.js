@@ -23,7 +23,14 @@ function $self (access, name, value) {
 		} else if (typeof this.$property[name] !== "undefined") {
 			return this.$property[name];
 		}
-		throw "Undefined variable/property: " + access;
+		var parent = this;
+		while (parent !== null) {
+			if (typeof parent[name] !== "undefined") {
+				return parent[name];
+			}
+			parent = parent.$parent;
+		}
+		throw "Undefined variable/property: " + name;
 	}
 	if (value === void 0) {
 		value = name;
@@ -66,10 +73,8 @@ function $enforceType (type, term, line) {
 	}
 	$runtimeError(line, "Expected " + type + " and got %what%.");
 };
-var $root = $newParent(this);
-this.$access = $root.access;
-this.$self = $root.$self;
-this.$property = $root.$property;
-this.$parent = $root.$parent;
-this.$self = $root.$self;
-this.$arg = $root.$arg;
+var $root = $newParent(null);
+var $i;
+for ($i in $root) {
+	this[$i] = $root[$i];
+}
