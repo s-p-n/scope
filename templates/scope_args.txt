@@ -1,5 +1,10 @@
 %scopeStart% function () {
+	%prefix%
 	%args%
 	%controlCode%
-	return this;
+	return $primitive("Instance", function (value) {
+		return function () {
+			return value;
+		}
+	}(this));
 }.bind($newParent(%this%))

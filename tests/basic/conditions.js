@@ -1,4 +1,19 @@
 #!/usr/bin/env node
+var $primitive = function $primitive(types, val) {
+    var obj = {};
+    if (types instanceof Array) {
+        obj.$types = types;
+    } else {
+        obj.$types = [types];
+    }
+    obj.value = val;
+    try {
+        //console.info("$primitive:", obj, obj.toString(), obj.valueOf());
+    } catch (e) {
+        //do nothing
+    }
+    return obj;
+}
 var $factorial = function $factorial(n) {
     var i, result = n;
     if (n < 0) {
@@ -101,22 +116,13 @@ var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m'
-    );
+        "\033[1m on line: \033[31m" + line + '\033[0m');
 }
 var Type = function Type(primitive) {
-    if (primitive instanceof Array) {
-        return "array";
-    }
-    switch (typeof primitive) {
-        case "string":
-            return "text";
-        case "function":
-            return "scope";
-        case "object":
-            return "instance";
-    }
-    return typeof primitive;
+    //console.log("Primitive:", primitive);
+    //console.log("Types:", primitive.$types);
+    //console.log("Value:", primitive.valueOf());
+    return primitive.$types;
 }
 var Console = function Console() {
     var rl = require('readline').createInterface({
@@ -133,6 +139,11 @@ var Console = function Console() {
     }
     return {
         write: function write() {
+            var i = 0;
+            while (arguments[i] !== void 0) {
+                //arguments[i] = arguments[i].valueOf();
+                i += 1;
+            }
             console.log.apply(null, Array.prototype.slice.call(arguments));
         },
         read: function read(fn) {
@@ -186,14 +197,26 @@ var $compare = function $compare(a, b) {
     return (typeof a === 'object') ? equals.call(a, b) : a === b;
 };
 var Text = function Text(primitive) {
-    return primitive.toString();
-}
+    var newPrim = $primitive("Text", function() {
+        console.log("Text.toString:", primitive);
+        return primitive + "";
+    });
+    console.log("Text:", primitive, newPrim);
+    return newPrim;
+};
 var $concat = function $concat(a, b, line) {
     var result, shortest, i;
-    if (!(Type(a) === "text" && Type(b) === "text") && !(Type(a) === "array" && Type(b) === "array")) {
+    console.log("$concat:", Type(a), Type(b), a, b);
+    if ((
+        Type(a).indexOf("Text") === -1 ||
+        Type(b).indexOf("Text") === -1) && (
+        Type(a).indexOf("Array") === -1 ||
+        Type(b).indexOf("Array") === -1)) {
         $runtimeError(line, "Both types must be the same (either string or array), got: %what%", Type(a) + " and " + Type(b));
     }
-    if (Type(a) === "text") {
+    if (Type(a).indexOf("Text") === -1) {
+        //a = a.valueOf();
+        //b = b.valueOf();
         result = a + b;
     } else {
         if (a instanceof Array) {
@@ -217,20 +240,78 @@ var $concat = function $concat(a, b, line) {
             }
         }
     }
+    console.log("result", result.valueOf(), result);
     return result;
-};; /* Begin ControlCode: 0 */
+};
+var $$$0 = $primitive('Number', function() {
+    return 8
+}.bind($root));
+var $$$1 = $primitive('Number', function() {
+    return 120
+}.bind($root));
+var $$$2 = $primitive('Number', function() {
+    return 2
+}.bind($root));
+var $$$3 = $primitive('Number', function() {
+    return 5
+}.bind($root));
+var $$$4 = $primitive('Text', function() {
+    return "Is foo 10?"
+}.bind($root));
+var $$$5 = $primitive('Text', function() {
+    return this.$self("foo")
+}.bind($root));
+var $$$6 = $primitive('Number', function() {
+    return 10
+}.bind($root));
+var $$$7 = $primitive('Text', function() {
+    return "Yes"
+}.bind($root));
+var $$$8 = $primitive('Text', function() {
+    return "No, foo is "
+}.bind($root));
+var $$$9 = $primitive('Text', function() {
+    return this.$self("foo")
+}.bind($root));
+var $$$10 = function() {
+    return (Text($$$9))
+}.bind($root);
+var $$$11 = $primitive('Text', function() {
+    return "."
+}.bind($root));
+var $$$12 = $primitive('Text', function() {
+    return (function() {
+        if ($compare($$$5, $$$6)) {
+            return (function() {
+                return $$$7;
+            }.bind(this)());
+        } else {
+            return (function() {
+                return $concat($concat($$$8, $$$10(), 8), $$$11, 8);
+            }.bind(this)());
+        }
+    }.bind(this)())
+}.bind($root));
+var $$$13 = function() {
+    return (Console.write($$$4, $$$12))
+}.bind($root);
+var $$$14 = $primitive('Text', function() {
+    return "Type of foo:"
+}.bind($root));
+var $$$15 = $primitive('Text', function() {
+    return this.$self("foo")
+}.bind($root));
+var $$$16 = function() {
+    return (Type($$$15))
+}.bind($root);
+var $$$17 = function() {
+    return (Console.write($$$14, $$$16()))
+}.bind($root);; /* Begin ControlCode: 0 */
 this.$self("var", "foo", function foo() {
     /* Begin ControlCode: 0 */
-    return 8 + 120 * 2 / $factorial((5));
+    return $primitive("Number", function() {
+        return $$$0 + $$$1 * $$$2 / $factorial(($$$3));
+    });
 }.bind($newParent(this))());
-(Console.write("foo is 10?", (function() {
-    if ($compare(this.$self("foo"), 10)) {
-        return (function() {
-            return "yes";
-        }.bind(this)());
-    } else {
-        return (function() {
-            return $concat("no, foo is ", (Text(this.$self("foo"))), 5);
-        }.bind(this)());
-    }
-}.bind(this)())));
+$$$13();
+$$$17();

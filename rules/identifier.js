@@ -2,7 +2,7 @@ module.exports = function identifier (id, name, isArr) {
     this.ext['$init']();
     this.ext['$runtimeError']();
     this.ext['Type']();
-
+    this.termType = "Identifier"
     if (name !== void 0) {
         if (name === "__proto__" ||
             name === "prototype") {
@@ -15,7 +15,8 @@ module.exports = function identifier (id, name, isArr) {
             }
             return id + name;
         }
-        if (id.substr(id.lastIndexOf('.') + 1).substr(0,1) !== '$') {
+        var suffix = id.substr(id.lastIndexOf('.') + 1).substr(0,7);
+        if (suffix !== 'value()' && suffix !== '$parent' && suffix !== '$self("') {
             return this.loadTemplate('identifier_extended', {
                 id: id,
                 name: name

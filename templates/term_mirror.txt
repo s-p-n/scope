@@ -1,1 +1,1 @@
-%termA% %operator% %termB%
+$Math.%operator%(%termA%, %termB%)

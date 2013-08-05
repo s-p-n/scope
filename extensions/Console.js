@@ -1,4 +1,4 @@
-var Console = function Console () {
+var Console = (function Console () {
     var rl = require('readline').createInterface({
         input: process.stdin,
         output: process.stdout
@@ -11,12 +11,27 @@ var Console = function Console () {
         }
     }
     return {
-        write: function write () {
-            console.log.apply(null, Array.prototype.slice.call(arguments));
+        write: {
+            $types: ["Scope"],
+            value: function () {
+                return function write() {
+                    var i = 0;
+                    while (arguments[i] !== void 0) {
+                        arguments[i] = arguments[i].value();
+                        i += 1;
+                    }
+                    console.log.apply(null, Array.prototype.slice.call(arguments));
+                }
+            }
         },
-        read: function read (fn) {
-            rl.resume();
-            rl.on('line', callback(fn));
+        read: {
+            $types: ["Scope"],
+            value: function () {
+                return function read (fn) {
+                    rl.resume();
+                    rl.on('line', callback(fn));
+                }
+            }
         }
     };
-}();
+}());

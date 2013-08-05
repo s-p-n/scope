@@ -12,4 +12,20 @@ var $factorial = function $factorial(n) {
     }
     return result;
 }; /* Begin ControlCode: 0 */
-return 8 + 120 * 2 / $factorial((5));
+return {
+    type: 'Number',
+    valueOf: function() {
+        return 8
+    }
+} + {
+    type: 'Number',
+    valueOf: function() {
+        return 120
+    }
+} * {
+    type: 'Number',
+    valueOf: function() {
+        return 2
+    }
+}
+/ $factorial(({type: 'Number', valueOf: function () {return 5}}));

@@ -30,7 +30,14 @@ module.exports = function (args,
     }
 
     program_data.parse = scope.parse;
-    code = ';' + compile(ast)
+
+    code = ';' + compile(ast);
+
+    var i;
+    for (i = 0; i < program_data.primitives.length; i += 1) {
+        program_data.codePrefix += 'var $$$' + i + ' = ' + program_data.primitives[i] + ';';
+    }
+
     code = extData.loaded +
         program_data.codePrefix +
         code +

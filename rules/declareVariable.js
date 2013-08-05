@@ -1,4 +1,5 @@
 module.exports = function declareVariable(name, value) {
+    this.termType = "Declare";
     if (this.curParent === -1) {
         return this.loadTemplate('declareVariable_root', {
 			'name': name, 

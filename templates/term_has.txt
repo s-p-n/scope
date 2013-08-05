@@ -1,0 +1,1 @@
+(%termA%.indexOf(%termB%) !== -1)

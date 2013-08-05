@@ -1,5 +1,5 @@
 module.exports = function declareProperty (a, b, c) {
-
+    this.termType = "Declare";
     if (c === void 0) {
         //return '((typeof ' + a + ' === "undefined")?self("' + a + '",' + b + '):' + a + '=' + b + ')';
 
@@ -13,7 +13,8 @@ module.exports = function declareProperty (a, b, c) {
         	id: this.scopeId,
         	access: a,
         	name: b,
-        	value: c
+        	value: c,
+            "this": this.curParent === -1 ? "$root" : "this"
         });
     }
 }

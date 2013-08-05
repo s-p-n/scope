@@ -41,6 +41,7 @@
 'protected' {return 'PRO';}
 'private'   {return 'PRI';}
 'is'        {return 'IS';}
+'has'       {return 'HAS';}
 'isnt'      {return 'ISNT';}
 'and'       {return 'AND';}
 'or'        {return 'OR';}
@@ -95,7 +96,7 @@
 %left ','
 %left IN
 %left AND OR
-%left IS ISNT
+%left IS ISNT HAS
 %left '<' '>' '<=' '>='
 %left '+' '-' '&' '|'
 %left '*' '%' '/'
@@ -559,6 +560,11 @@ term
             $1, $2, $3
         ]);
     }
+    | term HAS term {
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, $2, $3
+        ]);
+    }
     | term AND term {
         $$ = new yy.scopeAst(yy,"term",[
             $1, $2, $3
@@ -854,9 +860,7 @@ selectorTerm
 
 shortTagEnd
     : '/' '>' %prec TAGSHORTCLOSE {
-        $$ = new yy.scopeAst(yy,"shortTagEnd", [
-            $1, $2
-        ]);
+        $$ = new yy.scopeAst(yy,"shortTagEnd", []);
     }
     ;
 
@@ -893,7 +897,7 @@ scopeStart
 tagStart
     : '<' identifier %prec TAGOPEN {
         $$ = new yy.scopeAst(yy,"tagStart",[
-            $1, $2
+            $2
         ]);
     }
     ;

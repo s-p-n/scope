@@ -1,1 +1,1 @@
-this.$self("%access%", "%name%", %value%)
+%this%.$self("%access%", "%name%", %value%)

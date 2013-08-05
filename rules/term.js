@@ -1,4 +1,8 @@
 module.exports = function term (a, b, c) {
+    var thisArg = 'this';
+    if (this.curParent === -1) {
+        thisArg = '$root';
+    }
     switch (a) {
         case 'not':
             return this.loadTemplate('term_not', {
@@ -20,27 +24,31 @@ module.exports = function term (a, b, c) {
     }
     switch (b) {
         case '+':
+            this.ext['$Math']();
             return this.loadTemplate('term_mirror', {
                 termA: a,
-                operator: b,
+                operator: "add",
                 termB: c
             });
         case '-':
+            this.ext['$Math']();
             return this.loadTemplate('term_mirror', {
                 termA: a,
-                operator: b,
+                operator: "subtract",
                 termB: c
             });
         case '*':
+            this.ext['$Math']();
             return this.loadTemplate('term_mirror', {
                 termA: a,
-                operator: b,
+                operator: "multiply",
                 termB: c
             });
         case '/':
+            this.ext['$Math']();
             return this.loadTemplate('term_mirror', {
                 termA: a,
-                operator: b,
+                operator: "divide",
                 termB: c
             });
         case 'and':
@@ -65,6 +73,11 @@ module.exports = function term (a, b, c) {
                 termA: a,
                 termB: c
             });
+        case 'has':
+            return this.loadTemplate('term_has', {
+                termA: a,
+                termB: c
+            });
         case '&':
             this.ext['$concat']();
             this.ext['$runtimeError']();
@@ -74,5 +87,17 @@ module.exports = function term (a, b, c) {
                 line: this.line
             });
     }
-    return a;
+    this.ext['$init']();
+    var i;
+    if (this.termType === "Invoke") {
+        i = this.primitives.push("function () {return " + a + "}.bind(" + thisArg + ")") - 1;
+        return '$$$' + i + '()';
+    } else if (this.termType === "Identifier") {
+        return a;
+    } else if (this.termType === "Declare") {
+        return a;
+    } else {
+        i = this.primitives.push("$primitive('" + this.termType + "', function () {return " + a + "}.bind(" + thisArg + "))") - 1;
+        return '$$$' + i;
+    }
 }

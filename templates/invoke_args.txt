@@ -1,1 +1,1 @@
-(%func%(%args%))
+(%func%.value()(%args%))

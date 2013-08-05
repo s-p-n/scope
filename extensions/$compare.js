@@ -32,5 +32,12 @@ var $compare = function $compare (a, b) {
         return true;
     }
 
-    return (typeof a === 'object') ? equals.call(a, b) : a === b;
+    return $primitive("Boolean", function (val) {
+      return function () {
+        return val;
+      }
+    } ((typeof a.value() === 'object') ?
+        equals.call(a.value(), b.value()) :
+        a.value() === b.value()
+    ));
 };

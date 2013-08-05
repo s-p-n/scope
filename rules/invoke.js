@@ -1,4 +1,5 @@
 module.exports = function invoke (func, args, id) {
+    this.termType = "Invoke";
     if (args === void 0) {
         return this.loadTemplate('invoke_noArgs', {
         	func: func

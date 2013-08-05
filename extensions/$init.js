@@ -11,7 +11,7 @@
 	if (typeof Object.create === 'undefined') {
 		Object.create = function (o) {
 			function F() {};
-			F.prototype = 0;
+			F.prototype = o;
 			return new F();
 	}};
 /// > Shims
@@ -53,7 +53,28 @@ function $arg (name, $default, value) {
 	}
 	return this.$self("protected", name, value);
 };
+function $primitive (types, val) {
+	var obj = {};
+	if (typeof val === "object" && val.$types !== void 0) {
+		return val;
+	}
+	if (types instanceof Array) {
+		obj.$types = types;
+	} else {
+		obj.$types = [types];
+	}
+	obj.value = val;
+	try {
+		//console.info("$primitive:", obj, obj.toString(), obj.valueOf());
+	} catch (e) {
+		//do nothing
+	}
+	return obj;
+}
 function $newParent (parent) {
+	var newParent = $primitive("Instance", function () {
+		return parent;
+	});
 	var result = {
 		$access: {},
 		$property: {
@@ -61,14 +82,14 @@ function $newParent (parent) {
 			$protected: {},
 			$private: {}
 		},
-		$parent: parent
+		$parent: newParent
 	};
 	result.$self = $self.bind(result);
 	result.$arg = $arg.bind(result);
 	return result;
 };
 function $enforceType (type, term, line) {
-	if (Type(term) === type) {
+	if (Type(term).indexOf(type) !== -1) {
 		return term;
 	}
 	$runtimeError(line, "Expected " + type + " and got %what%.");

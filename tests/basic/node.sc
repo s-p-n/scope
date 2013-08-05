@@ -1,7 +1,3 @@
-var a = "hi";
-var b = 2;
-var c = 34;
-
 Console.write(<foo/>);
 
 /**
