@@ -96,6 +96,10 @@ module.exports = function term (a, b, c) {
         return '$$$' + i + '()';
     } else if (this.termType === "Identifier") {
         return a;
+    } else if (this.termType === "If") {
+        return a;
+    } else if (this.termType === "Scope") {
+        return a;
     } else if (this.termType === "Declare") {
         return a;
     } else {

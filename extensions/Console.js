@@ -7,7 +7,10 @@ var Console = (function Console () {
     function callback(fn) {
         return function cb(data) {
             rl.pause();
-            fn(data.replace(/\n/g, ""));
+            data = data.replace(/\n/g, "");
+            fn.$values["Scope"]()($primitive("Text", function () {
+                return data;
+            }));
         }
     }
 
@@ -48,10 +51,12 @@ var Console = (function Console () {
         },
         read: {
             $types: ["Scope"],
-            value: function () {
-                return function read (fn) {
-                    rl.resume();
-                    rl.on('line', callback(fn));
+            $values: {
+                "Scope": function () {
+                    return function read (fn) {
+                        rl.resume();
+                        rl.on('line', callback(fn));
+                    }
                 }
             }
         }

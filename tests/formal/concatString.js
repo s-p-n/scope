@@ -47,7 +47,7 @@ function $self(access, name, value) {
             if (typeof parent[name] !== "undefined") {
                 return parent[name];
             }
-            parent = parent.$parent;
+            parent = parent.$parent.$values["Instance"]();
         }
         throw "Undefined variable/property: " + name;
     }
@@ -129,7 +129,8 @@ var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = {
     $types: ["Scope"],
@@ -162,7 +163,10 @@ var Console = (function Console() {
     function callback(fn) {
         return function cb(data) {
             rl.pause();
-            fn(data.replace(/\n/g, ""));
+            data = data.replace(/\n/g, "");
+            fn.$values["Scope"]()($primitive("Text", function() {
+                return data;
+            }));
         }
     }
 
@@ -205,10 +209,12 @@ var Console = (function Console() {
         },
         read: {
             $types: ["Scope"],
-            value: function() {
-                return function read(fn) {
-                    rl.resume();
-                    rl.on('line', callback(fn));
+            $values: {
+                "Scope": function() {
+                    return function read(fn) {
+                        rl.resume();
+                        rl.on('line', callback(fn));
+                    }
                 }
             }
         }
@@ -239,7 +245,6 @@ var $compare = function() {
         if (typeof a !== "object") {
             return a === b;
         }
-        console.log(typeof a, a, a.valueOf());
         for (p in a) {
             if (typeof(b[p]) == 'undefined') {
                 return false;
@@ -282,7 +287,8 @@ var $compare = function() {
         }
         for (i = 0; i < a.$types.length; i += 1) {
             if (b.$types.indexOf(a.$types[i]) > -1 &&
-                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())
+            ) {
                 continue;
             }
             result = false;
@@ -350,7 +356,8 @@ var $concat = function $concat(a, b, line) {
         };
 
     if (compatible(a, b).$values["Boolean"]() ||
-        compatible(b, a).$values["Boolean"]()) {
+        compatible(b, a).$values["Boolean"]()
+    ) {
         if (compatible(a, concatTestBoth).$values["Boolean"]()) {
             return $primitive(["Text", "Array"], {
                 "Text": concatFunc(txtConcat(a, b)),
@@ -359,15 +366,18 @@ var $concat = function $concat(a, b, line) {
         }
         if (compatible(compatTestText, a).$values["Boolean"]()) {
             return $primitive("Text",
-                concatFunc(txtConcat(a, b)));
+                concatFunc(txtConcat(a, b))
+            );
         } else if (compatible(compatTestArr, a).$values["Boolean"]()) {
             return $primitive("Array",
-                concatFunc(arrConcat(a, b)));
+                concatFunc(arrConcat(a, b))
+            );
         }
     }
     $runtimeError(line,
         "Type Error:  Compatible Text, Array or Both expected, got: %what%",
-        a.$types + " and " + b.types);
+        a.$types + " and " + b.types
+    );
 };
 var $$$0 = $primitive('Text', function() {
     return "Expect:"

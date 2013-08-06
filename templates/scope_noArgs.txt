@@ -1,23 +1,25 @@
-%scopeStart% function () {
-	var $returnMulti = [], $temp;
-	%prefix%
-	%controlCode%
-	$returnMulti.push($primitive("Instance", function (value) {
-		return function () {
-			return value;
-		}
-	}(this)));
-	var $i = 0, $j = 0, $returnMultiType, $returnTypes, $returnValues;
-	var $return = {$types: [], value: null, $values: {}};
-	$returnTypes = $return.$types;
-	for ($i = 0;$i < $returnMulti.length; $i += 1) {
-		for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
-			$returnMultiType = $returnMulti[$i].$types[$j];
-			if ($returnTypes.indexOf($returnMultiType) === -1) {
-				$returnTypes.push($returnMultiType);
+%scopeStart% $primitive("Scope", function () {
+	return function () {
+		var $returnMulti = [], $temp;
+		%prefix%
+		%controlCode%
+		$returnMulti.push($primitive("Instance", function (value) {
+			return function () {
+				return value;
 			}
-			$return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+		}(this)));
+		var $i = 0, $j = 0, $returnMultiType, $returnTypes, $returnValues;
+		var $return = {$types: [], value: null, $values: {}};
+		$returnTypes = $return.$types;
+		for ($i = 0;$i < $returnMulti.length; $i += 1) {
+			for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+				$returnMultiType = $returnMulti[$i].$types[$j];
+				if ($returnTypes.indexOf($returnMultiType) === -1) {
+					$returnTypes.push($returnMultiType);
+				}
+				$return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+			}
 		}
-	}
-	return $return;
-}.bind($newParent(%this%))
+		return $return;
+	}.bind(this);
+}.bind($newParent(%this%)))

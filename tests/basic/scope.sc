@@ -12,12 +12,6 @@ var Foo = {
     };
 };
 
-// Scope with return:
-var bar = {
-    Console.write("What is your name?");
-    return "Name is " + Console.read();
-};
-
 // Create an instance of foo
 var foo = Foo();
 Console.write("foo is an", Type(foo), "of Foo.");

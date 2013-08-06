@@ -47,7 +47,7 @@ function $self(access, name, value) {
             if (typeof parent[name] !== "undefined") {
                 return parent[name];
             }
-            parent = parent.$parent;
+            parent = parent.$parent.$values["Instance"]();
         }
         throw "Undefined variable/property: " + name;
     }
@@ -129,7 +129,8 @@ var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = {
     $types: ["Scope"],
@@ -162,7 +163,10 @@ var Console = (function Console() {
     function callback(fn) {
         return function cb(data) {
             rl.pause();
-            fn(data.replace(/\n/g, ""));
+            data = data.replace(/\n/g, "");
+            fn.$values["Scope"]()($primitive("Text", function() {
+                return data;
+            }));
         }
     }
 
@@ -205,10 +209,12 @@ var Console = (function Console() {
         },
         read: {
             $types: ["Scope"],
-            value: function() {
-                return function read(fn) {
-                    rl.resume();
-                    rl.on('line', callback(fn));
+            $values: {
+                "Scope": function() {
+                    return function read(fn) {
+                        rl.resume();
+                        rl.on('line', callback(fn));
+                    }
                 }
             }
         }
@@ -221,6 +227,27 @@ var $Math = {
                 return val;
             }
         }(a.$values["Number"]() + b.$values["Number"]()));
+    },
+    subtract: function subtract(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() - b.$values["Number"]()));
+    },
+    multiply: function multiply(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() * b.$values["Number"]()));
+    },
+    divide: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() / b.$values["Number"]()));
     }
 };
 var $$$0 = $primitive('Text', function() {

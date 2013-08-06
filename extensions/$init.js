@@ -43,7 +43,7 @@ function $self (access, name, value) {
 			if (typeof parent[name] !== "undefined") {
 				return parent[name];
 			}
-			parent = parent.$parent;
+			parent = parent.$parent.$values["Instance"]();
 		}
 		throw "Undefined variable/property: " + name;
 	}

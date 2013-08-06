@@ -1,15 +1,20 @@
 var Text = {
 	$types: "Scope",
-	value: function () {
-		return function Text (primitive) {
-			var newPrim = $primitive("Text", function () {
-				console.log("Text.toString:", primitive);
-		    	return primitive + "";
-		    });
-			console.log("Text:", primitive, newPrim);
-		    return newPrim;
+	$values: {
+		"Scope": function () {
+			return function Text (primitive) {
+				var result = null, res = "";
+				if (primitive.$values.hasOwnProperty("Text")) {
+					result = primitive.$values["Text"];
+				} else if(primitive.$types.length === 1) {
+					res = primitive.$values[primitive.$types[0]]().toString();
+					result = function () { return res; };
+				}
+				if (result === null) {
+					throw "Error in Text()";
+				}
+				return $primitive("Text", result);
+			}
 		}
-	},
-	$values: {}
+	}
 };
-Text.$values.Scope = Text.value;

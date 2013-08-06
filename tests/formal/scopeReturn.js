@@ -47,7 +47,7 @@ function $self(access, name, value) {
             if (typeof parent[name] !== "undefined") {
                 return parent[name];
             }
-            parent = parent.$parent;
+            parent = parent.$parent.$values["Instance"]();
         }
         throw "Undefined variable/property: " + name;
     }
@@ -129,7 +129,8 @@ var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = {
     $types: ["Scope"],
@@ -162,7 +163,10 @@ var Console = (function Console() {
     function callback(fn) {
         return function cb(data) {
             rl.pause();
-            fn(data.replace(/\n/g, ""));
+            data = data.replace(/\n/g, "");
+            fn.$values["Scope"]()($primitive("Text", function() {
+                return data;
+            }));
         }
     }
 
@@ -205,23 +209,46 @@ var Console = (function Console() {
         },
         read: {
             $types: ["Scope"],
-            value: function() {
-                return function read(fn) {
-                    rl.resume();
-                    rl.on('line', callback(fn));
+            $values: {
+                "Scope": function() {
+                    return function read(fn) {
+                        rl.resume();
+                        rl.on('line', callback(fn));
+                    }
                 }
             }
         }
     };
 }());
-var $$$0 = $primitive('Scope', function() {
-    return /* Starting Scope:1 */ function() {
+var $$$0 = $primitive('Text', function() {
+    return "Expect:"
+}.bind($root));
+var $$$1 = $primitive('Text', function() {
+    return "foo"
+}.bind($root));
+var $$$2 = function() {
+    return (Console.write.$values["Scope"]()($$$0, $$$1))
+}.bind($root);
+var $$$3 = $primitive('Text', function() {
+    return "Test:"
+}.bind($root));
+var $$$4 = function() {
+    return (this.$self("foo").$values["Scope"]()())
+}.bind($root);
+var $$$5 = function() {
+    return (Console.write.$values["Scope"]()($$$3, $$$4()))
+}.bind($root);; /* Begin ControlCode: 0 */
+$root.$self("private", "foo", /* Starting Scope:1 */ $primitive("Scope", function() {
+    return function() {
         var $returnMulti = [],
             $temp;
         $$$0 = $primitive('Text', function() {
             return "foo"
         }.bind(this));
         /* Begin ControlCode: 1 */
+        if (typeof $returnMulti === "undefined") {
+            var $returnMulti = [];
+        }
         $returnMulti.push($$$0);
         var $i = 0,
             $j = 0,
@@ -266,26 +293,7 @@ var $$$0 = $primitive('Scope', function() {
             }
         }
         return $return;
-    }.bind($newParent($root))
-}.bind($root));
-var $$$1 = $primitive('Text', function() {
-    return "Expect:"
-}.bind($root));
-var $$$2 = $primitive('Text', function() {
-    return "foo"
-}.bind($root));
-var $$$3 = function() {
-    return (Console.write.$values["Scope"]()($$$1, $$$2))
-}.bind($root);
-var $$$4 = $primitive('Text', function() {
-    return "Test:"
-}.bind($root));
-var $$$5 = function() {
-    return (this.$self("foo").$values["Scope"]()())
-}.bind($root);
-var $$$6 = function() {
-    return (Console.write.$values["Scope"]()($$$4, $$$5()))
-}.bind($root);; /* Begin ControlCode: 0 */
-$root.$self("private", "foo", $$$0);
-$$$3();
-$$$6();
+    }.bind(this);
+}.bind($newParent($root))));
+$$$2();
+$$$5();
