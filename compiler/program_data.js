@@ -17,6 +17,8 @@ module.exports = function (extensions) {
         termType: [],
         primitives: [],
         primStore: [],
+        returns: [],
+        returnStore: [],
         path: require('path'),
         fs: require('fs'),
         templates: {},

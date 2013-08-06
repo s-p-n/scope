@@ -4,6 +4,6 @@ var $Math = {
             return function () {
                 return val;
             }
-        }(a.value() + b.value()));
+        }(a.$values["Number"]() + b.$values["Number"]()));
     }
 };

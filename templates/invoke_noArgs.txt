@@ -1,1 +1,1 @@
-(%func%.value()())
+(%func%.$values["Scope"]()())

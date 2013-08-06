@@ -14,6 +14,21 @@
 			F.prototype = o;
 			return new F();
 	}};
+	Array.prototype.has = function (term) {
+		var key, result = false;
+		for (key in this) {
+			if (!this.hasOwnProperty(key)) {
+				continue;
+			}
+			if ($compare(this[key], term).$values["Boolean"]()) {
+				result = true;
+				break;
+			}
+		}
+		return $primitive("Boolean", function () {
+			return result;
+		});
+	}
 /// > Shims
 function $self (access, name, value) {
 	if (name === void 0) {
@@ -54,7 +69,8 @@ function $arg (name, $default, value) {
 	return this.$self("protected", name, value);
 };
 function $primitive (types, val) {
-	var obj = {};
+	var obj = {$values: {}};
+	var i;
 	if (typeof val === "object" && val.$types !== void 0) {
 		return val;
 	}
@@ -63,11 +79,11 @@ function $primitive (types, val) {
 	} else {
 		obj.$types = [types];
 	}
-	obj.value = val;
-	try {
-		//console.info("$primitive:", obj, obj.toString(), obj.valueOf());
-	} catch (e) {
-		//do nothing
+
+	if (typeof val === "object") {
+		obj.$values = val;
+	} else {
+		obj.$values[obj.$types[0]] = val;
 	}
 	return obj;
 }

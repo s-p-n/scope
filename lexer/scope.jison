@@ -762,12 +762,17 @@ return
     }
     | RETURN identifier ':' term {
         $$ = new yy.scopeAst(yy,"return",[
-            $3, $4
+            $2, $4
         ]);
     }
     | RETURN scope ':' term {
         $$ = new yy.scopeAst(yy,"return",[
-            $3, $4
+            $2, $4
+        ]);
+    }
+    | RETURN text ':' term {
+        $$ = new yy.scopeAst(yy,"return",[
+            $2, $4
         ]);
     }
     ;

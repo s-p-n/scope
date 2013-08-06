@@ -1,1 +1,1 @@
-$enforceType("Instance", %id%, %line%).value().$self("%name%")
+%id%.$values["Instance"]().$self("%name%")

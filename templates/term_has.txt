@@ -1,1 +1,1 @@
-(%termA%.indexOf(%termB%) !== -1)
+%termA%.$values["Array"]().has(%termB%)

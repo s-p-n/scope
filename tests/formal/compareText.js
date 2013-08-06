@@ -17,6 +17,21 @@ if (typeof Object.create === 'undefined') {
         return new F();
     }
 };
+Array.prototype.has = function(term) {
+    var key, result = false;
+    for (key in this) {
+        if (!this.hasOwnProperty(key)) {
+            continue;
+        }
+        if ($compare(this[key], term).$values["Boolean"]()) {
+            result = true;
+            break;
+        }
+    }
+    return $primitive("Boolean", function() {
+        return result;
+    });
+}
 /// > Shims
 
 function $self(access, name, value) {
@@ -60,7 +75,10 @@ function $arg(name, $default, value) {
 };
 
 function $primitive(types, val) {
-    var obj = {};
+    var obj = {
+        $values: {}
+    };
+    var i;
     if (typeof val === "object" && val.$types !== void 0) {
         return val;
     }
@@ -69,11 +87,11 @@ function $primitive(types, val) {
     } else {
         obj.$types = [types];
     }
-    obj.value = val;
-    try {
-        //console.info("$primitive:", obj, obj.toString(), obj.valueOf());
-    } catch (e) {
-        //do nothing
+
+    if (typeof val === "object") {
+        obj.$values = val;
+    } else {
+        obj.$values[obj.$types[0]] = val;
     }
     return obj;
 }
@@ -113,12 +131,27 @@ var $runtimeError = function $runtimeError(line, msg, what) {
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
         "\033[1m on line: \033[31m" + line + '\033[0m');
 }
-var Type = function Type(primitive) {
-    //console.log("Primitive:", primitive);
-    //console.log("Types:", primitive.$types);
-    //console.log("Value:", primitive.valueOf());
-    return primitive.$types;
-}
+var Type = {
+    $types: ["Scope"],
+    $values: {
+        "Scope": function() {
+            return function Type(primitive) {
+                var types = [];
+                var i;
+                for (i = 0; i < primitive.$types.length; i += 1) {
+                    types.push($primitive("Text", function(val) {
+                        return function() {
+                            return val;
+                        }
+                    }(primitive.$types[i])));
+                }
+                return $primitive("Array", function() {
+                    return types;
+                })
+            }
+        }
+    }
+};
 var Console = (function Console() {
     var rl = require('readline').createInterface({
         input: process.stdin,
@@ -132,17 +165,41 @@ var Console = (function Console() {
             fn(data.replace(/\n/g, ""));
         }
     }
+
+    function printValues(Arr) {
+        var result = {}, key, val, i;
+        for (key in Arr.$values) {
+            val = Arr.$values[key]();
+            if (key === "Array" || key === "Instance") {
+                result[key] = [];
+                for (i in val) {
+                    if (val.hasOwnProperty(i)) {
+                        result[key].push(printValues(val[i]));
+                    }
+                }
+                continue;
+            }
+            result[key] = val;
+        }
+        return result;
+    }
+
     return {
         write: {
             $types: ["Scope"],
-            value: function() {
-                return function write() {
-                    var i = 0;
-                    while (arguments[i] !== void 0) {
-                        arguments[i] = arguments[i].value();
-                        i += 1;
+            $values: {
+                "Scope": function() {
+                    return function write() {
+                        var i = 0,
+                            result = [],
+                            subResult, key, val;
+                        while (arguments[i] !== void 0) {
+                            //console.log("Arg:", arguments[i]);
+                            result.push(printValues(arguments[i]));
+                            i += 1;
+                        }
+                        console.log.apply(console, result);
                     }
-                    console.log.apply(null, Array.prototype.slice.call(arguments));
                 }
             }
         },
@@ -157,56 +214,68 @@ var Console = (function Console() {
         }
     };
 }());
-var $compare = function $compare(a, b) {
-    if ((typeof a) !== (typeof b)) {
-        return false;
-    }
-
-    var equals = function(x) {
+var $compare = function() {
+    var equals = function(a, b) {
         var p;
-        for (p in this) {
-            if (typeof(x[p]) == 'undefined') {
+        if (typeof a !== "object") {
+            return a === b;
+        }
+        console.log(typeof a, a, a.valueOf());
+        for (p in a) {
+            if (typeof(b[p]) == 'undefined') {
                 return false;
             }
-            if (this[p]) {
-                switch (typeof(this[p])) {
+            if (a[p]) {
+                switch (typeof(a[p])) {
                     case 'object':
-                        if (!equals.call(this[p], x[p])) {
+                        if (!equals(a[p], b[p])) {
                             return false;
                         }
                         break;
                     case 'function':
-                        if (typeof(x[p]) == 'undefined' ||
-                            (p != 'equals' && this[p].toString() != x[p].toString()))
+                        if (typeof(b[p]) == 'undefined' ||
+                            (p != 'equals' && a[p].toString() != b[p].toString())) {
                             return false;
+                        }
                         break;
                     default:
-                        if (this[p] !== x[p]) {
+                        if (a[p] !== b[p]) {
                             return false;
                         }
                 }
-            } else if (x[p]) {
+            } else if (b[p]) {
                 return false;
             }
         }
-
-        for (p in x) {
-            if (typeof(this[p]) == 'undefined') {
+        for (p in b) {
+            if (typeof(a[p]) == 'undefined') {
                 return false;
             }
         }
-
         return true;
-    }
-
-    return $primitive("Boolean", function(val) {
-        return function() {
-            return val;
+    };
+    return function $compare(a, b) {
+        var i, j, c, result = true;
+        if (a.$types.length > b.$types.length) {
+            c = a;
+            a = b;
+            b = a;
         }
-    }((typeof a.value() === 'object') ?
-        equals.call(a.value(), b.value()) :
-        a.value() === b.value()));
-};
+        for (i = 0; i < a.$types.length; i += 1) {
+            if (b.$types.indexOf(a.$types[i]) > -1 &&
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
+                continue;
+            }
+            result = false;
+            break;
+        }
+        return $primitive("Boolean", function(val) {
+            return function() {
+                return val;
+            }
+        }(result))
+    }
+}();
 var $$$0 = $primitive('Text', function() {
     return "Expect:"
 }.bind($root));
@@ -214,7 +283,7 @@ var $$$1 = $primitive('Boolean', function() {
     return true
 }.bind($root));
 var $$$2 = function() {
-    return (Console.write.value()($$$0, $$$1))
+    return (Console.write.$values["Scope"]()($$$0, $$$1))
 }.bind($root);
 var $$$3 = $primitive('Text', function() {
     return "Test:"
@@ -226,7 +295,7 @@ var $$$5 = $primitive('Text', function() {
     return "foo"
 }.bind($root));
 var $$$6 = function() {
-    return (Console.write.value()($$$3, $compare($$$4, $$$5)))
+    return (Console.write.$values["Scope"]()($$$3, $compare($$$4, $$$5)))
 }.bind($root);
 var $$$7 = $primitive('Text', function() {
     return "Expect:"
@@ -235,7 +304,7 @@ var $$$8 = $primitive('Boolean', function() {
     return false
 }.bind($root));
 var $$$9 = function() {
-    return (Console.write.value()($$$7, $$$8))
+    return (Console.write.$values["Scope"]()($$$7, $$$8))
 }.bind($root);
 var $$$10 = $primitive('Text', function() {
     return "Test:"
@@ -247,7 +316,7 @@ var $$$12 = $primitive('Text', function() {
     return "bar"
 }.bind($root));
 var $$$13 = function() {
-    return (Console.write.value()($$$10, $compare($$$11, $$$12)))
+    return (Console.write.$values["Scope"]()($$$10, $compare($$$11, $$$12)))
 }.bind($root);; /* Begin ControlCode: 0 */
 $$$2();
 $$$6();

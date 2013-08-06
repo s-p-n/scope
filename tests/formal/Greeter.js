@@ -17,6 +17,21 @@ if (typeof Object.create === 'undefined') {
         return new F();
     }
 };
+Array.prototype.has = function(term) {
+    var key, result = false;
+    for (key in this) {
+        if (!this.hasOwnProperty(key)) {
+            continue;
+        }
+        if ($compare(this[key], term).$values["Boolean"]()) {
+            result = true;
+            break;
+        }
+    }
+    return $primitive("Boolean", function() {
+        return result;
+    });
+}
 /// > Shims
 
 function $self(access, name, value) {
@@ -60,7 +75,10 @@ function $arg(name, $default, value) {
 };
 
 function $primitive(types, val) {
-    var obj = {};
+    var obj = {
+        $values: {}
+    };
+    var i;
     if (typeof val === "object" && val.$types !== void 0) {
         return val;
     }
@@ -69,11 +87,11 @@ function $primitive(types, val) {
     } else {
         obj.$types = [types];
     }
-    obj.value = val;
-    try {
-        //console.info("$primitive:", obj, obj.toString(), obj.valueOf());
-    } catch (e) {
-        //do nothing
+
+    if (typeof val === "object") {
+        obj.$values = val;
+    } else {
+        obj.$values[obj.$types[0]] = val;
     }
     return obj;
 }
@@ -113,12 +131,27 @@ var $runtimeError = function $runtimeError(line, msg, what) {
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
         "\033[1m on line: \033[31m" + line + '\033[0m');
 }
-var Type = function Type(primitive) {
-    //console.log("Primitive:", primitive);
-    //console.log("Types:", primitive.$types);
-    //console.log("Value:", primitive.valueOf());
-    return primitive.$types;
-}
+var Type = {
+    $types: ["Scope"],
+    $values: {
+        "Scope": function() {
+            return function Type(primitive) {
+                var types = [];
+                var i;
+                for (i = 0; i < primitive.$types.length; i += 1) {
+                    types.push($primitive("Text", function(val) {
+                        return function() {
+                            return val;
+                        }
+                    }(primitive.$types[i])));
+                }
+                return $primitive("Array", function() {
+                    return types;
+                })
+            }
+        }
+    }
+};
 var Console = (function Console() {
     var rl = require('readline').createInterface({
         input: process.stdin,
@@ -132,17 +165,41 @@ var Console = (function Console() {
             fn(data.replace(/\n/g, ""));
         }
     }
+
+    function printValues(Arr) {
+        var result = {}, key, val, i;
+        for (key in Arr.$values) {
+            val = Arr.$values[key]();
+            if (key === "Array" || key === "Instance") {
+                result[key] = [];
+                for (i in val) {
+                    if (val.hasOwnProperty(i)) {
+                        result[key].push(printValues(val[i]));
+                    }
+                }
+                continue;
+            }
+            result[key] = val;
+        }
+        return result;
+    }
+
     return {
         write: {
             $types: ["Scope"],
-            value: function() {
-                return function write() {
-                    var i = 0;
-                    while (arguments[i] !== void 0) {
-                        arguments[i] = arguments[i].value();
-                        i += 1;
+            $values: {
+                "Scope": function() {
+                    return function write() {
+                        var i = 0,
+                            result = [],
+                            subResult, key, val;
+                        while (arguments[i] !== void 0) {
+                            //console.log("Arg:", arguments[i]);
+                            result.push(printValues(arguments[i]));
+                            i += 1;
+                        }
+                        console.log.apply(console, result);
                     }
-                    console.log.apply(null, Array.prototype.slice.call(arguments));
                 }
             }
         },
@@ -157,28 +214,118 @@ var Console = (function Console() {
         }
     };
 }());
-var $concat = function $concat(a, b, line) {
-    var result, shortest, i;
-    if ((
-        Type(a).indexOf("Text") === -1 ||
-        Type(b).indexOf("Text") === -1) && (
-        Type(a).indexOf("Array") === -1 ||
-        Type(b).indexOf("Array") === -1)) {
-        $runtimeError(line, "Both types must be the same (either string or array), got: %what%", Type(a) + " and " + Type(b));
+var Compatible = {
+    $types: ["Scope"],
+    $values: {
+        "Scope": function() {
+            return function(a, b) {
+                var i, result = true;
+                for (i = 0; i < b.$types.length; i += 1) {
+                    if (a.$types.indexOf(b.$types[i]) === -1) {
+                        result = false;
+                        break;
+                    }
+                }
+                return $primitive("Boolean", function() {
+                    return result;
+                });
+            }
+        }
     }
-    if (Type(a).indexOf("Text") !== -1) {
-        result = $primitive("Text", function(value) {
+}
+var $compare = function() {
+    var equals = function(a, b) {
+        var p;
+        if (typeof a !== "object") {
+            return a === b;
+        }
+        console.log(typeof a, a, a.valueOf());
+        for (p in a) {
+            if (typeof(b[p]) == 'undefined') {
+                return false;
+            }
+            if (a[p]) {
+                switch (typeof(a[p])) {
+                    case 'object':
+                        if (!equals(a[p], b[p])) {
+                            return false;
+                        }
+                        break;
+                    case 'function':
+                        if (typeof(b[p]) == 'undefined' ||
+                            (p != 'equals' && a[p].toString() != b[p].toString())) {
+                            return false;
+                        }
+                        break;
+                    default:
+                        if (a[p] !== b[p]) {
+                            return false;
+                        }
+                }
+            } else if (b[p]) {
+                return false;
+            }
+        }
+        for (p in b) {
+            if (typeof(a[p]) == 'undefined') {
+                return false;
+            }
+        }
+        return true;
+    };
+    return function $compare(a, b) {
+        var i, j, c, result = true;
+        if (a.$types.length > b.$types.length) {
+            c = a;
+            a = b;
+            b = a;
+        }
+        for (i = 0; i < a.$types.length; i += 1) {
+            if (b.$types.indexOf(a.$types[i]) > -1 &&
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
+                continue;
+            }
+            result = false;
+            break;
+        }
+        return $primitive("Boolean", function(val) {
+            return function() {
+                return val;
+            }
+        }(result))
+    }
+}();
+var $concat = function $concat(a, b, line) {
+    var type = Type.$values["Scope"](),
+        compatible = Compatible.$values["Scope"](),
+        concatTestBoth = $primitive(["Text", "Array"], {
+            "Text": function() {
+                return "";
+            },
+            "Array": function() {
+                return [];
+            }
+        }),
+        compatTestText = $primitive("Text", function() {
+            return "";
+        }),
+        compatTestArray = $primitive("Array", function() {
+            return [];
+        }),
+        concatFunc = function(value) {
             return function() {
                 return value;
             }
-        }("" + a.value() + b.value()));
-    } else {
-        if (a instanceof Array) {
-            for (i = 0; i < b.length; i += 1) {
-                a.push(b[i]);
-            }
-            result = a;
-        } else {
+        },
+        txtConcat = function(a, b) {
+            return a.$values["Text"]() + b.$values["Text"]();
+        },
+        arrConcat = function(a, b) {
+            var result,
+                shortest,
+                i;
+            a = a.$values["Array"]();
+            b = b.$values["Array"]();
             if (a.length > b.length) {
                 result = a;
                 shortest = b;
@@ -186,20 +333,50 @@ var $concat = function $concat(a, b, line) {
                 result = b;
                 shortest = a;
             }
-            for (i in shortest) {
-                if (i !== "length" && shortest.hasOwnProperty(i)) {
-                    result[i] = shortest[i];
-                    result.length += 1;
+            if (a instanceof Array) {
+                for (i = 0; i < b.length; i += 1) {
+                    a.push(b[i]);
+                }
+                result = a;
+            } else {
+                for (i in shortest) {
+                    if (i !== "length" && shortest.hasOwnProperty(i)) {
+                        result[i] = shortest[i];
+                        result.length += 1;
+                    }
                 }
             }
+            return result;
+        };
+
+    if (compatible(a, b).$values["Boolean"]() ||
+        compatible(b, a).$values["Boolean"]()) {
+        if (compatible(a, concatTestBoth).$values["Boolean"]()) {
+            return $primitive(["Text", "Array"], {
+                "Text": concatFunc(txtConcat(a, b)),
+                "Array": concatFunc(arrConcat(a, b))
+            });
+        }
+        if (compatible(compatTestText, a).$values["Boolean"]()) {
+            return $primitive("Text",
+                concatFunc(txtConcat(a, b)));
+        } else if (compatible(compatTestArr, a).$values["Boolean"]()) {
+            return $primitive("Array",
+                concatFunc(arrConcat(a, b)));
         }
     }
-    return result;
+    $runtimeError(line,
+        "Type Error:  Compatible Text, Array or Both expected, got: %what%",
+        a.$types + " and " + b.types);
 };
 var $$$0 = $primitive('Scope', function() {
     return /* Starting Scope:1 */ function() {
+        var $returnMulti = [],
+            $temp;
         $$$0 = $primitive('Scope', function() {
             return /* Starting Scope:2 */ function() {
+                var $returnMulti = [],
+                    $temp;
                 $$$0 = $primitive('Text', function() {
                     return "Hello "
                 }.bind(this));
@@ -207,15 +384,34 @@ var $$$0 = $primitive('Scope', function() {
                     return "!"
                 }.bind(this));
                 $$$2 = function() {
-                    return (Console.write.value()($concat($concat($$$0, $enforceType("Instance", this.$parent, 3).value().$self("name"), 3), $$$1, 3)))
+                    return (Console.write.$values["Scope"]()($concat($concat($$$0, this.$parent.$values["Instance"]().$self("name"), 3), $$$1, 3)))
                 }.bind(this);
                 /* Begin ControlCode: 2 */
                 $$$2();
-                return $primitive("Instance", function(value) {
+                $returnMulti.push($primitive("Instance", function(value) {
                     return function() {
                         return value;
                     }
-                }(this));
+                }(this)));
+                var $i = 0,
+                    $j = 0,
+                    $returnMultiType, $returnTypes, $returnValues;
+                var $return = {
+                    $types: [],
+                    value: null,
+                    $values: {}
+                };
+                $returnTypes = $return.$types;
+                for ($i = 0; $i < $returnMulti.length; $i += 1) {
+                    for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                        $returnMultiType = $returnMulti[$i].$types[$j];
+                        if ($returnTypes.indexOf($returnMultiType) === -1) {
+                            $returnTypes.push($returnMultiType);
+                        }
+                        $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+                    }
+                }
+                return $return;
             }.bind($newParent(this))
         }.bind(this));
         $$$1 = $primitive('Text', function() {
@@ -224,18 +420,37 @@ var $$$0 = $primitive('Scope', function() {
         this.$arg("name", "$$$1", arguments[0]);
         /* Begin ControlCode: 1 */
         this.$self("public", "salute", $$$0);
-        return $primitive("Instance", function(value) {
+        $returnMulti.push($primitive("Instance", function(value) {
             return function() {
                 return value;
             }
-        }(this));
+        }(this)));
+        var $i = 0,
+            $j = 0,
+            $returnMultiType, $returnTypes, $returnValues;
+        var $return = {
+            $types: [],
+            value: null,
+            $values: {}
+        };
+        $returnTypes = $return.$types;
+        for ($i = 0; $i < $returnMulti.length; $i += 1) {
+            for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                $returnMultiType = $returnMulti[$i].$types[$j];
+                if ($returnTypes.indexOf($returnMultiType) === -1) {
+                    $returnTypes.push($returnMultiType);
+                }
+                $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+            }
+        }
+        return $return;
     }.bind($newParent($root))
 }.bind($root));
 var $$$1 = $primitive('Text', function() {
     return "world"
 }.bind($root));
 var $$$2 = function() {
-    return (this.$self("Greeter").value()($$$1))
+    return (this.$self("Greeter").$values["Scope"]()($$$1))
 }.bind($root);
 var $$$3 = $primitive('Text', function() {
     return "Expect:"
@@ -244,16 +459,16 @@ var $$$4 = $primitive('Text', function() {
     return "Hello world!"
 }.bind($root));
 var $$$5 = function() {
-    return (Console.write.value()($$$3, $$$4))
+    return (Console.write.$values["Scope"]()($$$3, $$$4))
 }.bind($root);
 var $$$6 = $primitive('Text', function() {
     return "Test:"
 }.bind($root));
 var $$$7 = function() {
-    return (Console.write.value()($$$6))
+    return (Console.write.$values["Scope"]()($$$6))
 }.bind($root);
 var $$$8 = function() {
-    return ($enforceType("Instance", this.$self("g"), 9).value().$self("salute").value()())
+    return (this.$self("g").$values["Instance"]().$self("salute").$values["Scope"]()())
 }.bind($root);; /* Begin ControlCode: 0 */
 $root.$self("var", "Greeter", $$$0);
 $root.$self("var", "g", $$$2());

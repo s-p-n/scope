@@ -1,43 +1,56 @@
-var $compare = function $compare (a, b) {
-    if ((typeof a) !== (typeof b)) {
-        return false;
+var $compare = function () {
+  var equals = function(a, b) {
+    var p;
+    if (typeof a !== "object") {
+      return a === b;
     }
-
-    var equals = function(x) {
-        var p;
-        for(p in this) {
-          if(typeof(x[p])=='undefined') {return false;}
-          if (this[p]) {
-              switch(typeof(this[p])) {
-                  case 'object':
-                      if (!equals.call(this[p], x[p])) { return false; }
-                  break;
-                  case 'function':
-                      if (typeof(x[p])=='undefined' ||
-                          (p != 'equals' && this[p].toString() != x[p].toString()))
-                          return false;
-                      break;
-                  default:
-                      if (this[p] !== x[p]) { return false; }
-              }
-          } else if (x[p]) {
+    for(p in a) {
+      if(typeof(b[p])=='undefined') {return false;}
+      if (a[p]) {
+        switch(typeof(a[p])) {
+          case 'object':
+            if (!equals(a[p], b[p])) {
               return false;
-          }
-        }
-
-        for(p in x) {
-          if(typeof(this[p])=='undefined') {return false;}
-        }
-
-        return true;
+            }
+            break;
+          case 'function':
+            if (typeof(b[p])=='undefined' ||
+              (p != 'equals' && a[p].toString() != b[p].toString()
+              )) {
+              return false;
+            }
+            break;
+          default:
+            if (a[p] !== b[p]) {
+              return false;
+            }
+      }} else if (b[p]) {
+        return false;
+    }}
+    for(p in b) {
+      if(typeof(a[p])=='undefined') {
+        return false;
+    }}
+    return true;
+  };
+  return function $compare (a, b) {
+    var i, j, c, result = true;
+    if (a.$types.length > b.$types.length) {
+      c = a;
+      a = b;
+      b = a;
     }
-
+    for (i = 0; i < a.$types.length; i += 1) {
+      if (b.$types.indexOf(a.$types[i]) > -1 &&
+          equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())
+        ) {
+        continue;
+      }
+      result = false;
+      break;
+    }
     return $primitive("Boolean", function (val) {
       return function () {
         return val;
-      }
-    } ((typeof a.value() === 'object') ?
-        equals.call(a.value(), b.value()) :
-        a.value() === b.value()
-    ));
-};
+    }}(result)
+)}}();

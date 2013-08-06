@@ -1,0 +1,8 @@
+$temp = {
+	$types: %type%.$types,
+	$values: {}
+};
+for ($i = 0; $i < $temp.$types.length; $i += 1) {
+	$temp.$values[$temp.$types[$i]] = %value%.$values[$temp.$types[$i]];
+}
+$returnMulti.push($temp);

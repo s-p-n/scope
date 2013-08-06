@@ -1,1 +1,1 @@
-(%func%.value()(%args%))
+(%func%.$values["Scope"]()(%args%))

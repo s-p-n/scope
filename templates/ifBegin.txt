@@ -1,3 +1,3 @@
 (function () {
-	if (%condition%) {
+	if (%condition%.$values["Boolean"]()) {
 		return (function () {

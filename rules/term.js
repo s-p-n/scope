@@ -79,6 +79,8 @@ module.exports = function term (a, b, c) {
                 termB: c
             });
         case '&':
+            this.ext['Compatible']();
+            this.ext['$compare']();
             this.ext['$concat']();
             this.ext['$runtimeError']();
             return this.loadTemplate('term_concat', {
