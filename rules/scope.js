@@ -9,7 +9,7 @@ module.exports = function scope (start, controlCode, args) {
         thisArg = "$root";
     }
     for (j = 0; j < this.primitives.length; j += 1) {
-        prefix += "$$$" + j + "=" + this.primitives[j] + ';';
+        prefix += "var $$$" + j + "=" + this.primitives[j] + ';';
     }
     this.primitives = this.primStore.pop() || [];
     if (args === void 0) {
