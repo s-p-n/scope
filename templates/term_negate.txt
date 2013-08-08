@@ -2,4 +2,4 @@ $primitive("Number", function (value) {
 	return function () {
 		return value;
 	}
-}(-%num%))
+}(-%num%.$values["Number"]()))
