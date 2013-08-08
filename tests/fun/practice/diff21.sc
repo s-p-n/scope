@@ -14,4 +14,4 @@ var diff21 = (n: 0) {
 print(diff21(19)); // 2
 print(diff21(10)); // 11
 print(diff21(21)); // 0
-print(diff21(44)); // 0
+print(diff21(44)); // 46
