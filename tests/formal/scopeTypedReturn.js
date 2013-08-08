@@ -173,8 +173,7 @@ var $compare = function() {
         }
         for (i = 0; i < a.$types.length; i += 1) {
             if (b.$types.indexOf(a.$types[i]) > -1 &&
-                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())
-            ) {
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
                 continue;
             }
             result = false;
@@ -191,8 +190,7 @@ var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m'
-    );
+        "\033[1m on line: \033[31m" + line + '\033[0m');
 }
 var Type = {
     $types: ["Scope"],
@@ -215,6 +213,75 @@ var Type = {
         }
     }
 };
+var Text = {
+    $types: ["Scope"],
+    $values: {
+        "Scope": function() {
+            return function Text(primitive, fromType) {
+                var result = null,
+                    res = "";
+                if (fromType !== void 0) {
+                    fromType = fromType.$values["Text"]();
+                    if (primitive.$values.hasOwnProperty(fromType)) {
+                        res = primitive.$values[fromType]().toString();
+                        result = function() {
+                            return res;
+                        };
+                    }
+                } else if (primitive.$values.hasOwnProperty("Text")) {
+                    result = primitive.$values["Text"];
+                } else if (primitive.$types.length === 1) {
+                    res = primitive.$values[primitive.$types[0]]().toString();
+                    result = function() {
+                        return res;
+                    };
+                }
+                if (result === null) {
+                    throw "Error! Multi-Type Primitive (without a text-type and no specified type for" +
+                        "Text(Any:Primitive [, Text:fromType])), cannot be converted to Text.";
+                }
+                return $primitive("Text", result);
+            }
+        }
+    }
+};
+var Scope = (function() {
+    return {
+        extend: {
+            $types: ["Scope"],
+            $values: {
+                "Scope": function() {
+                    return function extend(extended, extendee, parent) {
+                        var result;
+                        extendee = extendee.$values["Scope"]().unbind();
+                        extended = extended.$values["Scope"]().bind($newParent(parent));
+                        //console.log("Extend:", extendee, extended);
+                        result = function() {
+                            var i, access;
+                            var extension = extended.apply(this, arguments);
+                            //console.log("extension:", extension);
+                            this.$self("protected", "extended", extension);
+                            for (i in extension.$access) {
+                                access = extension.$access[i]
+                                if (access === "private") {
+                                    continue;
+                                }
+                                this.$self(access, i, extension.$property[i]);
+                            }
+                            //console.log(this);
+                            return extendee.apply(this, arguments);
+                        }.bind($newParent(parent));
+                        result.name = extendee.name;
+                        //console.log("Result:", result);
+                        return $primitive("Scope", function() {
+                            return result
+                        });
+                    }
+                }
+            }
+        }
+    }
+}());
 var Console = (function Console() {
     var rl = require('readline').createInterface({
         input: process.stdin,
@@ -310,6 +377,13 @@ var $Math = {
                 return val;
             }
         }(a.$values["Number"]() / b.$values["Number"]()));
+    },
+    modulus: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() % b.$values["Number"]()));
     }
 };
 var Compatible = {
@@ -547,17 +621,17 @@ $root.$self("var", "Five", /* Starting Scope:1 */ $primitive("Scope", function()
     }.bind(this);
 }.bind($newParent($root))));
 (function() {
-    if ($primitive("Boolean", function(val) {
+    if (($primitive("Boolean", function(val) {
         return function() {
             return val;
         }
-    }(!$compare($$$0, $$$1).$values["Boolean"]())).$values["Boolean"]()) {
+    }(!$compare($$$0, $$$1).$values["Boolean"]()))).$values["Boolean"]()) {
         return (function() {
-            return $$$3();
+            return $$$3();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$5();
+            return $$$5();;
         }.bind(this)());
     }
 }.bind(this)());
@@ -698,79 +772,79 @@ $root.$self("var", "Four", /* Starting Scope:1 */ $primitive("Scope", function()
     }.bind(this);
 }.bind($newParent($root))));
 (function() {
-    if ($compare($$$6(), $$$7()).$values["Boolean"]()) {
+    if (($compare($$$6(), $$$7())).$values["Boolean"]()) {
         return (function() {
-            return $$$9();
+            return $$$9();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$11();
+            return $$$11();;
         }.bind(this)());
     }
 }.bind(this)());
 (function() {
-    if ($compare($$$12, $$$13()).$values["Boolean"]()) {
+    if (($compare($$$12, $$$13())).$values["Boolean"]()) {
         return (function() {
-            return $$$15();
+            return $$$15();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$17();
+            return $$$17();;
         }.bind(this)());
     }
 }.bind(this)());
 (function() {
-    if ($$$19().$values["Array"]().has($$$20).$values["Boolean"]()) {
+    if (($$$19().$values["Array"]().has($$$20)).$values["Boolean"]()) {
         return (function() {
-            return $$$22();
+            return $$$22();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$24();
+            return $$$24();;
         }.bind(this)());
     }
 }.bind(this)());
 (function() {
-    if ($compare($Math.add($$$25, $$$26()), $$$27).$values["Boolean"]()) {
+    if (($compare($Math.add($$$25, $$$26()), $$$27)).$values["Boolean"]()) {
         return (function() {
-            return $$$29();
+            return $$$29();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$31();
+            return $$$31();;
         }.bind(this)());
     }
 }.bind(this)());
 (function() {
-    if ($compare($$$33(), $$$35()).$values["Boolean"]()) {
+    if (($compare($$$33(), $$$35())).$values["Boolean"]()) {
         return (function() {
-            return $$$37();
+            return $$$37();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$39();
+            return $$$39();;
         }.bind(this)());
     }
 }.bind(this)());
 (function() {
-    if ($$$42().$values["Boolean"]()) {
+    if (($$$42()).$values["Boolean"]()) {
         return (function() {
-            return $$$44();
+            return $$$44();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$46();
+            return $$$46();;
         }.bind(this)());
     }
 }.bind(this)());
 (function() {
-    if ($$$49().$values["Boolean"]()) {
+    if (($$$49()).$values["Boolean"]()) {
         return (function() {
-            return $$$51();
+            return $$$51();;
         }.bind(this)());
     } else {
         return (function() {
-            return $$$53();
+            return $$$53();;
         }.bind(this)());
     }
 }.bind(this)());

@@ -31,6 +31,8 @@ module.exports = function identifier (id, name, isArr) {
         return this.loadTemplate('identifier_parent');
     }
     if (id in this.ext) {
+        this.ext['Text']();
+        this.ext['Scope']();
         ret = this.ext[id]();
     } else {
         ret = this.loadTemplate('identifier_property', {

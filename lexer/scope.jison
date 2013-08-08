@@ -6,6 +6,15 @@
 "/*"(.|\n|\r)*?"*/" /* ignore block comment */
 '.'         return '.'
 ';'         return ';'
+'&='        return '&='
+'+='        return '+='
+'-='        return '-='
+'*='        return '*='
+'/='        return '/='
+'%='        return '%='
+'^='        return '^='
+'<='        return 'LE'
+'>='        return 'GE'
 '+'         return '+'
 '-'         return '-'
 '*'         return '*'
@@ -17,8 +26,10 @@
 ')'         return ')'
 '['         return '['
 ']'         return ']'
-'<'         return '<'
-'>'         return '>'
+'<'         {return 'LT';}
+'>'         {return 'GT';}
+//'<'         return '<'
+//'>'         return '>'
 '{'         return '{'
 '}'         return '}'
 ':'         return ':'
@@ -26,7 +37,6 @@
 '&'         return '&'
 '|'         return '|'
 ','         return ','
-'`'         return '`'
 'end'       {return 'END';}
 'if'        {return 'IF';}
 'for'       {return 'FOR';}
@@ -48,9 +58,7 @@
 'not'       {return 'NOT';}
 'true'      {return 'TRUE';}
 'false'     {return 'FALSE';}
-'<='        {return '<=';}
-'>='        {return '>=';}
-[a-zA-Z_][a-zA-Z0-9_]*  {return 'NAME';} // check later for: (?!end|if|for|while|else|use|as|return|var|public|protected|private|is|isnt|and|or|not|true|false)
+[a-zA-Z_][a-zA-Z0-9_]*  {return 'NAME';} // check later for: (?!end|if|for|while|else|use|as|return|var|public|protected|private|is|isnt|and|or|not|true|false|lt|gt|le|ge)
 /*[a-zA-Z_][a-zA-Z0-9_]*  {return 'ASSOCNAME';}*/
 '$'+[a-zA-Z0-9_]*   {return 'SELECTNAME';}
 [0-9]+(\.[0-9]+)?\b    {return 'NUMBER';}
@@ -78,7 +86,6 @@
 %token END
 %token TRUE
 %token FALSE
-%token UMINUS
 %token NUMBER
 %token QSTRING
 %token ASTRING
@@ -88,16 +95,18 @@
 %token TAGSHORTCLOSE
 %token TAGLONGCLOSE
 %token TAGOPEN TAGCLOSE
+%token UMINUS
+%token CONCATEQ PLUSEQ MINUSEQ TIMESEQ DIVIDEEQ MODULUSEQ EXPONENTEQ
+%token LT GT LE GE
 
 %right TAGSHORTCLOSE TAGLONGCLOSE
 
 %left TAGOPEN TAGCLOSE
-%left '=' ':'
+%left '=' ':' CONCATEQ PLUSEQ MINUSEQ TIMESEQ DIVIDEEQ MODULUSEQ EXPONENTEQ
 %left ','
 %left IN
 %left AND OR
-%left IS ISNT HAS
-%left '<' '>' '<=' '>='
+%left IS ISNT HAS LT GT LE GE
 %left '+' '-' '&' '|'
 %left '*' '%' '/'
 %left '^'
@@ -360,9 +369,9 @@ if
     ;
 
 ifBegin
-    : IF '(' term ')' ':' {
+    : IF term ':' {
         $$ = new yy.scopeAst(yy,"ifBegin",[
-            $3
+            $2
         ]);
     }
     ;
@@ -495,14 +504,71 @@ subTerm
     ;
 
 term
-    : subTerm {
+    :
+    identifier '&=' term %prec CONCATEQ{
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, '&=', $3
+        ]);
+    }
+    |
+    identifier '+=' term %prec PLUSEQ{
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, '+=', $3
+        ]);
+    }
+    |
+    identifier '-=' term %prec MINUSEQ{
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, '-=', $3
+        ]);
+    }
+    |
+    identifier '*=' term %prec TIMESEQ{
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, '*=', $3
+        ]);
+    }
+    |
+    identifier '/=' term %prec DIVIDEEQ{
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, '/=', $3
+        ]);
+    }
+    |
+    identifier '%=' term %prec MODULUSEQ{
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, '%=', $3
+        ]);
+    }
+    |
+    identifier '^=' term %prec EXPONENTEQ{
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, '^=', $3
+        ]);
+    }
+    | subTerm {
         $$ = new yy.scopeAst(yy,"term",[
             $1
         ]);
     }
-    | '(' attrConflictTerm ')' {
+    | term GT term %prec GT {
         $$ = new yy.scopeAst(yy,"term",[
-            $2
+            $1, $2, $3
+        ]);
+    }
+    | term LT term %prec LT {
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, $2, $3
+        ]);
+    }
+    | term GE term %prec GE {
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, $2, $3
+        ]);
+    }
+    | term LE term %prec LE {
+        $$ = new yy.scopeAst(yy,"term",[
+            $1, $2, $3
         ]);
     }
     | assignment {
@@ -624,29 +690,6 @@ program
     }
     ;
 
-attrConflictTerm
-    : term '>' term {
-        $$ = new yy.scopeAst(yy,"attrConflictTerm",[
-            $1, $2, $3
-        ]);
-    }
-    | term '<' term {
-        $$ = new yy.scopeAst(yy,"attrConflictTerm",[
-            $1, $2, $3
-        ]);
-    }
-    | term '>=' term {
-        $$ = new yy.scopeAst(yy,"attrConflictTerm",[
-            $1, $2, $3
-        ]);
-    }
-    | term '<=' term {
-        $$ = new yy.scopeAst(yy,"attrConflictTerm",[
-            $1, $2, $3
-        ]);
-    }
-    ;
-
 attributeList
     : attributeTerm {
         $$ = new yy.scopeAst(yy,"attributeList",[
@@ -677,9 +720,19 @@ for
     ;
 
 forBegin
-    : FOR '(' NAME IN term ')' ':' {
+    : FOR NAME IN term ':' {
+        $$ = new yy.scopeAst(yy,"forBegin",[
+            $2, $4
+        ]);
+    }
+    | FOR '(' NAME IN term ')' ':' {
         $$ = new yy.scopeAst(yy,"forBegin",[
             $3, $5
+        ]);
+    }
+    | FOR NAME ':' NAME IN term ':' {
+        $$ = new yy.scopeAst(yy,"forBegin",[
+            $2, $6, $4
         ]);
     }
     | FOR '(' NAME ':' NAME IN term ')' ':' {
@@ -713,9 +766,9 @@ node
     ;
 
 nodeBlockEnd
-    : '<' '/' identifier tagEnd %prec TAGLONGCLOSE {
+    : '</' identifier tagEnd %prec TAGLONGCLOSE {
         $$ = new yy.scopeAst(yy,"nodeBlockEnd",[
-            $1, $2, $3, $4
+            $2
         ]);
     }
     ;
@@ -924,9 +977,9 @@ while
     ;
 
 whileBegin
-    : WHILE '(' boolean ')' ':' {
+    : WHILE term ':' {
         $$ = new yy.scopeAst(yy,"whileBegin",[
-            $1, $2, $3, $4, $5
+            $2
         ]);
     }
     ;

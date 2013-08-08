@@ -1,0 +1,4 @@
+%whileBegin%
+	%controlBlock%
+%loopElse%
+}.bind(this)());}}.bind(this)())

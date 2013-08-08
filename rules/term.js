@@ -51,13 +51,20 @@ module.exports = function term (a, b, c) {
                 operator: "divide",
                 termB: c
             });
+        case '%':
+            this.ext['$Math']();
+            return this.loadTemplate('term_mirror', {
+                termA: a,
+                operator: "modulus",
+                termB: c
+            });
         case 'and':
-            return loadTemplate('term_and', {
+            return this.loadTemplate('term_and', {
                 termA: a,
                 termB: c
             });
         case 'or':
-            return loadTemplate('term_or', {
+            return this.loadTemplate('term_or', {
                 termA: a,
                 termB: c
             });
@@ -88,6 +95,52 @@ module.exports = function term (a, b, c) {
                 termB: c,
                 line: this.line
             });
+        case '&=':
+            console.log("Got &=");
+            this.ext['Compatible']();
+            this.ext['$compare']();
+            this.ext['$concat']();
+            this.ext['$runtimeError']();
+            return this.loadTemplate ('redeclareProperty_concatEq', {
+                id: a,
+                value: c,
+                line: this.line
+            });
+            break;
+        case '+=':
+            console.log("Got +=");
+            return this.loadTemplate ('redeclareProperty_plusEq', {
+                id: a,
+                value: c
+            });
+            break;
+        case '/=':
+            console.log("Got /=");
+            return this.loadTemplate ('redeclareProperty_divideEq', {
+                id: a,
+                value: c
+            });
+            break;
+        case '<':
+            return this.loadTemplate('term_lessThan', {
+                termA: a,
+                termB: c
+            });
+        case '>':
+            return this.loadTemplate('term_greaterThan', {
+                termA: a,
+                termB: c
+            });
+        case '<=':
+            return this.loadTemplate('term_lessOrEqual', {
+                termA: a,
+                termB: c
+            });
+        case '>=':
+            return this.loadTemplate('term_greaterOrEqual', {
+                termA: a,
+                termB: c
+            });
     }
     this.ext['$init']();
     var i;
@@ -97,6 +150,8 @@ module.exports = function term (a, b, c) {
     } else if (this.termType === "Identifier") {
         return a;
     } else if (this.termType === "If") {
+        return a;
+    } else if (this.termType === "While") {
         return a;
     } else if (this.termType === "Scope") {
         return a;

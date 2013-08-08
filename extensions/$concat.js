@@ -24,8 +24,20 @@ var $concat = function $concat (a, b, line) {
         },
         arrConcat = function (a, b) {
             var result, 
+                subResult,
                 shortest, 
-                i;
+                i,
+                type,
+                len,
+                f = function (val) {
+                    return function () {
+                        return val;
+                    }
+                };
+            //console.log("a:");
+            //Console.write.$values["Scope"]()(a);
+            //console.log("b:");
+            //Console.write.$values["Scope"]()(b);
             a = a.$values["Array"]();
             b = b.$values["Array"]();
             if (a.length > b.length) {
@@ -37,7 +49,10 @@ var $concat = function $concat (a, b, line) {
             }
             if(a instanceof Array) {
                 for (i = 0; i < b.length; i += 1) {
-                    a.push(b[i]);
+                    len = a.push({$types: Object.create(b[i].$types), $values: {}}) - 1;
+                    for (type in b[i].$values) {
+                        a[len].$values[type] = f(b[i].$values[type]());
+                    }
                 }
                 result = a;
             } else {
@@ -62,7 +77,7 @@ var $concat = function $concat (a, b, line) {
             return $primitive("Text", 
                 concatFunc(txtConcat(a, b))
             );
-        } else if (compatible(compatTestArr, a).$values["Boolean"]()) {
+        } else if (compatible(compatTestArray, a).$values["Boolean"]()) {
             return $primitive("Array", 
                 concatFunc(arrConcat(a, b))
             );

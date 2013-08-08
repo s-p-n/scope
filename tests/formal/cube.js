@@ -152,6 +152,43 @@ var Type = {
         }
     }
 };
+var $Math = {
+    add: function add(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() + b.$values["Number"]()));
+    },
+    subtract: function subtract(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() - b.$values["Number"]()));
+    },
+    multiply: function multiply(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() * b.$values["Number"]()));
+    },
+    divide: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() / b.$values["Number"]()));
+    },
+    modulus: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() % b.$values["Number"]()));
+    }
+};
 var Text = {
     $types: ["Scope"],
     $values: {
@@ -288,218 +325,142 @@ var Console = (function Console() {
         }
     };
 }());
-var $compare = function() {
-    var equals = function(a, b) {
-        var p;
-        if (typeof a !== "object") {
-            return a === b;
-        }
-        for (p in a) {
-            if (typeof(b[p]) == 'undefined') {
-                return false;
-            }
-            if (a[p]) {
-                switch (typeof(a[p])) {
-                    case 'object':
-                        if (!equals(a[p], b[p])) {
-                            return false;
-                        }
-                        break;
-                    case 'function':
-                        if (typeof(b[p]) == 'undefined' ||
-                            (p != 'equals' && a[p].toString() != b[p].toString())) {
-                            return false;
-                        }
-                        break;
-                    default:
-                        if (a[p] !== b[p]) {
-                            return false;
-                        }
-                }
-            } else if (b[p]) {
-                return false;
-            }
-        }
-        for (p in b) {
-            if (typeof(a[p]) == 'undefined') {
-                return false;
-            }
-        }
-        return true;
-    };
-    return function $compare(a, b) {
-        var i, j, c, result = true;
-        if (a.$types.length > b.$types.length) {
-            c = a;
-            a = b;
-            b = a;
-        }
-        for (i = 0; i < a.$types.length; i += 1) {
-            if (b.$types.indexOf(a.$types[i]) > -1 &&
-                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
-                continue;
-            }
-            result = false;
-            break;
-        }
-        return $primitive("Boolean", function(val) {
-            return function() {
-                return val;
-            }
-        }(result))
-    }
-}();
 var $$$0 = $primitive('Text', function() {
     return "Expect:"
 }.bind($root));
-var $$$1 = $primitive('Boolean', function() {
-    return true
+var $$$1 = $primitive('Number', function() {
+    return 125
 }.bind($root));
 var $$$2 = function() {
     return (Console.write.$values["Scope"]()($$$0, $$$1))
 }.bind($root);
-var $$$3 = $primitive('Text', function() {
-    return "Test:"
+var $$$3 = $primitive('Number', function() {
+    return 5
 }.bind($root));
-var $$$4 = $primitive('Number', function() {
-    return 1
-}.bind($root));
-var $$$5 = $primitive('Number', function() {
-    return 1
-}.bind($root));
-var $$$6 = function() {
-    return (Console.write.$values["Scope"]()($$$3, $compare($$$4, $$$5)))
+var $$$4 = function() {
+    return (this.$self("cube").$values["Scope"]()($$$3))
 }.bind($root);
-var $$$7 = $primitive('Text', function() {
-    return "Expect:"
-}.bind($root));
-var $$$8 = $primitive('Boolean', function() {
-    return false
-}.bind($root));
-var $$$9 = function() {
-    return (Console.write.$values["Scope"]()($$$7, $$$8))
-}.bind($root);
-var $$$10 = $primitive('Text', function() {
-    return "Test:"
-}.bind($root));
-var $$$11 = $primitive('Number', function() {
-    return 1
-}.bind($root));
-var $$$12 = $primitive('Number', function() {
-    return 2
-}.bind($root));
-var $$$13 = function() {
-    return (Console.write.$values["Scope"]()($$$10, $compare($$$11, $$$12)))
-}.bind($root);
-var $$$14 = $primitive('Text', function() {
-    return "Expect:"
-}.bind($root));
-var $$$15 = $primitive('Boolean', function() {
-    return true
-}.bind($root));
-var $$$16 = function() {
-    return (Console.write.$values["Scope"]()($$$14, $$$15))
-}.bind($root);
-var $$$17 = $primitive('Text', function() {
-    return "Test:"
-}.bind($root));
-var $$$18 = $primitive('Number', function() {
-    return 1
-}.bind($root));
-var $$$19 = $primitive('Number', function() {
-    return 2
-}.bind($root));
-var $$$20 = function() {
-    return (Console.write.$values["Scope"]()($$$17, $primitive("Boolean", function(val) {
-        return function() {
-            return val;
-        }
-    }($$$18.$values["Number"]() < $$$19.$values["Number"]()))))
-}.bind($root);
-var $$$21 = $primitive('Text', function() {
-    return "Expect:"
-}.bind($root));
-var $$$22 = $primitive('Boolean', function() {
-    return true
-}.bind($root));
-var $$$23 = function() {
-    return (Console.write.$values["Scope"]()($$$21, $$$22))
-}.bind($root);
-var $$$24 = $primitive('Text', function() {
-    return "Test:"
-}.bind($root));
-var $$$25 = $primitive('Number', function() {
-    return 1
-}.bind($root));
-var $$$26 = $primitive('Number', function() {
-    return 2
-}.bind($root));
-var $$$27 = function() {
-    return (Console.write.$values["Scope"]()($$$24, $primitive("Boolean", function(val) {
-        return function() {
-            return val;
-        }
-    }($$$25.$values["Number"]() <= $$$26.$values["Number"]()))))
-}.bind($root);
-var $$$28 = $primitive('Text', function() {
-    return "Expect:"
-}.bind($root));
-var $$$29 = $primitive('Boolean', function() {
-    return false
-}.bind($root));
-var $$$30 = function() {
-    return (Console.write.$values["Scope"]()($$$28, $$$29))
-}.bind($root);
-var $$$31 = $primitive('Text', function() {
-    return "Test:"
-}.bind($root));
-var $$$32 = $primitive('Number', function() {
-    return 1
-}.bind($root));
-var $$$33 = $primitive('Number', function() {
-    return 2
-}.bind($root));
-var $$$34 = function() {
-    return (Console.write.$values["Scope"]()($$$31, $primitive("Boolean", function(val) {
-        return function() {
-            return val;
-        }
-    }($$$32.$values["Number"]() > $$$33.$values["Number"]()))))
-}.bind($root);
-var $$$35 = $primitive('Text', function() {
-    return "Expect:"
-}.bind($root));
-var $$$36 = $primitive('Boolean', function() {
-    return false
-}.bind($root));
-var $$$37 = function() {
-    return (Console.write.$values["Scope"]()($$$35, $$$36))
-}.bind($root);
-var $$$38 = $primitive('Text', function() {
-    return "Test:"
-}.bind($root));
-var $$$39 = $primitive('Number', function() {
-    return 1
-}.bind($root));
-var $$$40 = $primitive('Number', function() {
-    return 2
-}.bind($root));
-var $$$41 = function() {
-    return (Console.write.$values["Scope"]()($$$38, $primitive("Boolean", function(val) {
-        return function() {
-            return val;
-        }
-    }($$$39.$values["Number"]() >= $$$40.$values["Number"]()))))
+var $$$5 = function() {
+    return (Console.write.$values["Scope"]()($$$4()))
 }.bind($root);; /* Begin ControlCode: 0 */
+$root.$self("var", "square", /* Starting Scope:1 */ $primitive("Scope", function() {
+    return function() {
+        var $returnMulti = [],
+            $temp;
+        $$$0 = $primitive('Number', function() {
+            return 0
+        }.bind(this));
+        this.$arg("x", "$$$0", arguments[0]);
+        /* Begin ControlCode: 1 */
+        if (typeof $returnMulti === "undefined") {
+            var $returnMulti = [];
+        }
+        $returnMulti.push($Math.multiply(this.$self("x"), this.$self("x")));
+        var $i = 0,
+            $j = 0,
+            $returnMultiType, $returnTypes, $returnValues;
+        var $return = {
+            $types: [],
+            value: null,
+            $values: {}
+        };
+        $returnTypes = $return.$types;
+        for ($i = 0; $i < $returnMulti.length; $i += 1) {
+            for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                $returnMultiType = $returnMulti[$i].$types[$j];
+                if ($returnTypes.indexOf($returnMultiType) === -1) {
+                    $returnTypes.push($returnMultiType);
+                }
+                $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+            }
+        }
+        return $return;;
+        $returnMulti.push($primitive("Instance", function(value) {
+            return function() {
+                return value;
+            }
+        }(this)));
+        var $i = 0,
+            $j = 0,
+            $returnMultiType, $returnTypes, $returnValues;
+        var $return = {
+            $types: [],
+            value: null,
+            $values: {}
+        };
+        $returnTypes = $return.$types;
+        for ($i = 0; $i < $returnMulti.length; $i += 1) {
+            for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                $returnMultiType = $returnMulti[$i].$types[$j];
+                if ($returnTypes.indexOf($returnMultiType) === -1) {
+                    $returnTypes.push($returnMultiType);
+                }
+                $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+            }
+        }
+        return $return;
+    }.bind(this);
+}.bind($newParent($root))));
+$root.$self("var", "cube", /* Starting Scope:1 */ $primitive("Scope", function() {
+    return function() {
+        var $returnMulti = [],
+            $temp;
+        $$$0 = function() {
+            return (this.$self("square").$values["Scope"]()(this.$self("x")))
+        }.bind(this);
+        $$$1 = $primitive('Number', function() {
+            return 0
+        }.bind(this));
+        this.$arg("x", "$$$1", arguments[0]);
+        /* Begin ControlCode: 1 */
+        if (typeof $returnMulti === "undefined") {
+            var $returnMulti = [];
+        }
+        $returnMulti.push($Math.multiply($$$0(), this.$self("x")));
+        var $i = 0,
+            $j = 0,
+            $returnMultiType, $returnTypes, $returnValues;
+        var $return = {
+            $types: [],
+            value: null,
+            $values: {}
+        };
+        $returnTypes = $return.$types;
+        for ($i = 0; $i < $returnMulti.length; $i += 1) {
+            for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                $returnMultiType = $returnMulti[$i].$types[$j];
+                if ($returnTypes.indexOf($returnMultiType) === -1) {
+                    $returnTypes.push($returnMultiType);
+                }
+                $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+            }
+        }
+        return $return;;
+        $returnMulti.push($primitive("Instance", function(value) {
+            return function() {
+                return value;
+            }
+        }(this)));
+        var $i = 0,
+            $j = 0,
+            $returnMultiType, $returnTypes, $returnValues;
+        var $return = {
+            $types: [],
+            value: null,
+            $values: {}
+        };
+        $returnTypes = $return.$types;
+        for ($i = 0; $i < $returnMulti.length; $i += 1) {
+            for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                $returnMultiType = $returnMulti[$i].$types[$j];
+                if ($returnTypes.indexOf($returnMultiType) === -1) {
+                    $returnTypes.push($returnMultiType);
+                }
+                $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+            }
+        }
+        return $return;
+    }.bind(this);
+}.bind($newParent($root))));
 $$$2();
-$$$6();
-$$$9();
-$$$13();
-$$$16();
-$$$20();
-$$$23();
-$$$27();
-$$$30();
-$$$34();
-$$$37();
-$$$41();
+$$$5();

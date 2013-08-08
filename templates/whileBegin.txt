@@ -1,0 +1,3 @@
+(function () {
+	while (%term%.$values["Boolean"]()) {
+		(function () {

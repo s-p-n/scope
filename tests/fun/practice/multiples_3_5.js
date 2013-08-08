@@ -152,75 +152,104 @@ var Type = {
         }
     }
 };
-var Text = {
-    $types: ["Scope"],
-    $values: {
-        "Scope": function() {
-            return function Text(primitive, fromType) {
-                var result = null,
-                    res = "";
-                if (fromType !== void 0) {
-                    fromType = fromType.$values["Text"]();
-                    if (primitive.$values.hasOwnProperty(fromType)) {
-                        res = primitive.$values[fromType]().toString();
-                        result = function() {
-                            return res;
-                        };
-                    }
-                } else if (primitive.$values.hasOwnProperty("Text")) {
-                    result = primitive.$values["Text"];
-                } else if (primitive.$types.length === 1) {
-                    res = primitive.$values[primitive.$types[0]]().toString();
-                    result = function() {
-                        return res;
-                    };
-                }
-                if (result === null) {
-                    throw "Error! Multi-Type Primitive (without a text-type and no specified type for" +
-                        "Text(Any:Primitive [, Text:fromType])), cannot be converted to Text.";
-                }
-                return $primitive("Text", result);
+var $Math = {
+    add: function add(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
             }
-        }
+        }(a.$values["Number"]() + b.$values["Number"]()));
+    },
+    subtract: function subtract(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() - b.$values["Number"]()));
+    },
+    multiply: function multiply(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() * b.$values["Number"]()));
+    },
+    divide: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() / b.$values["Number"]()));
+    },
+    modulus: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() % b.$values["Number"]()));
     }
 };
-var Scope = (function() {
-    return {
-        extend: {
-            $types: ["Scope"],
-            $values: {
-                "Scope": function() {
-                    return function extend(extended, extendee, parent) {
-                        var result;
-                        extendee = extendee.$values["Scope"]().unbind();
-                        extended = extended.$values["Scope"]().bind($newParent(parent));
-                        //console.log("Extend:", extendee, extended);
-                        result = function() {
-                            var i, access;
-                            var extension = extended.apply(this, arguments);
-                            //console.log("extension:", extension);
-                            this.$self("protected", "extended", extension);
-                            for (i in extension.$access) {
-                                access = extension.$access[i]
-                                if (access === "private") {
-                                    continue;
-                                }
-                                this.$self(access, i, extension.$property[i]);
-                            }
-                            //console.log(this);
-                            return extendee.apply(this, arguments);
-                        }.bind($newParent(parent));
-                        result.name = extendee.name;
-                        //console.log("Result:", result);
-                        return $primitive("Scope", function() {
-                            return result
-                        });
-                    }
+var $compare = function() {
+    var equals = function(a, b) {
+        var p;
+        if (typeof a !== "object") {
+            return a === b;
+        }
+        for (p in a) {
+            if (typeof(b[p]) == 'undefined') {
+                return false;
+            }
+            if (a[p]) {
+                switch (typeof(a[p])) {
+                    case 'object':
+                        if (!equals(a[p], b[p])) {
+                            return false;
+                        }
+                        break;
+                    case 'function':
+                        if (typeof(b[p]) == 'undefined' ||
+                            (p != 'equals' && a[p].toString() != b[p].toString())) {
+                            return false;
+                        }
+                        break;
+                    default:
+                        if (a[p] !== b[p]) {
+                            return false;
+                        }
                 }
+            } else if (b[p]) {
+                return false;
             }
         }
+        for (p in b) {
+            if (typeof(a[p]) == 'undefined') {
+                return false;
+            }
+        }
+        return true;
+    };
+    return function $compare(a, b) {
+        var i, j, c, result = true;
+        if (a.$types.length > b.$types.length) {
+            c = a;
+            a = b;
+            b = a;
+        }
+        for (i = 0; i < a.$types.length; i += 1) {
+            if (b.$types.indexOf(a.$types[i]) > -1 &&
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
+                continue;
+            }
+            result = false;
+            break;
+        }
+        return $primitive("Boolean", function(val) {
+            return function() {
+                return val;
+            }
+        }(result))
     }
-}());
+}();
 var Console = (function Console() {
     var rl = require('readline').createInterface({
         input: process.stdin,
@@ -288,24 +317,75 @@ var Console = (function Console() {
         }
     };
 }());
-var $$$0 = $primitive('Text', function() {
-    return "foo"
+var $$$0 = $primitive('Number', function() {
+    return 1
 }.bind($root));
-var $$$1 = $primitive('Text', function() {
-    return "Expect:"
+var $$$1 = $primitive('Number', function() {
+    return 1000
 }.bind($root));
-var $$$2 = $primitive('Text', function() {
-    return "foo"
+var $$$2 = $primitive('Number', function() {
+    return 3
 }.bind($root));
-var $$$3 = function() {
-    return (Console.write.$values["Scope"]()($$$1, $$$2))
-}.bind($root);
-var $$$4 = $primitive('Text', function() {
-    return "Test:"
+var $$$3 = $primitive('Number', function() {
+    return 5
 }.bind($root));
-var $$$5 = function() {
-    return (Console.write.$values["Scope"]()($$$4, this.$self("foo")))
+var $$$4 = $primitive('Number', function() {
+    return 0
+}.bind($root));
+var $$$5 = $primitive('Array', function() {
+    return []
+}.bind($root));
+var $$$6 = $primitive('Number', function() {
+    return 0
+}.bind($root));
+var $$$7 = $primitive('Number', function() {
+    return 0
+}.bind($root));
+var $$$8 = $primitive('Number', function() {
+    return 1
+}.bind($root));
+var $$$9 = $primitive('Text', function() {
+    return "Result:"
+}.bind($root));
+var $$$10 = function() {
+    return (Console.write.$values["Scope"]()($$$9, this.$self("result")))
 }.bind($root);; /* Begin ControlCode: 0 */
-$root.$self("private", "foo", $$$0);
-$$$3();
-$$$5();
+$root.$self("var", "i", $$$0);
+$root.$self("var", "max", $$$1);
+$root.$self("var", "a", $$$2);
+$root.$self("var", "b", $$$3);
+$root.$self("var", "result", $$$4);
+$root.$self("var", "multiples", $$$5);
+(function() {
+    while ($primitive("Boolean", function(val) {
+        return function() {
+            return val;
+        }
+    }(this.$self("i").$values["Number"]() < this.$self("max").$values["Number"]())).$values["Boolean"]()) {
+        (function() {
+            (function() {
+                if ($primitive("Boolean", function(val) {
+                    return function() {
+                        return val;
+                    }
+                }(($compare($Math.modulus(this.$self("i"), this.$self("a")), $$$6)).$values["Boolean"]() || ($compare($Math.modulus(this.$self("i"), this.$self("b")), $$$7)).$values["Boolean"]())).$values["Boolean"]()) {
+                    return (function() {
+                        return this.$self("result").$values["Number"] = function(val) {
+                            return function() {
+                                return val;
+                            }
+                        }(this.$self("result").$values["Number"]() + this.$self("i").$values["Number"]());
+
+                    }.bind(this)());
+                }
+            }.bind(this)())
+            return this.$self("i").$values["Number"] = function(val) {
+                return function() {
+                    return val;
+                }
+            }(this.$self("i").$values["Number"]() + $$$8.$values["Number"]());;
+
+        }.bind(this)());
+    }
+}.bind(this)());
+$$$10();
