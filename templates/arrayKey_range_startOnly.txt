@@ -1,1 +1,1 @@
-.substr(%start%)
+.$substr(%start%.$values["Number"]())

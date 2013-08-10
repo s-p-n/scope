@@ -1,0 +1,1 @@
+.$substr(%selector%.$values["Number"](), %selector%.$values["Number"]())

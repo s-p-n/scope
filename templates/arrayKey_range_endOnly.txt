@@ -1,1 +1,1 @@
-.substr(0, %end% + 1)
+.$substr(0, %end%.$values["Number"]())

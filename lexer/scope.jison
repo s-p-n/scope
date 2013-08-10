@@ -682,6 +682,11 @@ text
             $1
         ]);
     }
+    | string '[' arrayKey ']' {
+        $$ = new yy.scopeAst(yy,"text",[
+            $1, $3
+        ]);
+    }
     ;
 
 program

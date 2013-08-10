@@ -1,3 +1,4 @@
+/*
 Array.prototype.substr = function substr (start, end) {
     var i, result = [];
     if (end === void 0) {
@@ -19,3 +20,4 @@ Array.prototype.substr = function substr (start, end) {
     }
     return result;
 }
+*/
