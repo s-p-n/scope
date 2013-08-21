@@ -4,7 +4,7 @@ var i = 0;
 var c = 0;
 var a = 1;
 var b = 2;
-while (a lt fin):
+while (a < fin):
 	if (a % 2 is 0):
 		result += a;
 	end;
