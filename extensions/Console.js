@@ -33,29 +33,36 @@ var Console = (function Console () {
     }
 
     return {
-        write: {
-            $types: ["Scope"],
-            $values: {
-                "Scope": function () {
-                    return function write() {
-                        var i = 0, result = [], subResult, key, val;
-                        while (arguments[i] !== void 0) {
-                            //console.log("Arg:", arguments[i]);
-                            result.push(printValues(arguments[i]));
-                            i += 1;
+        $types: ["Instance"],
+        $values: {
+            "Instance": function () {
+                return {
+                    write: {
+                        $types: ["Scope"],
+                        $values: {
+                            "Scope": function () {
+                                return function write() {
+                                    var i = 0, result = [], subResult, key, val;
+                                    while (arguments[i] !== void 0) {
+                                        //console.log("Arg:", arguments[i]);
+                                        result.push(printValues(arguments[i]));
+                                        i += 1;
+                                    }
+                                    console.log.apply(console, result);
+                                }
+                            }
                         }
-                        console.log.apply(console, result);
-                    }
-                }
-            }
-        },
-        read: {
-            $types: ["Scope"],
-            $values: {
-                "Scope": function () {
-                    return function read (fn) {
-                        rl.resume();
-                        rl.on('line', callback(fn));
+                    },
+                    read: {
+                        $types: ["Scope"],
+                        $values: {
+                            "Scope": function () {
+                                return function read (fn) {
+                                    rl.resume();
+                                    rl.on('line', callback(fn));
+                                }
+                            }
+                        }
                     }
                 }
             }

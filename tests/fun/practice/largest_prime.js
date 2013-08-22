@@ -35,6 +35,11 @@ Array.prototype.has = function(term) {
 /// > Shims
 
 function $self(access, name, value) {
+    var line;
+    if (typeof name === "number") {
+        line = name;
+        name = void 0;
+    }
     if (name === void 0) {
         name = access;
         if (typeof this[name] !== "undefined") {
@@ -49,7 +54,7 @@ function $self(access, name, value) {
             }
             parent = parent.$parent.$values["Instance"]();
         }
-        throw "Undefined variable/property: " + name;
+        throw "Undefined variable/property: " + name + " on line: " + line;
     }
     if (value === void 0) {
         value = name;
@@ -125,11 +130,41 @@ var $i;
 for ($i in $root) {
     this[$i] = $root[$i];
 }
+var $array = (function() {
+    var assocArray = function() {
+        var obj = {};
+        Object.defineProperty(obj, 'length', {
+            enumerable: false,
+            value: 0,
+            configurable: false,
+            writable: true
+        });
+        return obj;
+    };
+    return function $array(arr) {
+        var n, i;
+        if (arr instanceof Array) {
+            //console.log("$array:", arr);
+            return $primitive("Array", function() {
+                return arr;
+            });
+        }
+        n = assocArray();
+        for (i in arr) {
+            n[i] = arr[i];
+            n.length += 1;
+        }
+        return $primitive("Array", function() {
+            return n;
+        });
+    }
+}());
 var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = {
     $types: ["Scope"],
@@ -237,7 +272,8 @@ var $compare = function() {
         }
         for (i = 0; i < a.$types.length; i += 1) {
             if (b.$types.indexOf(a.$types[i]) > -1 &&
-                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())
+            ) {
                 continue;
             }
             result = false;
@@ -251,7 +287,7 @@ var $compare = function() {
     }
 }();
 var Text = {
-    $types: ["Scope"],
+    $types: ["Scope", "Instance"],
     $values: {
         "Scope": function() {
             return function Text(primitive, fromType) {
@@ -278,6 +314,88 @@ var Text = {
                         "Text(Any:Primitive [, Text:fromType])), cannot be converted to Text.";
                 }
                 return $primitive("Text", result);
+            }
+        },
+        "Instance": function() {
+            return {
+                "split": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            return function split(txt, sep, maxSplit) {
+                                var hasMax = false;
+                                var result = [];
+                                var i;
+                                txt = txt.$values["Text"]();
+                                return $primitive("Text", f(txt.split(sep, maxSplit)));
+                                /*
+                                if (typeof sep === "undefined") {
+                                    sep = /\s+/;
+                                } else {
+                                    sep = sep.$values["Text"]();
+                                }
+
+                                if (typeof maxSplit === "undefined") {
+                                    hasMax = true
+                                }
+                                for (i = findNext(txt, sep); i !== -1; i = findNext(txt, sep)) {
+                                    result.push($primitive("Text", f(txt.substr(0, i))));
+                                    txt = txt.substr(i + 1);
+                                }
+                                result.push($primitive("Text", f(txt)));
+                                return {
+                                    $types: ["Array"],
+                                    $values: {
+                                        "Array": function() {
+                                            return result;
+                                        }
+                                    }
+                                };
+                                */
+
+                            }
+                        }
+                    }
+                },
+                "rsplit": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            String.prototype.rsplit = function(sep, maxsplit) {
+                                var split = this.split(sep);
+                                return maxsplit ? [split.slice(0, -maxsplit).join(sep)].concat(split.slice(-maxsplit)) : split;
+                            };
+                            return function rsplit(txt, sep, maxSplit) {
+                                var maxSplit = maxSplit || 0;
+                                var result = [];
+                                var i;
+                                var txt = txt.$values["Text"]().rsplit(sep.$values["Text"](), maxSplit.$values["Number"]());
+                                for (i = 0; i < txt.length; i += 1) {
+                                    txt[i] = $primitive("Text", f(txt[i]));
+                                }
+                                return $array(txt);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -421,7 +539,8 @@ var $concat = function $concat(a, b, line) {
         };
 
     if (compatible(a, b).$values["Boolean"]() ||
-        compatible(b, a).$values["Boolean"]()) {
+        compatible(b, a).$values["Boolean"]()
+    ) {
         if (compatible(a, concatTestBoth).$values["Boolean"]()) {
             return $primitive(["Text", "Array"], {
                 "Text": concatFunc(txtConcat(a, b)),
@@ -430,15 +549,18 @@ var $concat = function $concat(a, b, line) {
         }
         if (compatible(compatTestText, a).$values["Boolean"]()) {
             return $primitive("Text",
-                concatFunc(txtConcat(a, b)));
+                concatFunc(txtConcat(a, b))
+            );
         } else if (compatible(compatTestArray, a).$values["Boolean"]()) {
             return $primitive("Array",
-                concatFunc(arrConcat(a, b)));
+                concatFunc(arrConcat(a, b))
+            );
         }
     }
     $runtimeError(line,
         "Type Error:  Compatible Text, Array or Both expected, got: %what%",
-        a.$types + " and " + b.types);
+        a.$types + " and " + b.types
+    );
 };
 var $$$0 = $primitive('Number', function() {
     return 600851475143
@@ -456,7 +578,7 @@ var $$$4 = $primitive('Text', function() {
     return "Largest Prime: "
 }.bind($root));
 var $$$5 = function() {
-    return (Text.$values["Scope"]()(this.$self("n")))
+    return (Text.$values["Scope"]()(this.$self("n", 11)))
 }.bind($root);
 var $$$6 = function() {
     return (print.$values["Scope"]()($concat($$$4, $$$5(), 11)))
@@ -468,24 +590,24 @@ $root.$self("var", "z", $$$1);
         return function() {
             return val;
         }
-    }($Math.multiply(this.$self("z"), this.$self("z")).$values["Number"]() <= this.$self("n").$values["Number"]())).$values["Boolean"]()) {
+    }($Math.multiply(this.$self("z", 3), this.$self("z", 3)).$values["Number"]() <= this.$self("n", 3).$values["Number"]())).$values["Boolean"]()) {
         (function() {
             return (function() {
-                if ($compare($Math.modulus(this.$self("n"), this.$self("z")), $$$2).$values["Boolean"]()) {
+                if ($compare($Math.modulus(this.$self("n", 4), this.$self("z", 4)), $$$2).$values["Boolean"]()) {
                     return (function() {
-                        return this.$self("n").$values["Number"] = function(val) {
+                        return this.$self("n", 5).$values["Number"] = function(val) {
                             return function() {
                                 return val;
                             }
-                        }(this.$self("n").$values["Number"]() / this.$self("z").$values["Number"]());;
+                        }(this.$self("n", 5).$values["Number"]() / this.$self("z", 5).$values["Number"]());;
                     }.bind(this)());
                 } else {
                     return (function() {
-                        return this.$self("z").$values["Number"] = function(val) {
+                        return this.$self("z", 7).$values["Number"] = function(val) {
                             return function() {
                                 return val;
                             }
-                        }(this.$self("z").$values["Number"]() + $$$3.$values["Number"]());;
+                        }(this.$self("z", 7).$values["Number"]() + $$$3.$values["Number"]());;
                     }.bind(this)());
                 }
             }.bind(this)());;

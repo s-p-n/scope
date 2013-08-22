@@ -35,6 +35,11 @@ Array.prototype.has = function(term) {
 /// > Shims
 
 function $self(access, name, value) {
+    var line;
+    if (typeof name === "number") {
+        line = name;
+        name = void 0;
+    }
     if (name === void 0) {
         name = access;
         if (typeof this[name] !== "undefined") {
@@ -49,7 +54,7 @@ function $self(access, name, value) {
             }
             parent = parent.$parent.$values["Instance"]();
         }
-        throw "Undefined variable/property: " + name;
+        throw "Undefined variable/property: " + name + " on line: " + line;
     }
     if (value === void 0) {
         value = name;
@@ -153,6 +158,35 @@ var Type = {
         }
     }
 };
+var $array = (function() {
+    var assocArray = function() {
+        var obj = {};
+        Object.defineProperty(obj, 'length', {
+            enumerable: false,
+            value: 0,
+            configurable: false,
+            writable: true
+        });
+        return obj;
+    };
+    return function $array(arr) {
+        var n, i;
+        if (arr instanceof Array) {
+            //console.log("$array:", arr);
+            return $primitive("Array", function() {
+                return arr;
+            });
+        }
+        n = assocArray();
+        for (i in arr) {
+            n[i] = arr[i];
+            n.length += 1;
+        }
+        return $primitive("Array", function() {
+            return n;
+        });
+    }
+}());
 var $Math = {
     add: function add(a, b) {
         return $primitive("Number", function(val) {
@@ -191,7 +225,7 @@ var $Math = {
     }
 };
 var Text = {
-    $types: ["Scope"],
+    $types: ["Scope", "Instance"],
     $values: {
         "Scope": function() {
             return function Text(primitive, fromType) {
@@ -218,6 +252,88 @@ var Text = {
                         "Text(Any:Primitive [, Text:fromType])), cannot be converted to Text.";
                 }
                 return $primitive("Text", result);
+            }
+        },
+        "Instance": function() {
+            return {
+                "split": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            return function split(txt, sep, maxSplit) {
+                                var hasMax = false;
+                                var result = [];
+                                var i;
+                                txt = txt.$values["Text"]();
+                                return $primitive("Text", f(txt.split(sep, maxSplit)));
+                                /*
+                                if (typeof sep === "undefined") {
+                                    sep = /\s+/;
+                                } else {
+                                    sep = sep.$values["Text"]();
+                                }
+
+                                if (typeof maxSplit === "undefined") {
+                                    hasMax = true
+                                }
+                                for (i = findNext(txt, sep); i !== -1; i = findNext(txt, sep)) {
+                                    result.push($primitive("Text", f(txt.substr(0, i))));
+                                    txt = txt.substr(i + 1);
+                                }
+                                result.push($primitive("Text", f(txt)));
+                                return {
+                                    $types: ["Array"],
+                                    $values: {
+                                        "Array": function() {
+                                            return result;
+                                        }
+                                    }
+                                };
+                                */
+
+                            }
+                        }
+                    }
+                },
+                "rsplit": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            String.prototype.rsplit = function(sep, maxsplit) {
+                                var split = this.split(sep);
+                                return maxsplit ? [split.slice(0, -maxsplit).join(sep)].concat(split.slice(-maxsplit)) : split;
+                            };
+                            return function rsplit(txt, sep, maxSplit) {
+                                var maxSplit = maxSplit || 0;
+                                var result = [];
+                                var i;
+                                var txt = txt.$values["Text"]().rsplit(sep.$values["Text"](), maxSplit.$values["Number"]());
+                                for (i = 0; i < txt.length; i += 1) {
+                                    txt[i] = $primitive("Text", f(txt[i]));
+                                }
+                                return $array(txt);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -273,7 +389,7 @@ var $$$0 = $primitive('Number', function() {
     return 19
 }.bind($root));
 var $$$1 = function() {
-    return (this.$self("diff21").$values["Scope"]()($$$0))
+    return (this.$self("diff21", 14).$values["Scope"]()($$$0))
 }.bind($root);
 var $$$2 = function() {
     return (print.$values["Scope"]()($$$1()))
@@ -282,7 +398,7 @@ var $$$3 = $primitive('Number', function() {
     return 10
 }.bind($root));
 var $$$4 = function() {
-    return (this.$self("diff21").$values["Scope"]()($$$3))
+    return (this.$self("diff21", 15).$values["Scope"]()($$$3))
 }.bind($root);
 var $$$5 = function() {
     return (print.$values["Scope"]()($$$4()))
@@ -291,7 +407,7 @@ var $$$6 = $primitive('Number', function() {
     return 21
 }.bind($root));
 var $$$7 = function() {
-    return (this.$self("diff21").$values["Scope"]()($$$6))
+    return (this.$self("diff21", 16).$values["Scope"]()($$$6))
 }.bind($root);
 var $$$8 = function() {
     return (print.$values["Scope"]()($$$7()))
@@ -300,7 +416,7 @@ var $$$9 = $primitive('Number', function() {
     return 44
 }.bind($root));
 var $$$10 = function() {
-    return (this.$self("diff21").$values["Scope"]()($$$9))
+    return (this.$self("diff21", 17).$values["Scope"]()($$$9))
 }.bind($root);
 var $$$11 = function() {
     return (print.$values["Scope"]()($$$10()))
@@ -308,7 +424,7 @@ var $$$11 = function() {
 $root.$self("var", "diff21", /* Starting Scope:1 */ $primitive("Scope", function() {
     return function() {
         var $returnMulti = [],
-            $temp;
+            $temp, $val;
         var $$$0 = $primitive('Number', function() {
             return 21
         }.bind(this));
@@ -334,13 +450,13 @@ $root.$self("var", "diff21", /* Starting Scope:1 */ $primitive("Scope", function
                 return function() {
                     return val;
                 }
-            }(this.$self("n").$values["Number"]() > $$$0.$values["Number"]())).$values["Boolean"]()) {
+            }(this.$self("n", 7).$values["Number"]() > $$$0.$values["Number"]())).$values["Boolean"]()) {
                 return (function() {
-                    return $Math.multiply(($Math.subtract(this.$self("n"), $$$1)), $$$2);;
+                    return $Math.multiply(($Math.subtract(this.$self("n", 8), $$$1)), $$$2);;
                 }.bind(this)());
             } else {
                 return (function() {
-                    return $Math.subtract($$$3, this.$self("n"));;
+                    return $Math.subtract($$$3, this.$self("n", 10));;
                 }.bind(this)());
             }
         }.bind(this)()));

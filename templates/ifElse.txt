@@ -1,0 +1,7 @@
+		}.bind(this)());
+	} else {
+		return %ifBegin%
+			%controlBlock%
+		%ifElse%
+	}
+}.bind(this)())

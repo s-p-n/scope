@@ -35,6 +35,11 @@ Array.prototype.has = function(term) {
 /// > Shims
 
 function $self(access, name, value) {
+    var line;
+    if (typeof name === "number") {
+        line = name;
+        name = void 0;
+    }
     if (name === void 0) {
         name = access;
         if (typeof this[name] !== "undefined") {
@@ -49,7 +54,7 @@ function $self(access, name, value) {
             }
             parent = parent.$parent.$values["Instance"]();
         }
-        throw "Undefined variable/property: " + name;
+        throw "Undefined variable/property: " + name + " on line: " + line;
     }
     if (value === void 0) {
         value = name;
@@ -125,6 +130,35 @@ var $i;
 for ($i in $root) {
     this[$i] = $root[$i];
 }
+var $array = (function() {
+    var assocArray = function() {
+        var obj = {};
+        Object.defineProperty(obj, 'length', {
+            enumerable: false,
+            value: 0,
+            configurable: false,
+            writable: true
+        });
+        return obj;
+    };
+    return function $array(arr) {
+        var n, i;
+        if (arr instanceof Array) {
+            //console.log("$array:", arr);
+            return $primitive("Array", function() {
+                return arr;
+            });
+        }
+        n = assocArray();
+        for (i in arr) {
+            n[i] = arr[i];
+            n.length += 1;
+        }
+        return $primitive("Array", function() {
+            return n;
+        });
+    }
+}());
 var $Math = {
     add: function add(a, b) {
         return $primitive("Number", function(val) {
@@ -153,9 +187,17 @@ var $Math = {
                 return val;
             }
         }(a.$values["Number"]() / b.$values["Number"]()));
+    },
+    modulus: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(a.$values["Number"]() % b.$values["Number"]()));
     }
 };
 var $factorial = function $factorial(n) {
+    n = n.$values["Number"]();
     var i, result = n;
     if (n < 0) {
         for (i = -1; i > n; i -= 1) {
@@ -166,7 +208,9 @@ var $factorial = function $factorial(n) {
             result *= i;
         }
     }
-    return result;
+    return $primitive("Number", function() {
+        return result
+    });
 }
 var $$$0 = $primitive('Number', function() {
     return 8

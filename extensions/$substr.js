@@ -1,38 +1,78 @@
-String.prototype.substr = Array.prototype.substr = function substr (start, end) {
-	var i,
-		newEnd = end,
-		len = this.length,
-		result = "";
-	if (end < 0 && len > 0) {
-		newEnd = end + len;
-	}
-	if (start === end) {
-		return this[newEnd];
-	}
-	for (i = start; newEnd < this.length && i < newEnd; i += 1) {
-		result += this[i];
-	}
-	return result;
-}
-
-Object.prototype.$substr = function $substr(start, end) {
-	var result = {
-		$types: [],
-		$values: {}
-	};
-	var what = this;
-	var f = function (val) {
-		return function () {
-			return val;
+(function () {
+	var $substrFunc = function (start, end, returnIndex) {
+		var i,
+			newEnd,
+			len = this.length,
+			result = "";
+		if (end === "complete") {
+			end = len;
 		}
+		newEnd = end;
+		if (end < 0 && len > 0) {
+			newEnd = end + len;
+		}
+		//console.log("substr:", start, newEnd, returnIndex);
+		if (returnIndex) {
+			//console.log("arraySubstr returnIndex is true:", newEnd, this[newEnd]);
+			return this[newEnd];
+		}
+		for (i = start; newEnd > start && i < newEnd && i < len; i += 1) {
+			result += this[i];
+		}
+		return result;
 	};
-	if (what.$values.hasOwnProperty("Array")) {
-		result.$types.push("Array");
-		result.$values["Array"] = f(what.$values["Array"]().substr(start, end));
+	Object.defineProperty(Array.prototype, "$substr_arr", {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: $substrFunc
+	});
+	Object.defineProperty(String.prototype, "$substr_txt", {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: $substrFunc
+	});
+}());
+
+
+Object.defineProperty(Object.prototype, "$substr", {
+	enumerable: false,
+	configurable: false,
+	writable: false,
+	value: function $substr(start, end) {
+		var result = {
+			$types: [],
+			$values: {}
+		};
+		var returnIndex = false;
+		var what = this;
+		var f = function (val) {
+			return function () {
+				return val;
+			}
+		};
+		//console.log("$substr:", start, end);
+		
+		if (end === void 0) {
+			end = start;
+			returnIndex = true;
+		}
+		//console.log("what:", what);
+		//console.log("what values:", what.$values);
+		//console.log("returnIndex:", returnIndex);
+		if (what.$values.hasOwnProperty("Array")) {
+			//console.log("has Array", what.$values["Array"]().substr, [].substr);
+			result = what.$values["Array"]().$substr_arr(start, end, returnIndex);
+			if (result instanceof Array) {
+				result = $array(result);
+			}
+		} else if (what.$values.hasOwnProperty("Text")) {
+			//console.log("has Text", what.$values["Text"]());
+			result.$types.push("Text");
+			result.$values["Text"] = f(what.$values["Text"]().$substr_txt(start, end, returnIndex));
+		}
+		//console.log("$substr result:", result);
+		return result;
 	}
-	if (what.$values.hasOwnProperty("Text")) {
-		result.$types.push("Text");
-		result.$values["Text"] = f(what.$values["Text"]().substr(start, end));
-	}
-	return result;
-}
+});

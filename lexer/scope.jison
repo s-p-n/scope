@@ -405,6 +405,11 @@ invoke
             $1, $2, $3
         ]);
     }
+    | invoke '[' arrayKey ']' {
+        $$ = new yy.scopeAst(yy,"invoke",[
+            $1, $2, $3
+        ]);
+    }
     ;
 
 invokeParam

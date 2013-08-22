@@ -35,6 +35,11 @@ Array.prototype.has = function(term) {
 /// > Shims
 
 function $self(access, name, value) {
+    var line;
+    if (typeof name === "number") {
+        line = name;
+        name = void 0;
+    }
     if (name === void 0) {
         name = access;
         if (typeof this[name] !== "undefined") {
@@ -49,7 +54,7 @@ function $self(access, name, value) {
             }
             parent = parent.$parent.$values["Instance"]();
         }
-        throw "Undefined variable/property: " + name;
+        throw "Undefined variable/property: " + name + " on line: " + line;
     }
     if (value === void 0) {
         value = name;
@@ -125,6 +130,35 @@ var $i;
 for ($i in $root) {
     this[$i] = $root[$i];
 }
+var $array = (function() {
+    var assocArray = function() {
+        var obj = {};
+        Object.defineProperty(obj, 'length', {
+            enumerable: false,
+            value: 0,
+            configurable: false,
+            writable: true
+        });
+        return obj;
+    };
+    return function $array(arr) {
+        var n, i;
+        if (arr instanceof Array) {
+            //console.log("$array:", arr);
+            return $primitive("Array", function() {
+                return arr;
+            });
+        }
+        n = assocArray();
+        for (i in arr) {
+            n[i] = arr[i];
+            n.length += 1;
+        }
+        return $primitive("Array", function() {
+            return n;
+        });
+    }
+}());
 var $compare = function() {
     var equals = function(a, b) {
         var p;
@@ -173,7 +207,8 @@ var $compare = function() {
         }
         for (i = 0; i < a.$types.length; i += 1) {
             if (b.$types.indexOf(a.$types[i]) > -1 &&
-                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())
+            ) {
                 continue;
             }
             result = false;
@@ -190,7 +225,8 @@ var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = {
     $types: ["Scope"],
@@ -214,7 +250,7 @@ var Type = {
     }
 };
 var Text = {
-    $types: ["Scope"],
+    $types: ["Scope", "Instance"],
     $values: {
         "Scope": function() {
             return function Text(primitive, fromType) {
@@ -241,6 +277,88 @@ var Text = {
                         "Text(Any:Primitive [, Text:fromType])), cannot be converted to Text.";
                 }
                 return $primitive("Text", result);
+            }
+        },
+        "Instance": function() {
+            return {
+                "split": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            return function split(txt, sep, maxSplit) {
+                                var hasMax = false;
+                                var result = [];
+                                var i;
+                                txt = txt.$values["Text"]();
+                                return $primitive("Text", f(txt.split(sep, maxSplit)));
+                                /*
+                                if (typeof sep === "undefined") {
+                                    sep = /\s+/;
+                                } else {
+                                    sep = sep.$values["Text"]();
+                                }
+
+                                if (typeof maxSplit === "undefined") {
+                                    hasMax = true
+                                }
+                                for (i = findNext(txt, sep); i !== -1; i = findNext(txt, sep)) {
+                                    result.push($primitive("Text", f(txt.substr(0, i))));
+                                    txt = txt.substr(i + 1);
+                                }
+                                result.push($primitive("Text", f(txt)));
+                                return {
+                                    $types: ["Array"],
+                                    $values: {
+                                        "Array": function() {
+                                            return result;
+                                        }
+                                    }
+                                };
+                                */
+
+                            }
+                        }
+                    }
+                },
+                "rsplit": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            String.prototype.rsplit = function(sep, maxsplit) {
+                                var split = this.split(sep);
+                                return maxsplit ? [split.slice(0, -maxsplit).join(sep)].concat(split.slice(-maxsplit)) : split;
+                            };
+                            return function rsplit(txt, sep, maxSplit) {
+                                var maxSplit = maxSplit || 0;
+                                var result = [];
+                                var i;
+                                var txt = txt.$values["Text"]().rsplit(sep.$values["Text"](), maxSplit.$values["Number"]());
+                                for (i = 0; i < txt.length; i += 1) {
+                                    txt[i] = $primitive("Text", f(txt[i]));
+                                }
+                                return $array(txt);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -318,31 +436,38 @@ var Console = (function Console() {
     }
 
     return {
-        write: {
-            $types: ["Scope"],
-            $values: {
-                "Scope": function() {
-                    return function write() {
-                        var i = 0,
-                            result = [],
-                            subResult, key, val;
-                        while (arguments[i] !== void 0) {
-                            //console.log("Arg:", arguments[i]);
-                            result.push(printValues(arguments[i]));
-                            i += 1;
+        $types: ["Instance"],
+        $values: {
+            "Instance": function() {
+                return {
+                    write: {
+                        $types: ["Scope"],
+                        $values: {
+                            "Scope": function() {
+                                return function write() {
+                                    var i = 0,
+                                        result = [],
+                                        subResult, key, val;
+                                    while (arguments[i] !== void 0) {
+                                        //console.log("Arg:", arguments[i]);
+                                        result.push(printValues(arguments[i]));
+                                        i += 1;
+                                    }
+                                    console.log.apply(console, result);
+                                }
+                            }
                         }
-                        console.log.apply(console, result);
-                    }
-                }
-            }
-        },
-        read: {
-            $types: ["Scope"],
-            $values: {
-                "Scope": function() {
-                    return function read(fn) {
-                        rl.resume();
-                        rl.on('line', callback(fn));
+                    },
+                    read: {
+                        $types: ["Scope"],
+                        $values: {
+                            "Scope": function() {
+                                return function read(fn) {
+                                    rl.resume();
+                                    rl.on('line', callback(fn));
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -415,52 +540,52 @@ var $$$2 = $primitive('Text', function() {
     return "A.) Good"
 }.bind($root));
 var $$$3 = function() {
-    return (Console.write.$values["Scope"]()($$$2))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$2))
 }.bind($root);
 var $$$4 = $primitive('Text', function() {
     return "A.) Bad"
 }.bind($root));
 var $$$5 = function() {
-    return (Console.write.$values["Scope"]()($$$4))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$4))
 }.bind($root);
 var $$$6 = function() {
-    return (this.$self("Four").$values["Scope"]()())
+    return (this.$self("Four", 44).$values["Scope"]()())
 }.bind($root);
 var $$$7 = function() {
-    return (this.$self("Five").$values["Scope"]()())
+    return (this.$self("Five", 44).$values["Scope"]()())
 }.bind($root);
 var $$$8 = $primitive('Text', function() {
     return "B.) Bad"
 }.bind($root));
 var $$$9 = function() {
-    return (Console.write.$values["Scope"]()($$$8))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$8))
 }.bind($root);
 var $$$10 = $primitive('Text', function() {
     return "B.) Good"
 }.bind($root));
 var $$$11 = function() {
-    return (Console.write.$values["Scope"]()($$$10))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$10))
 }.bind($root);
 var $$$12 = $primitive('Number', function() {
     return 4
 }.bind($root));
 var $$$13 = function() {
-    return (this.$self("Four").$values["Scope"]()())
+    return (this.$self("Four", 50).$values["Scope"]()())
 }.bind($root);
 var $$$14 = $primitive('Text', function() {
     return "C.) Good"
 }.bind($root));
 var $$$15 = function() {
-    return (Console.write.$values["Scope"]()($$$14))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$14))
 }.bind($root);
 var $$$16 = $primitive('Text', function() {
     return "C.) Bad"
 }.bind($root));
 var $$$17 = function() {
-    return (Console.write.$values["Scope"]()($$$16))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$16))
 }.bind($root);
 var $$$18 = function() {
-    return (this.$self("Four").$values["Scope"]()())
+    return (this.$self("Four", 56).$values["Scope"]()())
 }.bind($root);
 var $$$19 = function() {
     return (Type.$values["Scope"]()($$$18()))
@@ -472,19 +597,19 @@ var $$$21 = $primitive('Text', function() {
     return "D.) Good"
 }.bind($root));
 var $$$22 = function() {
-    return (Console.write.$values["Scope"]()($$$21))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$21))
 }.bind($root);
 var $$$23 = $primitive('Text', function() {
     return "D.) Bad"
 }.bind($root));
 var $$$24 = function() {
-    return (Console.write.$values["Scope"]()($$$23))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$23))
 }.bind($root);
 var $$$25 = $primitive('Number', function() {
     return 3
 }.bind($root));
 var $$$26 = function() {
-    return (this.$self("Four").$values["Scope"]()())
+    return (this.$self("Four", 62).$values["Scope"]()())
 }.bind($root);
 var $$$27 = $primitive('Number', function() {
     return 7
@@ -493,22 +618,22 @@ var $$$28 = $primitive('Text', function() {
     return "E.) Good"
 }.bind($root));
 var $$$29 = function() {
-    return (Console.write.$values["Scope"]()($$$28))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$28))
 }.bind($root);
 var $$$30 = $primitive('Text', function() {
     return "E.) Bad"
 }.bind($root));
 var $$$31 = function() {
-    return (Console.write.$values["Scope"]()($$$30))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$30))
 }.bind($root);
 var $$$32 = function() {
-    return (this.$self("Four").$values["Scope"]()())
+    return (this.$self("Four", 68).$values["Scope"]()())
 }.bind($root);
 var $$$33 = function() {
     return (Type.$values["Scope"]()($$$32()))
 }.bind($root);
 var $$$34 = function() {
-    return (this.$self("Five").$values["Scope"]()())
+    return (this.$self("Five", 68).$values["Scope"]()())
 }.bind($root);
 var $$$35 = function() {
     return (Type.$values["Scope"]()($$$34()))
@@ -517,16 +642,16 @@ var $$$36 = $primitive('Text', function() {
     return "F.) Good"
 }.bind($root));
 var $$$37 = function() {
-    return (Console.write.$values["Scope"]()($$$36))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$36))
 }.bind($root);
 var $$$38 = $primitive('Text', function() {
     return "F.) Bad"
 }.bind($root));
 var $$$39 = function() {
-    return (Console.write.$values["Scope"]()($$$38))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$38))
 }.bind($root);
 var $$$40 = function() {
-    return (this.$self("Five").$values["Scope"]()())
+    return (this.$self("Five", 75).$values["Scope"]()())
 }.bind($root);
 var $$$41 = $primitive('Number', function() {
     return 123
@@ -538,19 +663,19 @@ var $$$43 = $primitive('Text', function() {
     return "G.) Good"
 }.bind($root));
 var $$$44 = function() {
-    return (Console.write.$values["Scope"]()($$$43))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$43))
 }.bind($root);
 var $$$45 = $primitive('Text', function() {
     return "G.) Bad"
 }.bind($root));
 var $$$46 = function() {
-    return (Console.write.$values["Scope"]()($$$45))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$45))
 }.bind($root);
 var $$$47 = $primitive('Number', function() {
     return 123
 }.bind($root));
 var $$$48 = function() {
-    return (this.$self("Four").$values["Scope"]()())
+    return (this.$self("Four", 81).$values["Scope"]()())
 }.bind($root);
 var $$$49 = function() {
     return (Compatible.$values["Scope"]()($$$47, $$$48()))
@@ -559,22 +684,22 @@ var $$$50 = $primitive('Text', function() {
     return "H.) Bad"
 }.bind($root));
 var $$$51 = function() {
-    return (Console.write.$values["Scope"]()($$$50))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$50))
 }.bind($root);
 var $$$52 = $primitive('Text', function() {
     return "H.) Good"
 }.bind($root));
 var $$$53 = function() {
-    return (Console.write.$values["Scope"]()($$$52))
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$52))
 }.bind($root);; /* Begin ControlCode: 0 */
 $root.$self("var", "Five", /* Starting Scope:1 */ $primitive("Scope", function() {
     return function() {
         var $returnMulti = [],
-            $temp;
-        $$$0 = $primitive('Text', function() {
+            $temp, $val;
+        var $$$0 = $primitive('Text', function() {
             return 'Five'
         }.bind(this));
-        $$$1 = $primitive('Number', function() {
+        var $$$1 = $primitive('Number', function() {
             return 5
         }.bind(this));
         /* Begin ControlCode: 1 */
@@ -582,16 +707,30 @@ $root.$self("var", "Five", /* Starting Scope:1 */ $primitive("Scope", function()
             $types: ["Text"],
             $values: {}
         };
+        $val = $$$0;
         for ($i = 0; $i < $temp.$types.length; $i += 1) {
-            $temp.$values[$temp.$types[$i]] = $$$0.$values[$temp.$types[$i]];
+            if ($val.$values["Text"] !== void 0) {
+                $temp.$values["Text"] = $val.$values["Text"];
+            } else if ($val.$values["Scope"] !== void 0) {
+                $temp.$values["Text"] = function() {
+                    return $val.$values["Scope"]()().$values["Text"]();
+                }
+            }
         }
         $returnMulti.push($temp);;
         $temp = {
             $types: ["Number"],
             $values: {}
         };
+        $val = $$$1;
         for ($i = 0; $i < $temp.$types.length; $i += 1) {
-            $temp.$values[$temp.$types[$i]] = $$$1.$values[$temp.$types[$i]];
+            if ($val.$values["Number"] !== void 0) {
+                $temp.$values["Number"] = $val.$values["Number"];
+            } else if ($val.$values["Scope"] !== void 0) {
+                $temp.$values["Number"] = function() {
+                    return $val.$values["Scope"]()().$values["Number"]();
+                }
+            }
         }
         $returnMulti.push($temp);;
         $returnMulti.push($primitive("Instance", function(value) {
@@ -638,11 +777,11 @@ $root.$self("var", "Five", /* Starting Scope:1 */ $primitive("Scope", function()
 $root.$self("var", "Five", /* Starting Scope:1 */ $primitive("Scope", function() {
     return function() {
         var $returnMulti = [],
-            $temp;
-        $$$0 = $primitive('Text', function() {
+            $temp, $val;
+        var $$$0 = $primitive('Text', function() {
             return "Five"
         }.bind(this));
-        $$$1 = $primitive('Number', function() {
+        var $$$1 = $primitive('Number', function() {
             return 5
         }.bind(this));
         /* Begin ControlCode: 1 */
@@ -650,8 +789,15 @@ $root.$self("var", "Five", /* Starting Scope:1 */ $primitive("Scope", function()
             $types: ["Text"],
             $values: {}
         };
+        $val = $$$0;
         for ($i = 0; $i < $temp.$types.length; $i += 1) {
-            $temp.$values[$temp.$types[$i]] = $$$0.$values[$temp.$types[$i]];
+            if ($val.$values["Text"] !== void 0) {
+                $temp.$values["Text"] = $val.$values["Text"];
+            } else if ($val.$values["Scope"] !== void 0) {
+                $temp.$values["Text"] = function() {
+                    return $val.$values["Scope"]()().$values["Text"]();
+                }
+            }
         }
         $returnMulti.push($temp);;
         if (typeof $returnMulti === "undefined") {
@@ -706,11 +852,11 @@ $root.$self("var", "Five", /* Starting Scope:1 */ $primitive("Scope", function()
 $root.$self("var", "Four", /* Starting Scope:1 */ $primitive("Scope", function() {
     return function() {
         var $returnMulti = [],
-            $temp;
-        $$$0 = $primitive('Text', function() {
+            $temp, $val;
+        var $$$0 = $primitive('Text', function() {
             return "Four"
         }.bind(this));
-        $$$1 = $primitive('Number', function() {
+        var $$$1 = $primitive('Number', function() {
             return 4
         }.bind(this));
         /* Begin ControlCode: 1 */
@@ -718,8 +864,15 @@ $root.$self("var", "Four", /* Starting Scope:1 */ $primitive("Scope", function()
             $types: ["Text"],
             $values: {}
         };
+        $val = $$$0;
         for ($i = 0; $i < $temp.$types.length; $i += 1) {
-            $temp.$values[$temp.$types[$i]] = $$$0.$values[$temp.$types[$i]];
+            if ($val.$values["Text"] !== void 0) {
+                $temp.$values["Text"] = $val.$values["Text"];
+            } else if ($val.$values["Scope"] !== void 0) {
+                $temp.$values["Text"] = function() {
+                    return $val.$values["Scope"]()().$values["Text"]();
+                }
+            }
         }
         $returnMulti.push($temp);;
         if (typeof $returnMulti === "undefined") {

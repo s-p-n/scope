@@ -1,6 +1,6 @@
 %scopeStart% $primitive("Scope", function () {
 	return function () {
-		var $returnMulti = [], $temp;
+		var $returnMulti = [], $temp, $val;
 		%prefix%
 		%controlCode%
 		$returnMulti.push($primitive("Instance", function (value) {

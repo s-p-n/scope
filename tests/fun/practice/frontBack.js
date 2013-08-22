@@ -35,6 +35,11 @@ Array.prototype.has = function(term) {
 /// > Shims
 
 function $self(access, name, value) {
+    var line;
+    if (typeof name === "number") {
+        line = name;
+        name = void 0;
+    }
     if (name === void 0) {
         name = access;
         if (typeof this[name] !== "undefined") {
@@ -49,7 +54,7 @@ function $self(access, name, value) {
             }
             parent = parent.$parent.$values["Instance"]();
         }
-        throw "Undefined variable/property: " + name;
+        throw "Undefined variable/property: " + name + " on line: " + line;
     }
     if (value === void 0) {
         value = name;
@@ -129,7 +134,8 @@ var $runtimeError = function $runtimeError(line, msg, what) {
     throw new Error(
         "\033[31m\033[1m Runtime Error:\033[0m\033[1m " +
         msg.replace(/%what%/g, what).replace(/%red%/g, '\033[31m').replace(/%default%/g, '\033[0m\033[1m').replace(/%green%/g, '\033[32m') +
-        "\033[1m on line: \033[31m" + line + '\033[0m');
+        "\033[1m on line: \033[31m" + line + '\033[0m'
+    );
 }
 var Type = {
     $types: ["Scope"],
@@ -152,6 +158,35 @@ var Type = {
         }
     }
 };
+var $array = (function() {
+    var assocArray = function() {
+        var obj = {};
+        Object.defineProperty(obj, 'length', {
+            enumerable: false,
+            value: 0,
+            configurable: false,
+            writable: true
+        });
+        return obj;
+    };
+    return function $array(arr) {
+        var n, i;
+        if (arr instanceof Array) {
+            //console.log("$array:", arr);
+            return $primitive("Array", function() {
+                return arr;
+            });
+        }
+        n = assocArray();
+        for (i in arr) {
+            n[i] = arr[i];
+            n.length += 1;
+        }
+        return $primitive("Array", function() {
+            return n;
+        });
+    }
+}());
 /*
 Array.prototype.substr = function substr (start, end) {
     var i, result = [];
@@ -175,44 +210,84 @@ Array.prototype.substr = function substr (start, end) {
     return result;
 }
 */
-String.prototype.substr = Array.prototype.substr = function substr(start, end) {
-    var i,
-        newEnd = end,
-        len = this.length,
-        result = "";
-    if (end < 0 && len > 0) {
-        newEnd = end + len;
-    }
-    if (start === end) {
-        return this[newEnd];
-    }
-    for (i = start; newEnd < this.length && i < newEnd; i += 1) {
-        result += this[i];
-    }
-    return result;
-}
-
-Object.prototype.$substr = function $substr(start, end) {
-    var result = {
-        $types: [],
-        $values: {}
-    };
-    var what = this;
-    var f = function(val) {
-        return function() {
-            return val;
+(function() {
+    var $substrFunc = function(start, end, returnIndex) {
+        var i,
+            newEnd,
+            len = this.length,
+            result = "";
+        if (end === "complete") {
+            end = len;
         }
+        newEnd = end;
+        if (end < 0 && len > 0) {
+            newEnd = end + len;
+        }
+        //console.log("substr:", start, newEnd, returnIndex);
+        if (returnIndex) {
+            //console.log("arraySubstr returnIndex is true:", newEnd, this[newEnd]);
+            return this[newEnd];
+        }
+        for (i = start; newEnd > start && i < newEnd && i < len; i += 1) {
+            result += this[i];
+        }
+        return result;
     };
-    if (what.$values.hasOwnProperty("Array")) {
-        result.$types.push("Array");
-        result.$values["Array"] = f(what.$values["Array"]().substr(start, end));
+    Object.defineProperty(Array.prototype, "$substr_arr", {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+        value: $substrFunc
+    });
+    Object.defineProperty(String.prototype, "$substr_txt", {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+        value: $substrFunc
+    });
+}());
+
+
+Object.defineProperty(Object.prototype, "$substr", {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function $substr(start, end) {
+        var result = {
+            $types: [],
+            $values: {}
+        };
+        var returnIndex = false;
+        var what = this;
+        var f = function(val) {
+            return function() {
+                return val;
+            }
+        };
+        //console.log("$substr:", start, end);
+
+        if (end === void 0) {
+            end = start;
+            returnIndex = true;
+        }
+        //console.log("what:", what);
+        //console.log("what values:", what.$values);
+        //console.log("returnIndex:", returnIndex);
+        if (what.$values.hasOwnProperty("Array")) {
+            //console.log("has Array", what.$values["Array"]().substr, [].substr);
+            result = what.$values["Array"]().$substr_arr(start, end, returnIndex);
+            if (result instanceof Array) {
+                result = $array(result);
+            }
+        } else if (what.$values.hasOwnProperty("Text")) {
+            //console.log("has Text", what.$values["Text"]());
+            result.$types.push("Text");
+            result.$values["Text"] = f(what.$values["Text"]().$substr_txt(start, end, returnIndex));
+        }
+        //console.log("$substr result:", result);
+        return result;
     }
-    if (what.$values.hasOwnProperty("Text")) {
-        result.$types.push("Text");
-        result.$values["Text"] = f(what.$values["Text"]().substr(start, end));
-    }
-    return result;
-}
+});
 var $compare = function() {
     var equals = function(a, b) {
         var p;
@@ -261,7 +336,8 @@ var $compare = function() {
         }
         for (i = 0; i < a.$types.length; i += 1) {
             if (b.$types.indexOf(a.$types[i]) > -1 &&
-                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())) {
+                equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())
+            ) {
                 continue;
             }
             result = false;
@@ -366,7 +442,8 @@ var $concat = function $concat(a, b, line) {
         };
 
     if (compatible(a, b).$values["Boolean"]() ||
-        compatible(b, a).$values["Boolean"]()) {
+        compatible(b, a).$values["Boolean"]()
+    ) {
         if (compatible(a, concatTestBoth).$values["Boolean"]()) {
             return $primitive(["Text", "Array"], {
                 "Text": concatFunc(txtConcat(a, b)),
@@ -375,18 +452,21 @@ var $concat = function $concat(a, b, line) {
         }
         if (compatible(compatTestText, a).$values["Boolean"]()) {
             return $primitive("Text",
-                concatFunc(txtConcat(a, b)));
+                concatFunc(txtConcat(a, b))
+            );
         } else if (compatible(compatTestArray, a).$values["Boolean"]()) {
             return $primitive("Array",
-                concatFunc(arrConcat(a, b)));
+                concatFunc(arrConcat(a, b))
+            );
         }
     }
     $runtimeError(line,
         "Type Error:  Compatible Text, Array or Both expected, got: %what%",
-        a.$types + " and " + b.types);
+        a.$types + " and " + b.types
+    );
 };
 var Text = {
-    $types: ["Scope"],
+    $types: ["Scope", "Instance"],
     $values: {
         "Scope": function() {
             return function Text(primitive, fromType) {
@@ -413,6 +493,88 @@ var Text = {
                         "Text(Any:Primitive [, Text:fromType])), cannot be converted to Text.";
                 }
                 return $primitive("Text", result);
+            }
+        },
+        "Instance": function() {
+            return {
+                "split": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            return function split(txt, sep, maxSplit) {
+                                var hasMax = false;
+                                var result = [];
+                                var i;
+                                txt = txt.$values["Text"]();
+                                return $primitive("Text", f(txt.split(sep, maxSplit)));
+                                /*
+                                if (typeof sep === "undefined") {
+                                    sep = /\s+/;
+                                } else {
+                                    sep = sep.$values["Text"]();
+                                }
+
+                                if (typeof maxSplit === "undefined") {
+                                    hasMax = true
+                                }
+                                for (i = findNext(txt, sep); i !== -1; i = findNext(txt, sep)) {
+                                    result.push($primitive("Text", f(txt.substr(0, i))));
+                                    txt = txt.substr(i + 1);
+                                }
+                                result.push($primitive("Text", f(txt)));
+                                return {
+                                    $types: ["Array"],
+                                    $values: {
+                                        "Array": function() {
+                                            return result;
+                                        }
+                                    }
+                                };
+                                */
+
+                            }
+                        }
+                    }
+                },
+                "rsplit": {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            var findNext = function(unit, sep) {
+                                var match = unit.match(sep);
+                                return match !== null ? match.index : -1;
+                            }
+                            var f = function(val) {
+                                return function() {
+                                    return val;
+                                }
+                            }
+                            String.prototype.rsplit = function(sep, maxsplit) {
+                                var split = this.split(sep);
+                                return maxsplit ? [split.slice(0, -maxsplit).join(sep)].concat(split.slice(-maxsplit)) : split;
+                            };
+                            return function rsplit(txt, sep, maxSplit) {
+                                var maxSplit = maxSplit || 0;
+                                var result = [];
+                                var i;
+                                var txt = txt.$values["Text"]().rsplit(sep.$values["Text"](), maxSplit.$values["Number"]());
+                                for (i = 0; i < txt.length; i += 1) {
+                                    txt[i] = $primitive("Text", f(txt[i]));
+                                }
+                                return $array(txt);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -468,7 +630,7 @@ var $$$0 = $primitive('Text', function() {
     return "code"
 }.bind($root));
 var $$$1 = function() {
-    return (this.$self("frontBack").$values["Scope"]()($$$0))
+    return (this.$self("frontBack", 13).$values["Scope"]()($$$0))
 }.bind($root);
 var $$$2 = function() {
     return (print.$values["Scope"]()($$$1()))
@@ -477,7 +639,7 @@ var $$$3 = $primitive('Text', function() {
     return "a"
 }.bind($root));
 var $$$4 = function() {
-    return (this.$self("frontBack").$values["Scope"]()($$$3))
+    return (this.$self("frontBack", 14).$values["Scope"]()($$$3))
 }.bind($root);
 var $$$5 = function() {
     return (print.$values["Scope"]()($$$4()))
@@ -486,7 +648,7 @@ var $$$6 = $primitive('Text', function() {
     return "ab"
 }.bind($root));
 var $$$7 = function() {
-    return (this.$self("frontBack").$values["Scope"]()($$$6))
+    return (this.$self("frontBack", 15).$values["Scope"]()($$$6))
 }.bind($root);
 var $$$8 = function() {
     return (print.$values["Scope"]()($$$7()))
@@ -495,7 +657,7 @@ var $$$9 = $primitive('Text', function() {
     return "abba"
 }.bind($root));
 var $$$10 = function() {
-    return (this.$self("frontBack").$values["Scope"]()($$$9))
+    return (this.$self("frontBack", 16).$values["Scope"]()($$$9))
 }.bind($root);
 var $$$11 = function() {
     return (print.$values["Scope"]()($$$10()))
@@ -503,7 +665,7 @@ var $$$11 = function() {
 $root.$self("var", "frontBack", /* Starting Scope:1 */ $primitive("Scope", function() {
     return function() {
         var $returnMulti = [],
-            $temp;
+            $temp, $val;
         var $$$0 = $primitive('Number', function() {
             return 0
         }.bind(this));
@@ -531,33 +693,25 @@ $root.$self("var", "frontBack", /* Starting Scope:1 */ $primitive("Scope", funct
             var $returnMulti = [];
         }
         $returnMulti.push((function() {
-            if ($compare(this.$self("str").$substr($$$0.$values["Number"](), $$$0.$values["Number"]()), this.$self("str").$substr($primitive("Number", function(value) {
-                return function() {
-                    return value;
-                }
-            }(-$$$1.$values["Number"]())).$values["Number"](), $primitive("Number", function(value) {
+            if ($compare(this.$self("str", 6).$substr($$$0.$values["Number"]()), this.$self("str", 6).$substr($primitive("Number", function(value) {
                 return function() {
                     return value;
                 }
             }(-$$$1.$values["Number"]())).$values["Number"]())).$values["Boolean"]()) {
                 return (function() {
-                    return this.$self("str");;
+                    return this.$self("str", 7);;
                 }.bind(this)());
             } else {
                 return (function() {
-                    return $concat($concat(this.$self("str").$substr($primitive("Number", function(value) {
+                    return $concat($concat(this.$self("str", 9).$substr($primitive("Number", function(value) {
                         return function() {
                             return value;
                         }
-                    }(-$$$2.$values["Number"]())).$values["Number"](), $primitive("Number", function(value) {
+                    }(-$$$2.$values["Number"]())).$values["Number"]()), this.$self("str", 9).$substr($$$3.$values["Number"](), $primitive("Number", function(value) {
                         return function() {
                             return value;
                         }
-                    }(-$$$2.$values["Number"]())).$values["Number"]()), this.$self("str").$substr($$$3.$values["Number"](), $primitive("Number", function(value) {
-                        return function() {
-                            return value;
-                        }
-                    }(-$$$4.$values["Number"]())).$values["Number"]()), 9), this.$self("str").$substr($$$5.$values["Number"](), $$$5.$values["Number"]()), 9);;
+                    }(-$$$4.$values["Number"]())).$values["Number"]()), 9), this.$self("str", 9).$substr($$$5.$values["Number"]()), 9);;
                 }.bind(this)());
             }
         }.bind(this)()));

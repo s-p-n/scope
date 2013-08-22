@@ -4,7 +4,7 @@ var a = 3;
 var b = 5;
 var result = 0;
 var multiples = [];
-while (i lt max):
+while (i < max):
 	if ((i % a is 0) or
 		(i % b is 0)
 	):
@@ -13,4 +13,4 @@ while (i lt max):
 	i += 1;
 end;
 
-Console.write("Result:", result); // 233168
+print(result); // 233168

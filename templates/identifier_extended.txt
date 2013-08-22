@@ -1,1 +1,1 @@
-%id%.%name%
+%id%.$values["Instance"]().%name%

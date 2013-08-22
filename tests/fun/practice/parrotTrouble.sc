@@ -5,9 +5,6 @@
 */
 
 var parrotTrouble = (talking: false, hour: 0) {
-	//print ("Is talking?");
-	//print(talking);
-	//print("k");
 	return talking and (hour < 7 or hour > 20);
 };
 

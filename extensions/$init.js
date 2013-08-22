@@ -31,6 +31,11 @@
 	}
 /// > Shims
 function $self (access, name, value) {
+	var line;
+	if (typeof name === "number") {
+		line = name;
+		name = void 0;
+	}
 	if (name === void 0) {
 		name = access;
 		if (typeof this[name] !== "undefined") {
@@ -45,7 +50,7 @@ function $self (access, name, value) {
 			}
 			parent = parent.$parent.$values["Instance"]();
 		}
-		throw "Undefined variable/property: " + name;
+		throw "Undefined variable/property: " + name + " on line: " + line;
 	}
 	if (value === void 0) {
 		value = name;

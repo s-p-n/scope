@@ -96,7 +96,6 @@ module.exports = function term (a, b, c) {
                 line: this.line
             });
         case '&=':
-            console.log("Got &=");
             this.ext['Compatible']();
             this.ext['$compare']();
             this.ext['$concat']();
@@ -108,14 +107,12 @@ module.exports = function term (a, b, c) {
             });
             break;
         case '+=':
-            console.log("Got +=");
             return this.loadTemplate ('redeclareProperty_plusEq', {
                 id: a,
                 value: c
             });
             break;
         case '/=':
-            console.log("Got /=");
             return this.loadTemplate ('redeclareProperty_divideEq', {
                 id: a,
                 value: c
@@ -143,6 +140,7 @@ module.exports = function term (a, b, c) {
             });
     }
     this.ext['$init']();
+    this.ext['$array']();
     var i;
     if (this.termType === "Invoke") {
         i = this.primitives.push("function () {return " + a + "}.bind(" + thisArg + ")") - 1;
@@ -156,6 +154,8 @@ module.exports = function term (a, b, c) {
     } else if (this.termType === "Scope") {
         return a;
     } else if (this.termType === "Declare") {
+        return a;
+    } else if (this.termType === "Array") {
         return a;
     } else {
         i = this.primitives.push("$primitive('" + this.termType + "', function () {return " + a + "}.bind(" + thisArg + "))") - 1;

@@ -1,2 +1,4 @@
-%ifBegin%
-}.bind(this)());}}.bind(this)())
+			%ifBegin%
+		}.bind(this)());
+	}
+}.bind(this)())

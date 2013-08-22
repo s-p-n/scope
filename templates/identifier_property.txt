@@ -1,1 +1,1 @@
-this.$self("%id%")
+this.$self("%id%", %line%)

@@ -1,5 +1,9 @@
 var front3 = (str: "") {
-	var front = str[0:3];
-	print(front);
+
+	return str[0:3] & str[0:3] & str[0:3];
 };
-front3("Hello, World");
+print(front3("Java"));
+print(front3("Chocolate"));
+print(front3("abc"));
+print(front3("ab"));
+print(front3("abba"));

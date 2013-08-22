@@ -9,16 +9,21 @@ var $array = (function () {
         });
         return obj;
     };
-    return function $$$array (arr) {
+    return function $array (arr) {
         var n, i;
         if (arr instanceof Array) {
-            return arr;
+            //console.log("$array:", arr);
+            return $primitive("Array", function () {
+                return arr;
+            });
         }
         n = assocArray();
         for (i in arr) {
             n[i] = arr[i];
             n.length += 1;
         }
-        return n;
+        return $primitive("Array", function () {
+            return n;
+        });
     }
 }());

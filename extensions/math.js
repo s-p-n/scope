@@ -43,5 +43,5 @@ var math = (function (JSMath) {
 			};
 		}
 	}
-	return newMath;
+	return $primitive("Instance", n(newMath));
 }(Math));
