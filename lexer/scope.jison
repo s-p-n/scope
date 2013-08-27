@@ -342,6 +342,11 @@ declareVariable
     }
     ;
 
+end
+    : END
+    | ':'
+    ;
+
 identifier
     : NAME {
         $$ = new yy.scopeAst(yy,"identifier",[
@@ -361,7 +366,7 @@ identifier
     ;
 
 if
-    : ifBegin controlBlock ifElse END {
+    : ifBegin controlBlock ifElse end {
         $$ = new yy.scopeAst(yy,"if",[
             $1, $2, $3
         ]);
@@ -722,7 +727,7 @@ attributeTerm
     ;
 
 for
-    : forBegin controlBlock loopElse END {
+    : forBegin controlBlock loopElse end {
         $$ = new yy.scopeAst(yy,"for",[
             $1, $2, $3, $4
         ]);
@@ -979,7 +984,7 @@ tagEnd
     ;
 
 while
-    : whileBegin controlBlock loopElse END {
+    : whileBegin controlBlock loopElse end {
         $$ = new yy.scopeAst(yy,"while",[
             $1, $2, $3, $4
         ]);

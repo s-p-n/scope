@@ -2,5 +2,8 @@
 	this.$self("var", "%name%", "");
 	var $$$list = %list%.$values["Array"]();
 	for (%name% in $$$list) {
+		this.$self("%name%", $primitive((typeof %name% === "String" ? "Text" : "Number"), function () {
+			return %name%;
+		}));
 		if ($$$list.hasOwnProperty(%name%)) {
 			(function () {

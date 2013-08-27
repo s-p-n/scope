@@ -4,6 +4,9 @@
 			newEnd,
 			len = this.length,
 			result = "";
+		if (this instanceof Array) {
+			result = [];
+		}
 		if (end === "complete") {
 			end = len;
 		}
@@ -17,7 +20,12 @@
 			return this[newEnd];
 		}
 		for (i = start; newEnd > start && i < newEnd && i < len; i += 1) {
-			result += this[i];
+			if (typeof result === "string") {
+				result += this[i];
+			} else {
+				result.push(this[i]);
+			}
+			
 		}
 		return result;
 	};
@@ -62,8 +70,9 @@ Object.defineProperty(Object.prototype, "$substr", {
 		//console.log("what values:", what.$values);
 		//console.log("returnIndex:", returnIndex);
 		if (what.$values.hasOwnProperty("Array")) {
-			//console.log("has Array", what.$values["Array"]().substr, [].substr);
+			//console.log("has Array", what.$values["Array"]());
 			result = what.$values["Array"]().$substr_arr(start, end, returnIndex);
+			//console.log("result:", result);
 			if (result instanceof Array) {
 				result = $array(result);
 			}

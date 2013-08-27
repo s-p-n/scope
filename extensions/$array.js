@@ -12,7 +12,6 @@ var $array = (function () {
     return function $array (arr) {
         var n, i;
         if (arr instanceof Array) {
-            //console.log("$array:", arr);
             return $primitive("Array", function () {
                 return arr;
             });
