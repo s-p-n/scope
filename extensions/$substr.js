@@ -14,7 +14,7 @@
 		if (end < 0 && len > 0) {
 			newEnd = end + len;
 		}
-		//console.log("substr:", start, newEnd, returnIndex);
+		//console.log("substr:", start, end, newEnd, returnIndex);
 		if (returnIndex) {
 			//console.log("arraySubstr returnIndex is true:", newEnd, this[newEnd]);
 			return this[newEnd];
@@ -60,7 +60,8 @@ Object.defineProperty(Object.prototype, "$substr", {
 				return val;
 			}
 		};
-		//console.log("$substr:", start, end);
+		start = parseInt(start);
+		end = parseInt(end);
 		
 		if (end === void 0) {
 			end = start;
