@@ -13,4 +13,8 @@ while (a < fin):
 	b = c + b;
 	i += 1;
 end;
+<<<<<<< HEAD
 print("Result: " & Text(result)); // 4613732
+=======
+print("Result: " & Text(result));
+>>>>>>> f6bec42fe8377ced8ec7b9b5109abb536c58f883
