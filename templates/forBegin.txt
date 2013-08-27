@@ -1,6 +1,6 @@
 (function () {
 	this.$self("var", "%name%", "");
-	var $$$list = %list%;
+	var $$$list = %list%.$values["Array"]();
 	for (%name% in $$$list) {
 		if ($$$list.hasOwnProperty(%name%)) {
 			(function () {
