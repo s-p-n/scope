@@ -172,7 +172,6 @@ var $array = (function() {
     return function $array(arr) {
         var n, i;
         if (arr instanceof Array) {
-            //console.log("$array:", arr);
             return $primitive("Array", function() {
                 return arr;
             });
@@ -216,6 +215,9 @@ Array.prototype.substr = function substr (start, end) {
             newEnd,
             len = this.length,
             result = "";
+        if (this instanceof Array) {
+            result = [];
+        }
         if (end === "complete") {
             end = len;
         }
@@ -223,13 +225,18 @@ Array.prototype.substr = function substr (start, end) {
         if (end < 0 && len > 0) {
             newEnd = end + len;
         }
-        //console.log("substr:", start, newEnd, returnIndex);
+        //console.log("substr:", start, end, newEnd, returnIndex);
         if (returnIndex) {
             //console.log("arraySubstr returnIndex is true:", newEnd, this[newEnd]);
             return this[newEnd];
         }
         for (i = start; newEnd > start && i < newEnd && i < len; i += 1) {
-            result += this[i];
+            if (typeof result === "string") {
+                result += this[i];
+            } else {
+                result.push(this[i]);
+            }
+
         }
         return result;
     };
@@ -264,7 +271,8 @@ Object.defineProperty(Object.prototype, "$substr", {
                 return val;
             }
         };
-        //console.log("$substr:", start, end);
+        start = parseInt(start);
+        end = parseInt(end);
 
         if (end === void 0) {
             end = start;
@@ -274,8 +282,9 @@ Object.defineProperty(Object.prototype, "$substr", {
         //console.log("what values:", what.$values);
         //console.log("returnIndex:", returnIndex);
         if (what.$values.hasOwnProperty("Array")) {
-            //console.log("has Array", what.$values["Array"]().substr, [].substr);
+            //console.log("has Array", what.$values["Array"]());
             result = what.$values["Array"]().$substr_arr(start, end, returnIndex);
+            //console.log("result:", result);
             if (result instanceof Array) {
                 result = $array(result);
             }
@@ -291,6 +300,11 @@ Object.defineProperty(Object.prototype, "$substr", {
 var $compare = function() {
     var equals = function(a, b) {
         var p;
+        if (typeof a.$types !== "undefined") {
+            //console.log("equals is a scope primitive:", a, b);
+            return $compare(a, b).$values["Boolean"]();
+        }
+        //console.log("equals is a JS primitive:", a, b);
         if (typeof a !== "object") {
             return a === b;
         }
@@ -307,9 +321,12 @@ var $compare = function() {
                         break;
                     case 'function':
                         if (typeof(b[p]) == 'undefined' ||
-                            (p != 'equals' && a[p].toString() != b[p].toString())) {
+                            (p != 'equals' && (a[p].toString() != b[p].toString() ||
+                                a[p].unbind().toString() != b[p].unbind().toString()
+                            ))) {
                             return false;
                         }
+                        //console.log("func:", a[p].unbind().toString() != b[p].unbind().toString())
                         break;
                     default:
                         if (a[p] !== b[p]) {
@@ -334,15 +351,23 @@ var $compare = function() {
             a = b;
             b = a;
         }
+        //console.log("$compare:")
+        //Console.$values["Instance"]().write.$values["Scope"]()(a);
+        //Console.$values["Instance"]().write.$values["Scope"]()(b);
         for (i = 0; i < a.$types.length; i += 1) {
             if (b.$types.indexOf(a.$types[i]) > -1 &&
                 equals(a.$values[a.$types[i]](), b.$values[a.$types[i]]())
             ) {
+                //console.log("Got true");
                 continue;
             }
+            //console.log("Got false");
             result = false;
             break;
         }
+        //console.log("Returning", result);
+
+
         return $primitive("Boolean", function(val) {
             return function() {
                 return val;
@@ -464,43 +489,49 @@ var Text = {
         }
     }
 };
-var Scope = (function() {
-    return {
-        extend: {
-            $types: ["Scope"],
-            $values: {
-                "Scope": function() {
-                    return function extend(extended, extendee, parent) {
-                        var result;
-                        extendee = extendee.$values["Scope"]().unbind();
-                        extended = extended.$values["Scope"]().bind($newParent(parent));
-                        //console.log("Extend:", extendee, extended);
-                        result = function() {
-                            var i, access;
-                            var extension = extended.apply(this, arguments);
-                            //console.log("extension:", extension);
-                            this.$self("protected", "extended", extension);
-                            for (i in extension.$access) {
-                                access = extension.$access[i]
-                                if (access === "private") {
-                                    continue;
-                                }
-                                this.$self(access, i, extension.$property[i]);
+var Scope = {
+    $types: ["Instance"],
+    $values: {
+        "Instance": function() {
+            return {
+                extend: {
+                    $types: ["Scope"],
+                    $values: {
+                        "Scope": function() {
+                            return function extend(extended, extendee, parent) {
+                                var result;
+                                extendee = extendee.$values["Scope"]().unbind();
+                                extended = extended.$values["Scope"]().bind($newParent(parent));
+                                //console.log("Extend:", extendee, extended);
+                                result = function() {
+                                    var i, access;
+                                    var extension = extended.apply(this, arguments);
+                                    //console.log("extension:", extension);
+                                    this.$self("protected", "extended", extension);
+                                    for (i in extension.$access) {
+                                        access = extension.$access[i]
+                                        if (access === "private") {
+                                            continue;
+                                        }
+                                        this.$self(access, i, extension.$property[i]);
+                                    }
+                                    //console.log(this);
+                                    return extendee.apply(this, arguments);
+                                }.bind($newParent(parent));
+                                result.name = extendee.name;
+                                //console.log("Result:", result);
+                                return $primitive("Scope", function() {
+                                    return result
+                                });
                             }
-                            //console.log(this);
-                            return extendee.apply(this, arguments);
-                        }.bind($newParent(parent));
-                        result.name = extendee.name;
-                        //console.log("Result:", result);
-                        return $primitive("Scope", function() {
-                            return result
-                        });
+                        }
                     }
+
                 }
             }
         }
     }
-}());
+};
 var Compatible = {
     $types: ["Scope"],
     $values: {
@@ -636,7 +667,7 @@ var $$$2 = function() {
     return (this.$self("abs_path", 13).$values["Scope"]()($$$0, $$$1))
 }.bind($root);
 var $$$3 = function() {
-    return (print.$values["Scope"]()(this.$self("path", 14)))
+    return (print.$values["Scope"]()(this.$self("path", 15)))
 }.bind($root);; /* Begin ControlCode: 0 */
 $root.$self("var", "abs_path", /* Starting Scope:1 */ $primitive("Scope", function() {
     return function() {

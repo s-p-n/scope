@@ -2,7 +2,7 @@
     "name":"scope-lang",
     "description":"Scope is a programming language designed to revolutionize web application development for both the back-end and front-end developer.",
     "homepage": "http://scope-lang.org/",
-    "version":"0.0.2-17-chinchilla",
+    "version":"0.0.2-18-chinchilla",
     "bugs": {
         "url": "http://github.com/s-p-n/scope/issues",
         "email": "bugs@scope-lang.org"
