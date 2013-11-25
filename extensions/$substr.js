@@ -4,9 +4,11 @@
 			newEnd,
 			len = this.length,
 			result = "";
+
 		if (this instanceof Array) {
 			result = [];
 		}
+
 		if (end === "complete") {
 			end = len;
 		}
@@ -41,6 +43,12 @@
 		writable: false,
 		value: $substrFunc
 	});
+	Object.defineProperty(Object.prototype, "$substr_arr", {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: $substrFunc
+	});
 }());
 
 
@@ -60,13 +68,18 @@ Object.defineProperty(Object.prototype, "$substr", {
 				return val;
 			}
 		};
+		if (what.$types.indexOf("Array") !== -1 && !(what.$values["Array"]() instanceof Array)) {
+			return what.$values["Array"]()[start];
+		}
+
 		start = parseInt(start);
-		end = parseInt(end);
-		
 		if (end === void 0) {
 			end = start;
 			returnIndex = true;
+		} else if (end !== "complete") {
+			end = parseInt(end);
 		}
+		
 		//console.log("what:", what);
 		//console.log("what values:", what.$values);
 		//console.log("returnIndex:", returnIndex);

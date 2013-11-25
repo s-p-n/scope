@@ -21,13 +21,21 @@ module.exports = function scope (start, controlCode, args) {
             "this": thisArg
         });
     }
+    var cachedValRegex = /(\${3}[0-9]+)/;
+    var cachedValRegexG = /(\${3}[0-9]+)/g;
+    args = args.replace(cachedValRegexG, "'$1'");
+    console.log(args);
     args = eval('(function () { return ' + args + ';}())');
+    console.log(args);
     for (arg in args) {
         if (arg === "length") {
             continue;
         }
-        if (typeof args[arg] === "string") {
+        console.log("arg:" + args[arg]);
+        if (typeof args[arg] === "string" && !cachedValRegex.test(args[arg])) {
             args[arg] = '"' + args[arg] + '"';
+        } else if (args[arg] instanceof Array) {
+            args[arg] = "$array([" + args[arg].toString() + "])";
         }
         new_args += 'this.$arg("' + arg + '", ' + args[arg] + ', arguments[' + i + ']);';
         i += 1;

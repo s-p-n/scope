@@ -142,7 +142,10 @@ module.exports = function term (a, b, c) {
     this.ext['$init']();
     this.ext['$array']();
     var i;
-    if (this.termType === "Invoke") {
+    if (this.termType === "scopeArgs") {
+        console.log("Got a scopeArg", a);
+        return a;
+    } else if (this.termType === "Invoke") {
         i = this.primitives.push("function () {return " + a + "}.bind(" + thisArg + ")") - 1;
         return '$$$' + i + '()';
     } else if (this.termType === "Identifier") {
@@ -156,7 +159,7 @@ module.exports = function term (a, b, c) {
     } else if (this.termType === "Declare") {
         return a;
     } else if (this.termType === "Array") {
-        return a;
+        return "$array(" + a + ")";
     } else {
         i = this.primitives.push("$primitive('" + this.termType + "', function () {return " + a + "}.bind(" + thisArg + "))") - 1;
         return '$$$' + i;

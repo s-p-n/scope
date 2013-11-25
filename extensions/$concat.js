@@ -1,5 +1,6 @@
 var $concat = function $concat (a, b, line) {
-    var type = Type.$values["Scope"](), 
+    //console.log("concat:", a, b, line);
+    var type = Type.$values["Scope"](),
         compatible = Compatible.$values["Scope"](),
         concatTestBoth = $primitive(["Text", "Array"], {
             "Text": function () {
@@ -23,9 +24,9 @@ var $concat = function $concat (a, b, line) {
             return a.$values["Text"]() + b.$values["Text"]();
         },
         arrConcat = function (a, b) {
-            var result, 
+            var result,
                 subResult,
-                shortest, 
+                shortest,
                 i,
                 type,
                 len,
@@ -63,7 +64,7 @@ var $concat = function $concat (a, b, line) {
             }}}
             return result;
         };
-    
+
     if (compatible(a, b).$values["Boolean"]() ||
         compatible(b, a).$values["Boolean"]()
     ) {
@@ -74,17 +75,17 @@ var $concat = function $concat (a, b, line) {
             });
         }
         if (compatible(compatTestText, a).$values["Boolean"]()) {
-            return $primitive("Text", 
+            return $primitive("Text",
                 concatFunc(txtConcat(a, b))
             );
         } else if (compatible(compatTestArray, a).$values["Boolean"]()) {
-            return $primitive("Array", 
+            return $primitive("Array",
                 concatFunc(arrConcat(a, b))
             );
         }
     }
-    $runtimeError(line, 
-        "Type Error:  Compatible Text, Array or Both expected, got: %what%", 
+    $runtimeError(line,
+        "Type Error:  Compatible Text, Array or Both expected, got: %what%",
         a.$types + " and " + b.types
     );
 };

@@ -33,6 +33,7 @@ module.exports = function identifier (id, name, isArr) {
     if (id in this.ext) {
         this.ext['Text']();
         this.ext['Scope']();
+        this.ext['Console']();
         ret = this.ext[id]();
     } else {
         ret = this.loadTemplate('identifier_property', {

@@ -532,6 +532,88 @@ var $array = (function() {
         });
     }
 }());
+var List = {};
+List.$types = ["Scope", "Instance"];
+List.$values = {
+    "Scope": function() {
+        return function(num) {
+            var arr = Array(num.$values["Number"]());
+            var i = 0;
+            for (i; i < arr.length; i += 1) {
+                arr[i] = $primitive("Number", function(val) {
+                    return function() {
+                        return val;
+                    };
+                }(i));
+            }
+            return $array(arr);
+        }
+    },
+    "Instance": function() {
+        return {
+            "random": {
+                $types: ["Scope"],
+                $values: {
+                    "Scope": function() {
+                        return function(arr) {
+                            arr = arr.$values["Array"]();
+                            return arr[Math.floor(Math.random() * arr.length)];
+                        }
+                    }
+                }
+            },
+            "length": {
+                $types: ["Scope"],
+                $values: {
+                    "Scope": function() {
+                        return function(arr) {
+                            return $primitive("Number", function() {
+                                return arr.$values["Array"]().length;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+var $Math = {
+    add: function add(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(Number(a.$values["Number"]()) + Number(b.$values["Number"]())));
+    },
+    subtract: function subtract(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(Number(a.$values["Number"]()) - Number(b.$values["Number"]())));
+    },
+    multiply: function multiply(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(Number(a.$values["Number"]()) * Number(b.$values["Number"]())));
+    },
+    divide: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(Number(a.$values["Number"]()) / Number(b.$values["Number"]())));
+    },
+    modulus: function divide(a, b) {
+        return $primitive("Number", function(val) {
+            return function() {
+                return val;
+            }
+        }(Number(a.$values["Number"]()) % Number(b.$values["Number"]())));
+    }
+};
 var Compatible = {
     $types: ["Scope"],
     $values: {
@@ -726,32 +808,157 @@ var $concat = function $concat(a, b, line) {
         a.$types + " and " + b.types
     );
 };
+/*
+Array.prototype.substr = function substr (start, end) {
+    var i, result = [];
+    if (end === void 0) {
+        end = this.length;
+    }
+    if (start === void 0) {
+        start = 0;
+    }
+    if (end > start) {
+        for (i = start; this[i] && i < end; i += 1) {
+            result.push(this[i]);
+        }
+    } else if (end < start) {
+        for (i = start; this[i] && i > end; i -= 1) {
+            result.push(this[i]);
+        }
+    } else {
+        result.push(this[start]);
+    }
+    return result;
+}
+*/
+(function() {
+    var $substrFunc = function(start, end, returnIndex) {
+        var i,
+            newEnd,
+            len = this.length,
+            result = "";
+
+        if (this instanceof Array) {
+            result = [];
+        }
+
+        if (end === "complete") {
+            end = len;
+        }
+        newEnd = end;
+        if (end < 0 && len > 0) {
+            newEnd = end + len;
+        }
+        //console.log("substr:", start, end, newEnd, returnIndex);
+        if (returnIndex) {
+            //console.log("arraySubstr returnIndex is true:", newEnd, this[newEnd]);
+            return this[newEnd];
+        }
+        for (i = start; newEnd > start && i < newEnd && i < len; i += 1) {
+            if (typeof result === "string") {
+                result += this[i];
+            } else {
+                result.push(this[i]);
+            }
+
+        }
+        return result;
+    };
+    Object.defineProperty(Array.prototype, "$substr_arr", {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+        value: $substrFunc
+    });
+    Object.defineProperty(String.prototype, "$substr_txt", {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+        value: $substrFunc
+    });
+    Object.defineProperty(Object.prototype, "$substr_arr", {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+        value: $substrFunc
+    });
+}());
+
+
+Object.defineProperty(Object.prototype, "$substr", {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function $substr(start, end) {
+        var result = {
+            $types: [],
+            $values: {}
+        };
+        var returnIndex = false;
+        var what = this;
+        var f = function(val) {
+            return function() {
+                return val;
+            }
+        };
+        if (what.$types.indexOf("Array") !== -1 && !(what.$values["Array"]() instanceof Array)) {
+            return what.$values["Array"]()[start];
+        }
+
+        start = parseInt(start);
+        if (end === void 0) {
+            end = start;
+            returnIndex = true;
+        } else if (end !== "complete") {
+            end = parseInt(end);
+        }
+
+        //console.log("what:", what);
+        //console.log("what values:", what.$values);
+        //console.log("returnIndex:", returnIndex);
+        if (what.$values.hasOwnProperty("Array")) {
+            //console.log("has Array", what.$values["Array"]());
+            result = what.$values["Array"]().$substr_arr(start, end, returnIndex);
+            //console.log("result:", result);
+            if (result instanceof Array) {
+                result = $array(result);
+            }
+        } else if (what.$values.hasOwnProperty("Text")) {
+            //console.log("has Text", what.$values["Text"]());
+            result.$types.push("Text");
+            result.$values["Text"] = f(what.$values["Text"]().$substr_txt(start, end, returnIndex));
+        }
+        //console.log("$substr result:", result);
+        return result;
+    }
+});
 var $$$0 = function() {
-    return (Scope.$values["Instance"]().extend.$values["Scope"]()(this.$self("Animal", 6), /* Starting Scope:1 */ $primitive("Scope", function() {
+    return ( /* Starting Scope:1 */ $primitive("Scope", function() {
         return function() {
             var $returnMulti = [],
                 $temp, $val;
 
             /* Begin ControlCode: 1 */
-            this.$self("public", "move", /* Starting Scope:2 */ $primitive("Scope", function() {
+            this.$self("public", "notify", /* Starting Scope:2 */ $primitive("Scope", function() {
                 return function() {
                     var $returnMulti = [],
                         $temp, $val;
                     var $$$0 = $primitive('Text', function() {
-                        return "Slithering..."
+                        return "Notification!"
                     }.bind(this));
                     var $$$1 = function() {
                         return (print.$values["Scope"]()($$$0))
                     }.bind(this);
-                    var $$$2 = $primitive('Number', function() {
-                        return 5
-                    }.bind(this));
-                    var $$$3 = function() {
-                        return (this.$parent.$values["Instance"]().$self("extended").$values["Instance"]().$self("move").$values["Scope"]()($$$2))
+                    var $$$2 = function() {
+                        return (print.$values["Scope"]()(this.$self("what", 52)))
                     }.bind(this);
+                    var $$$3 = $primitive('Text', function() {
+                        return ""
+                    }.bind(this));
+                    this.$arg("what", $$$3, arguments[0]);
                     /* Begin ControlCode: 2 */
                     $$$1();
-                    $$$3();
+                    $$$2();
                     $returnMulti.push($primitive("Instance", function(value) {
                         return function() {
                             return value;
@@ -803,148 +1010,112 @@ var $$$0 = function() {
             }
             return $return;
         }.bind(this);
-    }.bind($newParent($root)))))
+    }.bind($newParent($root))).$values["Scope"]()())
 }.bind($root);
 var $$$1 = function() {
-    return (Scope.$values["Instance"]().extend.$values["Scope"]()(this.$self("Animal", 13), /* Starting Scope:1 */ $primitive("Scope", function() {
-        return function() {
-            var $returnMulti = [],
-                $temp, $val;
-
-            /* Begin ControlCode: 1 */
-            this.$self("public", "move", /* Starting Scope:2 */ $primitive("Scope", function() {
-                return function() {
-                    var $returnMulti = [],
-                        $temp, $val;
-                    var $$$0 = $primitive('Text', function() {
-                        return "Galloping..."
-                    }.bind(this));
-                    var $$$1 = function() {
-                        return (print.$values["Scope"]()($$$0))
-                    }.bind(this);
-                    var $$$2 = $primitive('Number', function() {
-                        return 45
-                    }.bind(this));
-                    var $$$3 = function() {
-                        return (this.$parent.$values["Instance"]().$self("extended").$values["Instance"]().$self("move").$values["Scope"]()($$$2))
-                    }.bind(this);
-                    /* Begin ControlCode: 2 */
-                    $$$1();
-                    $$$3();
-                    $returnMulti.push($primitive("Instance", function(value) {
-                        return function() {
-                            return value;
-                        }
-                    }(this)));
-                    var $i = 0,
-                        $j = 0,
-                        $returnMultiType, $returnTypes, $returnValues;
-                    var $return = {
-                        $types: [],
-                        value: null,
-                        $values: {}
-                    };
-                    $returnTypes = $return.$types;
-                    for ($i = 0; $i < $returnMulti.length; $i += 1) {
-                        for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
-                            $returnMultiType = $returnMulti[$i].$types[$j];
-                            if ($returnTypes.indexOf($returnMultiType) === -1) {
-                                $returnTypes.push($returnMultiType);
-                            }
-                            $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
-                        }
-                    }
-                    return $return;
-                }.bind(this);
-            }.bind($newParent(this))));
-            $returnMulti.push($primitive("Instance", function(value) {
-                return function() {
-                    return value;
-                }
-            }(this)));
-            var $i = 0,
-                $j = 0,
-                $returnMultiType, $returnTypes, $returnValues;
-            var $return = {
-                $types: [],
-                value: null,
-                $values: {}
-            };
-            $returnTypes = $return.$types;
-            for ($i = 0; $i < $returnMulti.length; $i += 1) {
-                for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
-                    $returnMultiType = $returnMulti[$i].$types[$j];
-                    if ($returnTypes.indexOf($returnMultiType) === -1) {
-                        $returnTypes.push($returnMultiType);
-                    }
-                    $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
-                }
-            }
-            return $return;
-        }.bind(this);
-    }.bind($newParent($root)))))
+    return (this.$self("Slit", 55).$values["Scope"]()(this.$self("observer", 55)))
 }.bind($root);
-var $$$2 = $primitive('Text', function() {
-    return 'Sammy the Python'
+var $$$2 = function() {
+    return (this.$self("Slit", 55).$values["Scope"]()())
+}.bind($root);
+var $$$3 = $primitive('Array', function() {
+    return [$$$1(), $$$2()]
 }.bind($root));
-var $$$3 = function() {
-    return (this.$self("Snake", 47).$values["Scope"]()($$$2))
-}.bind($root);
-var $$$4 = function() {
-    return (this.$self("sam", 48).$values["Instance"]().$self("move").$values["Scope"]()())
-}.bind($root);
-var $$$5 = $primitive('Text', function() {
-    return ''
+var $$$4 = $primitive('Number', function() {
+    return 10
 }.bind($root));
-var $$$6 = function() {
-    return (print.$values["Scope"]()($$$5))
+var $$$5 = function() {
+    return (List.$values["Scope"]()($$$4))
 }.bind($root);
+var $$$6 = $primitive('Text', function() {
+    return "."
+}.bind($root));
 var $$$7 = $primitive('Text', function() {
-    return 'Tommy the Palomino'
+    return "slit0  observed?"
 }.bind($root));
-var $$$8 = function() {
-    return (this.$self("Horse", 51).$values["Scope"]()($$$7))
-}.bind($root);
+var $$$8 = $primitive('Number', function() {
+    return 0
+}.bind($root));
 var $$$9 = function() {
-    return (this.$self("tom", 52).$values["Instance"]().$self("move").$values["Scope"]()())
+    return (Console.$values["Instance"]().write.$values["Scope"]()($$$7, this.$self("slits", 59).$substr(($$$8.$values["Number"] || $$$8.$values["Text"])()).$values["Instance"]().observed))
 }.bind($root);
-var $$$10 = $primitive('Text', function() {
-    return ''
-}.bind($root));
+var $$$10 = function() {
+    return (this.$self("Electron", 61).$values["Scope"]()())
+}.bind($root);
 var $$$11 = function() {
-    return (print.$values["Scope"]()($$$10))
+    return (this.$self("electron", 62).$values["Instance"]().$self("pass").$values["Scope"]()(this.$self("slits", 62)))
+}.bind($root);
+var $$$12 = function() {
+    return (this.$self("electron", 63).$values["Instance"]().$self("getPosition").$values["Scope"]()())
+}.bind($root);
+var $$$13 = function() {
+    return (Console.$values["Instance"]().write.$values["Scope"]()(this.$self("resultPositions", 66)))
 }.bind($root);; /* Begin ControlCode: 0 */
-$root.$self("var", "Animal", /* Starting Scope:1 */ $primitive("Scope", function() {
+$root.$self("var", "Slit", /* Starting Scope:1 */ $primitive("Scope", function() {
     return function() {
         var $returnMulti = [],
             $temp, $val;
         var $$$0 = $primitive('Text', function() {
+            return "Creating Slit"
+        }.bind(this));
+        var $$$1 = function() {
+            return (print.$values["Scope"]()($$$0))
+        }.bind(this);
+        var $$$2 = $primitive('Boolean', function() {
+            return true
+        }.bind(this));
+        var $$$3 = $primitive('Boolean', function() {
+            return false
+        }.bind(this));
+        var $$$4 = function() {
+            return (Type.$values["Scope"]()(this.$self("Observer", 5)))
+        }.bind(this);
+        var $$$5 = $primitive('Text', function() {
+            return "Instance"
+        }.bind(this));
+        var $$$6 = $primitive('Boolean', function() {
+            return true
+        }.bind(this));
+        var $$$7 = $primitive('Text', function() {
             return ""
         }.bind(this));
-        this.$arg("name", $$$0, arguments[0]);
+        this.$arg("Observer", $$$7, arguments[0]);
         /* Begin ControlCode: 1 */
-        this.$self("protected", "move", /* Starting Scope:2 */ $primitive("Scope", function() {
+        $$$1();
+        this.$self("public", "open", $$$2);
+        this.$self("public", "observed", $$$3);
+        (function() {
+            if ($$$4().$values["Array"]().has($$$5).$values["Boolean"]()) {
+                return (function() {
+                    return (function() {
+                        this.$self("observed", 6).$types = $$$6.$types;
+                        this.$self("observed", 6).$values = $$$6.$values;
+                        return this.$self("observed", 6);
+                    }.call(this));;
+
+                }.bind(this)());
+            }
+        }.bind(this)());
+        this.$self("public", "objectPasses", /* Starting Scope:2 */ $primitive("Scope", function() {
             return function() {
                 var $returnMulti = [],
                     $temp, $val;
-                var $$$0 = $primitive('Text', function() {
-                    return "moved"
-                }.bind(this));
-                var $$$1 = function() {
-                    return (Text.$values["Scope"]()(this.$self("meters", 3)))
+                var $$$0 = function() {
+                    return (this.$self("Observer", 10).$values["Instance"]().$self("notify").$values["Scope"]()(this.$self("object", 10)))
                 }.bind(this);
-                var $$$2 = $primitive('Text', function() {
-                    return "m."
+                var $$$1 = $primitive('Text', function() {
+                    return ""
                 }.bind(this));
-                var $$$3 = function() {
-                    return (print.$values["Scope"]()(this.$parent.$values["Instance"]().$self("name"), $$$0, $concat($$$1(), $$$2, 3)))
-                }.bind(this);
-                var $$$4 = $primitive('Number', function() {
-                    return 0
-                }.bind(this));
-                this.$arg("meters", $$$4, arguments[0]);
+                this.$arg("object", $$$1, arguments[0]);
                 /* Begin ControlCode: 2 */
-                $$$3();
+                (function() {
+                    if (this.$parent.$values["Instance"]().$self("observed").$values["Boolean"]()) {
+                        return (function() {
+                            return $$$0();;
+
+                        }.bind(this)());
+                    }
+                }.bind(this)());
                 $returnMulti.push($primitive("Instance", function(value) {
                     return function() {
                         return value;
@@ -997,11 +1168,311 @@ $root.$self("var", "Animal", /* Starting Scope:1 */ $primitive("Scope", function
         return $return;
     }.bind(this);
 }.bind($newParent($root))));
-$root.$self("var", "Snake", $$$0());
-$root.$self("var", "Horse", $$$1());
-$root.$self("var", "sam", $$$3());
-$$$4();
-$$$6();
-$root.$self("var", "tom", $$$8());
+$root.$self("var", "Electron", /* Starting Scope:1 */ $primitive("Scope", function() {
+    return function() {
+        var $returnMulti = [],
+            $temp, $val;
+        var $$$0 = $primitive('Array', function() {
+            return []
+        }.bind(this));
+        /* Begin ControlCode: 1 */
+        this.$self("private", "positions", $$$0);
+        this.$self("public", "pass", /* Starting Scope:2 */ $primitive("Scope", function() {
+            return function() {
+                var $returnMulti = [],
+                    $temp, $val;
+                var $$$0 = $primitive('Boolean', function() {
+                    return false
+                }.bind(this));
+                var $$$1 = $primitive('Text', function() {
+                    return "Observers:"
+                }.bind(this));
+                var $$$2 = function() {
+                    return (Console.$values["Instance"]().write.$values["Scope"]()($$$1, this.$self("slit", 20).$values["Instance"]().$self("observed")))
+                }.bind(this);
+                var $$$3 = $primitive('Boolean', function() {
+                    return true
+                }.bind(this));
+                var $$$4 = $primitive('Number', function() {
+                    return 0
+                }.bind(this));
+                var $$$5 = function() {
+                    return (List.$values["Instance"]().length.$values["Scope"]()(this.$self("slits", 26)))
+                }.bind(this);
+                var $$$6 = $primitive('Number', function() {
+                    return 1
+                }.bind(this));
+                var $$$7 = function() {
+                    return (this.$self("Math", 26).$values["Instance"]().$self("random").$values["Scope"]()($$$4, $Math.subtract($$$5(), $$$6)))
+                }.bind(this);
+                var $$$8 = $primitive('Array', function() {
+                    return [this.$self("pickSlit", 27)]
+                }.bind(this));
+                var $$$9 = function() {
+                    return (this.$self("slit", 29).$values["Instance"]().$self("objectPasses").$values["Scope"]()(this.$parent))
+                }.bind(this);
+                var $$$10 = $primitive('Number', function() {
+                    return 0
+                }.bind(this));
+                var $$$11 = $primitive('Array', function() {
+                    return [this.$self("i", 33)]
+                }.bind(this));
+                var $$$12 = $primitive('Number', function() {
+                    return 0
+                }.bind(this));
+                var $$$13 = $primitive('Array', function() {
+                    return [$Math.add(this.$self("prev", 35), this.$self("i", 35))]
+                }.bind(this));
+                var $$$14 = function() {
+                    return (this.$self("slit", 38).$values["Instance"]().$self("objectPasses").$values["Scope"]()(this.$parent))
+                }.bind(this);
+                var $$$15 = function() {
+                    return (function() {
+                        this.$self("var", "i", "");
+                        this.$self("var", "slit", null);
+                        var name, $$$list = this.$self("slits", 32).$values["Array"]();
+                        for (i in $$$list) {
+                            this.$self("i", $primitive((typeof i === "String" ? "Text" : "Number"), function() {
+                                return i;
+                            }));
+                            if ($$$list.hasOwnProperty(i)) {
+                                this.$self("slit", $$$list[i]);
+                                (function() {
+                                    (function(val) {
+                                        this.$parent.$values["Instance"]().$self("positions").$types = Object.create(val.$types);
+                                        this.$parent.$values["Instance"]().$self("positions").$values = Object.create(val.$values);
+                                        return this.$parent.$values["Instance"]().$self("positions");
+                                    }.call(this, $concat(this.$parent.$values["Instance"]().$self("positions"), $$$11, 33)));
+                                    (function() {
+                                        if ($primitive("Boolean", function(val) {
+                                            return function() {
+                                                return val;
+                                            }
+                                        }(!$compare(this.$self("prev", 34), $$$12).$values["Boolean"]())).$values["Boolean"]()) {
+                                            return (function() {
+                                                return (function(val) {
+                                                    this.$parent.$values["Instance"]().$self("positions").$types = Object.create(val.$types);
+                                                    this.$parent.$values["Instance"]().$self("positions").$values = Object.create(val.$values);
+                                                    return this.$parent.$values["Instance"]().$self("positions");
+                                                }.call(this, $concat(this.$parent.$values["Instance"]().$self("positions"), $$$13, 35)));;
+
+                                            }.bind(this)());
+                                        }
+                                    }.bind(this)());
+                                    (function() {
+                                        this.$self("prev", 37).$types = this.$self("i", 37).$types;
+                                        this.$self("prev", 37).$values = this.$self("i", 37).$values;
+                                        return this.$self("prev", 37);
+                                    }.call(this));
+                                    return $$$14();;;;;
+
+                                }.bind(this)());
+                            }
+                        }
+                    }.bind(this)())
+                }.bind(this);
+                var $$$16 = $primitive('Array', function() {
+                    return []
+                }.bind(this));
+                this.$arg("slits", $$$16, arguments[0]);
+                /* Begin ControlCode: 2 */
+                this.$self("var", "observers", $$$0);
+                (function() {
+                    this.$self("var", "i", "");
+                    this.$self("var", "slit", null);
+                    var name, $$$list = this.$self("slits", 19).$values["Array"]();
+                    for (i in $$$list) {
+                        this.$self("i", $primitive((typeof i === "String" ? "Text" : "Number"), function() {
+                            return i;
+                        }));
+                        if ($$$list.hasOwnProperty(i)) {
+                            this.$self("slit", $$$list[i]);
+                            (function() {
+                                $$$2();
+                                return (function() {
+                                    if (this.$self("slit", 21).$values["Instance"]().$self("observed").$values["Boolean"]()) {
+                                        return (function() {
+                                            return (function() {
+                                                this.$self("observers", 22).$types = $$$3.$types;
+                                                this.$self("observers", 22).$values = $$$3.$values;
+                                                return this.$self("observers", 22);
+                                            }.call(this));;
+
+                                        }.bind(this)());
+                                    }
+                                }.bind(this)());;;
+
+                            }.bind(this)());
+                        }
+                    }
+                }.bind(this)());
+                (function() {
+                    if (this.$self("observers", 25).$values["Boolean"]()) {
+                        return (function() {
+                            this.$self("var", "pickSlit", $$$7());
+                            (function(val) {
+                                this.$parent.$values["Instance"]().$self("positions").$types = Object.create(val.$types);
+                                this.$parent.$values["Instance"]().$self("positions").$values = Object.create(val.$values);
+                                return this.$parent.$values["Instance"]().$self("positions");
+                            }.call(this, $concat(this.$parent.$values["Instance"]().$self("positions"), $$$8, 27)));
+                            this.$self("var", "slit", this.$self("slits", 28).$substr((this.$self("pickSlit", 28).$values["Number"] || this.$self("pickSlit", 28).$values["Text"])()));
+                            return $$$9();;;;;
+                        }.bind(this)());
+                    } else {
+                        return (function() {
+                            this.$self("var", "prev", $$$10);
+                            return $$$15();;;
+                        }.bind(this)());
+                    }
+                }.bind(this)());
+                $returnMulti.push($primitive("Instance", function(value) {
+                    return function() {
+                        return value;
+                    }
+                }(this)));
+                var $i = 0,
+                    $j = 0,
+                    $returnMultiType, $returnTypes, $returnValues;
+                var $return = {
+                    $types: [],
+                    value: null,
+                    $values: {}
+                };
+                $returnTypes = $return.$types;
+                for ($i = 0; $i < $returnMulti.length; $i += 1) {
+                    for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                        $returnMultiType = $returnMulti[$i].$types[$j];
+                        if ($returnTypes.indexOf($returnMultiType) === -1) {
+                            $returnTypes.push($returnMultiType);
+                        }
+                        $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+                    }
+                }
+                return $return;
+            }.bind(this);
+        }.bind($newParent(this))));
+        this.$self("public", "getPosition", /* Starting Scope:2 */ $primitive("Scope", function() {
+            return function() {
+                var $returnMulti = [],
+                    $temp, $val;
+                var $$$0 = function() {
+                    return (List.$values["Instance"]().random.$values["Scope"]()(this.$parent.$values["Instance"]().$self("positions")))
+                }.bind(this);
+                var $$$1 = $primitive('Array', function() {
+                    return [this.$self("position", 45)]
+                }.bind(this));
+                /* Begin ControlCode: 2 */
+                this.$self("var", "position", $$$0());
+                (function() {
+                    this.$parent.$values["Instance"]().$self("positions").$types = $$$1.$types;
+                    this.$parent.$values["Instance"]().$self("positions").$values = $$$1.$values;
+                    return this.$parent.$values["Instance"]().$self("positions");
+                }.call(this));
+                if (typeof $returnMulti === "undefined") {
+                    var $returnMulti = [];
+                }
+                $returnMulti.push(this.$self("position", 46));
+                var $i = 0,
+                    $j = 0,
+                    $returnMultiType, $returnTypes, $returnValues;
+                var $return = {
+                    $types: [],
+                    value: null,
+                    $values: {}
+                };
+                $returnTypes = $return.$types;
+                for ($i = 0; $i < $returnMulti.length; $i += 1) {
+                    for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                        $returnMultiType = $returnMulti[$i].$types[$j];
+                        if ($returnTypes.indexOf($returnMultiType) === -1) {
+                            $returnTypes.push($returnMultiType);
+                        }
+                        $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+                    }
+                }
+                return $return;;
+                $returnMulti.push($primitive("Instance", function(value) {
+                    return function() {
+                        return value;
+                    }
+                }(this)));
+                var $i = 0,
+                    $j = 0,
+                    $returnMultiType, $returnTypes, $returnValues;
+                var $return = {
+                    $types: [],
+                    value: null,
+                    $values: {}
+                };
+                $returnTypes = $return.$types;
+                for ($i = 0; $i < $returnMulti.length; $i += 1) {
+                    for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                        $returnMultiType = $returnMulti[$i].$types[$j];
+                        if ($returnTypes.indexOf($returnMultiType) === -1) {
+                            $returnTypes.push($returnMultiType);
+                        }
+                        $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+                    }
+                }
+                return $return;
+            }.bind(this);
+        }.bind($newParent(this))));
+        $returnMulti.push($primitive("Instance", function(value) {
+            return function() {
+                return value;
+            }
+        }(this)));
+        var $i = 0,
+            $j = 0,
+            $returnMultiType, $returnTypes, $returnValues;
+        var $return = {
+            $types: [],
+            value: null,
+            $values: {}
+        };
+        $returnTypes = $return.$types;
+        for ($i = 0; $i < $returnMulti.length; $i += 1) {
+            for ($j = 0; $j < $returnMulti[$i].$types.length; $j += 1) {
+                $returnMultiType = $returnMulti[$i].$types[$j];
+                if ($returnTypes.indexOf($returnMultiType) === -1) {
+                    $returnTypes.push($returnMultiType);
+                }
+                $return.$values[$returnMultiType] = $returnMulti[$i].$values[$returnMultiType];
+            }
+        }
+        return $return;
+    }.bind(this);
+}.bind($newParent($root))));
+$root.$self("var", "observer", $$$0());
+$root.$self("var", "slits", $$$3);
+$root.$self("var", "resultPositions", $$$5());
+$root.$self("var", "electron", $$$6);
 $$$9();
-$$$11();
+(function() {
+    this.$self("var", "index", "");
+    this.$self("var", "value", null);
+    var name, $$$list = this.$self("resultPositions", 60).$values["Array"]();
+    for (index in $$$list) {
+        this.$self("index", $primitive((typeof index === "String" ? "Text" : "Number"), function() {
+            return index;
+        }));
+        if ($$$list.hasOwnProperty(index)) {
+            this.$self("value", $$$list[index]);
+            (function() {
+                (function() {
+                    this.$self("electron", 61).$types = $$$10().$types;
+                    this.$self("electron", 61).$values = $$$10().$values;
+                    return this.$self("electron", 61);
+                }.call(this));
+                $$$11();
+                return (function() {
+                    this.$self("resultPositions", 63).$substr((this.$self("index", 63).$values["Number"] || this.$self("index", 63).$values["Text"])()).$types = $$$12().$types;
+                    this.$self("resultPositions", 63).$substr((this.$self("index", 63).$values["Number"] || this.$self("index", 63).$values["Text"])()).$values = $$$12().$values;
+                    return this.$self("resultPositions", 63).$substr((this.$self("index", 63).$values["Number"] || this.$self("index", 63).$values["Text"])());
+                }.call(this));;;;
+
+            }.bind(this)());
+        }
+    }
+}.bind(this)());
+$$$13();

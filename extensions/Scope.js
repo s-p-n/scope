@@ -7,8 +7,9 @@ var Scope = {
 					$types: ["Scope"],
 					$values: {
 						"Scope": function () {
-							return function extend (extended, extendee, parent) {
+							return function extend (extended, extendee) {
 								var result;
+								parent = null;
 								extendee = extendee.$values["Scope"]().unbind();
 								extended = extended.$values["Scope"]().bind($newParent(parent));
 								//console.log("Extend:", extendee, extended);

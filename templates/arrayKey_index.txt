@@ -1,1 +1,1 @@
-.$substr(%selector%.$values["Number"]())
+.$substr((%selector%.$values["Number"] || %selector%.$values["Text"])())

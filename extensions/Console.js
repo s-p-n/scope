@@ -13,22 +13,30 @@ var Console = (function Console () {
             }));
         }
     }
-
+    var t = 0;
     function printValues (Arr) {
         var result = {}, key, val, i;
+        t += 1;
+        //console.log("printing value:", t);
+        if (t > 10) {
+            //console.log("too big:", Arr);
+            t -= 1;
+            return "..";
+        }
         for (key in Arr.$values) {
             val = Arr.$values[key]();
             if (key === "Array" || key === "Instance") {
                 result[key] = [];
                 for (i in val) {
                     if (val.hasOwnProperty(i)) {
-                        result[key].push(printValues(val[i]));
+                        result[key][i] = printValues(val[i]);
                     }
                 }
                 continue;
             }
             result[key] = val;
         }
+        t -= 1;
         return result;
     }
 
@@ -61,6 +69,14 @@ var Console = (function Console () {
                                     rl.resume();
                                     rl.on('line', callback(fn));
                                 }
+                            }
+                        }
+                    },
+                    printValues: {
+                        $types: ["Scope"],
+                        $values: {
+                            "Scope": function () {
+                                return printValues;
                             }
                         }
                     }

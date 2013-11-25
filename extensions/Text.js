@@ -13,7 +13,10 @@ var Text = {
 				} else if (primitive.$values.hasOwnProperty("Text")) {
 					result = primitive.$values["Text"];
 				} else if(primitive.$types.length === 1) {
-					res = primitive.$values[primitive.$types[0]]().toString();
+					res = Console.$values['Instance']().printValues.$values["Scope"]()(primitive);
+                    if (res.Number !== void 0) {
+                        res = "" + res.Number;
+                    }
 					result = function () { return res; };
 				}
 				if (result === null) {

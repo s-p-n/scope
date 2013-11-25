@@ -1,21 +1,23 @@
 var array = [a:1, b:2, c:3];
 for (name : val in array):
-    Console.write(name, "is", val);
+    print(name, "is", val);
 end;
 
-Console.write(array[`'b'`]);
+print(array['b']);
 
 //Console.write(name, val); // Runtime-Error! (undefined name/val)
-Console.write("Say something and press enter..");
-// Wait for user input, 
+print("Say something and press enter..");
+
+// Wait for user input,
 var data = Console.read((data:'') {
-	// When user is finished with input, data is the result:
-	if (data is ""):
-		Console.write("You didn't say nothin :(");
+    // When user is finished with input, data is the result:
+    if (data is ""):
+        print("You didn't say nothin :(");
     else:
-    	Console.write("data:", data);
+        print("data:", data);
     end;
 });
+
 
 /**
  * Expect:
