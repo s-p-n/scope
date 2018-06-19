@@ -1,1 +1,0 @@
-$compare(%termA%, %termB%)

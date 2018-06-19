@@ -1,5 +1,0 @@
-$primitive("Boolean", function (val) {
-	return function () {
-		return val;
-	}
-}(%termA%.$values["Boolean"]() && %termB%.$values["Boolean"]()))

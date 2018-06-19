@@ -1,5 +1,0 @@
-selector:(function () {
-	var ret;
-	ret = %selectorStatement%;
-	return ret;
-}.bind(this)())

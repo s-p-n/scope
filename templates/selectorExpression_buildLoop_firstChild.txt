@@ -1,7 +1,0 @@
-	for (i in $$) {
-		if($$.hasOwnProperty(i) && %condition%) {
-			%buildList%
-		}
-	}
-	%returnRet%;
-}.bind(this)(%context%))

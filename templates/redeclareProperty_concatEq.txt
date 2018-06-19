@@ -1,5 +1,0 @@
-(function (val) {
-	%id%.$types = Object.create(val.$types);
-	%id%.$values = Object.create(val.$values);
-	return %id%;
-}.call(this, $concat(%id%, %value%, %line%)))

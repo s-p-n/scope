@@ -1,3 +1,0 @@
-this.$self("var", "%name%", function %name% () {
-    %code%
-}.bind($newParent(this))())

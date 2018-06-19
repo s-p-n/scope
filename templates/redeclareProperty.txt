@@ -1,5 +1,0 @@
-(function () {
-	%name%.$types = %value%.$types; 
-	%name%.$values = %value%.$values;
-	return %name%;
-}.call(this))
