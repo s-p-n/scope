@@ -1,0 +1,23 @@
+{
+  "name": "scope-lang",
+  "version": "1.0.0",
+  "description": "Programming language for developing on the back-end and the front-end in the same project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s-p-n/scope.git"
+  },
+  "keywords": [
+    "programming",
+    "language"
+  ],
+  "author": "Spencer A. Lockhart",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/s-p-n/scope/issues"
+  },
+  "homepage": "https://github.com/s-p-n/scope#readme"
+}
