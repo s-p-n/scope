@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/s-p-n/scope/issues"
   },
-  "homepage": "https://github.com/s-p-n/scope#readme"
+  "homepage": "https://github.com/s-p-n/scope#readme",
+  "dependencies": {
+    "babylon": "^6.18.0"
+  }
 }
