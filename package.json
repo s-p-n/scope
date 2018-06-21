@@ -4,6 +4,9 @@
   "description": "Programming language for developing on the back-end and the front-end in the same project.",
   "main": "index.js",
   "scripts": {
+    "build": "babel src -d lib",
+    "start": "babel-node index.js",
+    "sc": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +24,15 @@
   },
   "homepage": "https://github.com/s-p-n/scope#readme",
   "dependencies": {
-    "babylon": "^6.18.0"
+    "babel": "^6.23.0",
+    "babel-traverse": "^6.26.0",
+    "babylon": "^6.18.0",
+    "hyperscript": "^2.0.2",
+    "jison": "^0.4.18"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-preset-es2015": "^6.24.1"
   }
 }
