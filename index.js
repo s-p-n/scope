@@ -1,6 +1,7 @@
 const ScopeParser = require("./lib/ScopeParser.js");
 const fs = require('fs');
 const path = require('path');
+const beautify = require('js-beautify').js_beautify;
 
 let scope = new ScopeParser();
 let srcDir = path.join(__dirname, "scopeSrc");
@@ -16,6 +17,6 @@ srcFiles.forEach((f) => {
 	let translation = scope.translate(srcCode);
 	let libAst = JSON.stringify(translation.ast, null, "  ");
 	fs.writeFileSync(astFilename, libAst);
-	fs.writeFileSync(libFilename, translation.js);
+	fs.writeFileSync(libFilename, beautify(translation.js, {indent_size: 2}));
 	console.log(`Translated file ${srcFilename} to ${libFilename}`);
 });

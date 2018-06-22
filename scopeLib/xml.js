@@ -21,7 +21,11 @@ class Scope {
     };
   }
 
-  declarationExpression({ type, name, value }) {
+  declarationExpression({
+    type,
+    name,
+    value
+  }) {
     const self = this;
     if (self.context.scoping.let.has(name)) {
       throw `Identifier '${name}' has already been declared`;
@@ -51,9 +55,12 @@ class Scope {
     console.log(value);
   }
 }
-const scope = new Scope({});scope.declarationExpression({
-			type: "let",
-			name: "foo",
-			value: scope.xmlExpression("bar", {}, scope.xmlExpression("baz", { someAttr: "someValue"}, scope.xmlExpression("qux", {})))
-		});
+const scope = new Scope({});
+scope.declarationExpression({
+  type: "let",
+  name: "foo",
+  value: scope.xmlExpression("bar", {}, scope.xmlExpression("baz", {
+    someAttr: "someValue"
+  }, scope.xmlExpression("qux", {})))
+});
 scope.print(scope.identifier("foo") + "");
