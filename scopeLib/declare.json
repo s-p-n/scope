@@ -66,7 +66,7 @@
               "line": 4,
               "traversedBody": [
                 null,
-                "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"foo\",\n\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t})"
+                "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"foo\",\n\t\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t\t})"
               ]
             },
             {
@@ -123,8 +123,8 @@
           "raw": "let foo = 'Hello, \nmultiline\nstring!';\nlet bar = true;\nlet",
           "line": 5,
           "traversedBody": [
-            "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"foo\",\n\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t});\n",
-            "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"bar\",\n\t\t\tvalue: true\n\t\t})"
+            "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"foo\",\n\t\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t\t});\n",
+            "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"bar\",\n\t\t\t\tvalue: true\n\t\t\t})"
           ]
         },
         {
@@ -188,7 +188,7 @@
           "traversedBody": [
             "let",
             "baz",
-            "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"qux\",\n\t\t\tvalue: 101\n\t\t})"
+            "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"qux\",\n\t\t\t\tvalue: 101\n\t\t\t})"
           ]
         }
       ],
@@ -205,14 +205,34 @@
       "raw": "let foo = 'Hello, \nmultiline\nstring!';\nlet bar = true;\nlet baz = let qux = 101;\n\nprint",
       "line": 7,
       "traversedBody": [
-        "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"foo\",\n\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t});\nscope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"bar\",\n\t\t\tvalue: true\n\t\t});\n",
-        "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"baz\",\n\t\t\tvalue: scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"qux\",\n\t\t\tvalue: 101\n\t\t})\n\t\t})"
+        "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"foo\",\n\t\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t\t});\nscope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"bar\",\n\t\t\t\tvalue: true\n\t\t\t});\n",
+        "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"baz\",\n\t\t\t\tvalue: scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"qux\",\n\t\t\t\tvalue: 101\n\t\t\t})\n\t\t\t})"
       ]
     },
     {
       "type": "invokeExpression",
       "body": [
-        "print",
+        {
+          "type": "identifier",
+          "body": [
+            "print"
+          ],
+          "loc": {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 6
+            }
+          },
+          "raw": "let foo = 'Hello, \nmultiline\nstring!';\nlet bar = true;\nlet baz = let qux = 101;\n\nprint(",
+          "line": 7,
+          "traversedBody": [
+            "print"
+          ]
+        },
         {
           "type": "invokeArguments",
           "body": [
@@ -327,7 +347,7 @@
       "raw": "let foo = 'Hello, \nmultiline\nstring!';\nlet bar = true;\nlet baz = let qux = 101;\n\nprint(foo + \"kk\");",
       "line": 7,
       "traversedBody": [
-        "print",
+        "ScopeApi.print",
         "scope.identifier(\"foo\") + \"kk\""
       ]
     }
@@ -345,7 +365,7 @@
   "raw": "let foo = 'Hello, \nmultiline\nstring!';\nlet bar = true;\nlet baz = let qux = 101;\n\nprint(foo + \"kk\");",
   "line": 7,
   "traversedBody": [
-    "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"foo\",\n\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t});\nscope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"bar\",\n\t\t\tvalue: true\n\t\t});\nscope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"baz\",\n\t\t\tvalue: scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"qux\",\n\t\t\tvalue: 101\n\t\t})\n\t\t});\n",
-    "scope.print(scope.identifier(\"foo\") + \"kk\")"
+    "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"foo\",\n\t\t\t\tvalue: \"Hello, \\nmultiline\\nstring!\"\n\t\t\t});\nscope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"bar\",\n\t\t\t\tvalue: true\n\t\t\t});\nscope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"baz\",\n\t\t\t\tvalue: scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"qux\",\n\t\t\t\tvalue: 101\n\t\t\t})\n\t\t\t});\n",
+    "scope.invokeExpression(ScopeApi.print, [scope.identifier(\"foo\") + \"kk\"])"
   ]
 }

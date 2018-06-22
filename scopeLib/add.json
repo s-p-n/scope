@@ -3,28 +3,13 @@
   "body": [
     null,
     {
-      "type": "binaryExpression",
+      "type": "invokeExpression",
       "body": [
         {
-          "type": "numericLiteral",
-          "body": 1,
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 2
-            },
-            "end": {
-              "line": 1,
-              "column": 3
-            }
-          },
-          "raw": "1 +",
-          "line": 1
-        },
-        "+",
-        {
-          "type": "numericLiteral",
-          "body": 2,
+          "type": "identifier",
+          "body": [
+            "print"
+          ],
           "loc": {
             "start": {
               "line": 1,
@@ -35,43 +20,140 @@
               "column": 6
             }
           },
-          "raw": "1 + 2;",
-          "line": 1
+          "raw": "print(",
+          "line": 1,
+          "traversedBody": [
+            "print"
+          ]
+        },
+        {
+          "type": "invokeArguments",
+          "body": [
+            {
+              "type": "expressionList",
+              "body": [
+                {
+                  "type": "binaryExpression",
+                  "body": [
+                    {
+                      "type": "numericLiteral",
+                      "body": 1,
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 9
+                        }
+                      },
+                      "raw": "print(1 +",
+                      "line": 1
+                    },
+                    "+",
+                    {
+                      "type": "numericLiteral",
+                      "body": 2,
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 11
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 12
+                        }
+                      },
+                      "raw": "print(1 + 2)",
+                      "line": 1
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 12
+                    }
+                  },
+                  "raw": "print(1 + 2)",
+                  "line": 1,
+                  "traversedBody": [
+                    1,
+                    "+",
+                    2
+                  ]
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 11
+                },
+                "end": {
+                  "line": 1,
+                  "column": 12
+                }
+              },
+              "raw": "print(1 + 2)",
+              "line": 1,
+              "traversedBody": [
+                "1 + 2"
+              ]
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 11
+            },
+            "end": {
+              "line": 1,
+              "column": 12
+            }
+          },
+          "raw": "print(1 + 2)",
+          "line": 1,
+          "traversedBody": [
+            "1 + 2"
+          ]
         }
       ],
       "loc": {
         "start": {
           "line": 1,
-          "column": 5
+          "column": 12
         },
         "end": {
           "line": 1,
-          "column": 6
+          "column": 13
         }
       },
-      "raw": "1 + 2;",
+      "raw": "print(1 + 2);",
       "line": 1,
       "traversedBody": [
-        1,
-        "+",
-        2
+        "ScopeApi.print",
+        "1 + 2"
       ]
     }
   ],
   "loc": {
     "start": {
       "line": 1,
-      "column": 6
+      "column": 13
     },
     "end": {
       "line": 1,
-      "column": 6
+      "column": 13
     }
   },
-  "raw": "1 + 2;",
+  "raw": "print(1 + 2);",
   "line": 1,
   "traversedBody": [
     null,
-    "1 + 2"
+    "scope.invokeExpression(ScopeApi.print, [1 + 2])"
   ]
 }

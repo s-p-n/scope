@@ -13,7 +13,27 @@
             {
               "type": "xmlExpression",
               "body": [
-                "bar",
+                {
+                  "type": "identifier",
+                  "body": [
+                    "bar"
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 5
+                    }
+                  },
+                  "raw": "let foo = \n<bar>",
+                  "line": 2,
+                  "traversedBody": [
+                    "bar"
+                  ]
+                },
                 {
                   "type": "xmlAttributes",
                   "body": [],
@@ -54,7 +74,27 @@
                     {
                       "type": "xmlExpression",
                       "body": [
-                        "baz",
+                        {
+                          "type": "identifier",
+                          "body": [
+                            "baz"
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 6
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 14
+                            }
+                          },
+                          "raw": "let foo = \n<bar>\n\t<baz someAttr",
+                          "line": 3,
+                          "traversedBody": [
+                            "baz"
+                          ]
+                        },
                         {
                           "type": "xmlAttributes",
                           "body": [
@@ -75,7 +115,27 @@
                               "line": 3,
                               "traversedBody": []
                             },
-                            "someAttr",
+                            {
+                              "type": "identifier",
+                              "body": [
+                                "someAttr"
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 14
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 15
+                                }
+                              },
+                              "raw": "let foo = \n<bar>\n\t<baz someAttr=",
+                              "line": 3,
+                              "traversedBody": [
+                                "someAttr"
+                              ]
+                            },
                             {
                               "type": "stringLiteral",
                               "body": "someValue",
@@ -134,7 +194,27 @@
                             {
                               "type": "xmlExpression",
                               "body": [
-                                "qux",
+                                {
+                                  "type": "identifier",
+                                  "body": [
+                                    "qux"
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 4,
+                                      "column": 7
+                                    },
+                                    "end": {
+                                      "line": 4,
+                                      "column": 9
+                                    }
+                                  },
+                                  "raw": "let foo = \n<bar>\n\t<baz someAttr=\"someValue\">\n\t\t<qux />",
+                                  "line": 4,
+                                  "traversedBody": [
+                                    "qux"
+                                  ]
+                                },
                                 {
                                   "type": "xmlAttributes",
                                   "body": [],
@@ -278,13 +358,33 @@
       "line": 7,
       "traversedBody": [
         null,
-        "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"foo\",\n\t\t\tvalue: scope.xmlExpression(\"bar\", {}, scope.xmlExpression(\"baz\", { someAttr: \"someValue\"}, scope.xmlExpression(\"qux\", {})))\n\t\t})"
+        "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"foo\",\n\t\t\t\tvalue: scope.xmlExpression(\"bar\", {}, scope.xmlExpression(\"baz\", { someAttr: \"someValue\"}, scope.xmlExpression(\"qux\", {})))\n\t\t\t})"
       ]
     },
     {
       "type": "invokeExpression",
       "body": [
-        "print",
+        {
+          "type": "identifier",
+          "body": [
+            "print"
+          ],
+          "loc": {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 6
+            }
+          },
+          "raw": "let foo = \n<bar>\n\t<baz someAttr=\"someValue\">\n\t\t<qux />;\n\t</baz>;\n</bar>;\nprint(",
+          "line": 7,
+          "traversedBody": [
+            "print"
+          ]
+        },
         {
           "type": "invokeArguments",
           "body": [
@@ -399,7 +499,7 @@
       "raw": "let foo = \n<bar>\n\t<baz someAttr=\"someValue\">\n\t\t<qux />;\n\t</baz>;\n</bar>;\nprint(foo + \"\");",
       "line": 7,
       "traversedBody": [
-        "print",
+        "ScopeApi.print",
         "scope.identifier(\"foo\") + \"\""
       ]
     }
@@ -417,7 +517,7 @@
   "raw": "let foo = \n<bar>\n\t<baz someAttr=\"someValue\">\n\t\t<qux />;\n\t</baz>;\n</bar>;\nprint(foo + \"\");",
   "line": 7,
   "traversedBody": [
-    "scope.declarationExpression({\n\t\t\ttype: \"let\",\n\t\t\tname: \"foo\",\n\t\t\tvalue: scope.xmlExpression(\"bar\", {}, scope.xmlExpression(\"baz\", { someAttr: \"someValue\"}, scope.xmlExpression(\"qux\", {})))\n\t\t});\n",
-    "scope.print(scope.identifier(\"foo\") + \"\")"
+    "scope.declarationExpression({\n\t\t\t\ttype: \"let\",\n\t\t\t\tname: \"foo\",\n\t\t\t\tvalue: scope.xmlExpression(\"bar\", {}, scope.xmlExpression(\"baz\", { someAttr: \"someValue\"}, scope.xmlExpression(\"qux\", {})))\n\t\t\t});\n",
+    "scope.invokeExpression(ScopeApi.print, [scope.identifier(\"foo\") + \"\"])"
   ]
 }

@@ -1,3 +1,10 @@
+const ScopeApi = {
+  print(value) {
+    console.log(value);
+  }
+}
+
+
 class Scope {
   constructor(context) {
     this.root = context;
@@ -44,9 +51,9 @@ class Scope {
     }
     throw `Identifier '${name}' is not defined`;
   }
-
-  print(value) {
-    console.log(value);
+  
+  invokeExpression (f, args) {
+    return f(...args);
   }
 }
 const scope = new Scope({});
