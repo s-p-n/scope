@@ -8,6 +8,19 @@ let allowedUndefinedIdExpressions = [
 	"xmlAttributes"
 ];
 
+let buildArgPartFromAssocPart = (assoc, addTo = false) => {
+	let result = "";
+	if (addTo) {
+		result = ",";
+	}
+	if (assoc.type === "id") {
+		result += `{key: "${assoc.name}", value: ${assoc.expression}}`;
+	} else if (assoc.type === "string") {
+		result += `{key: ${assoc.name}, value: ${assoc.expression}}`;
+	}
+	return result;
+}
+
 class ScopeRules {
 	constructor (state = {context: {}}) {
 		const self = this;
@@ -33,6 +46,27 @@ class ScopeRules {
 	      protected: new Map(),
 	      public: new Map()
 	    };
+	    state.context.args = [];
+	    state.newChildContext = () => {
+	    	state.parent = state.context;
+	    	let newContext = {
+	    		scoping: {
+			      let: new Map(),
+			      private: new Map(),
+			      protected: new Map(),
+			      public: new Map()
+			    },
+			    definedLocally: state.context.definedLocally,
+			    idAvailable: state.context.idAvailable
+	    	}
+	    	newContext.args = [];
+	    	state.context = newContext;
+	    };
+
+	    state.setParentContext = () => {
+	    	state.context = state.parent;
+	    };
+
 	    state.context.definedLocally = (id="") => {
 	    	let me = state.context;
 	    	if (me.scoping.let.has(id)) {
@@ -59,6 +93,85 @@ class ScopeRules {
 
 	    	return false;
 	    }
+	}
+
+	scopeStart () {
+		this.state.newChildContext();
+		console.log("New scope definition is starting..");
+		return true;
+	}
+
+	scopeExpression (scopeStart, scopeArguments, controlCode) {
+		const state = this.state;
+		let argDeclarations = "";
+		console.log("scopeExpression:", scopeStart, scopeArguments, controlCode);
+		if (scopeStart !== true) {
+			controlCode = scopeArguments;
+			scopeArguments = scopeStart;
+		}
+		if (controlCode === undefined) {
+			controlCode = scopeArguments;
+			scopeArguments = "[]";
+		}
+
+		if (scopeArguments === undefined) {
+			scopeArguments = "[]";
+		}
+
+		state.context.args.forEach((arg, index) => {
+			console.log(arg);
+			argDeclarations += `scope.declarationExpression({
+				type: "let",
+				name: "${arg.name}",
+				value: args[${index}] === undefined ? ${arg.default} : args[${index}]
+			});`;
+		});
+
+		state.setParentContext();
+
+		return `scope.createScope((args = ${scopeArguments}) => {
+			scope.newChildContext();
+			${argDeclarations}
+			${controlCode}
+			scope.setParentContext();
+		})`;
+	}
+
+	scopeArguments (associativeList) {
+		const state = this.state;
+
+		console.log("scopeArguments:", associativeList);
+
+		return `[${associativeList}]`;
+	}
+
+	associativeList (associativeList, associativeDeclaration) {
+		const state = this.state;
+		let result = '';
+		let name = '';
+		if (associativeDeclaration === undefined) {
+			associativeDeclaration = associativeList;
+			result =  buildArgPartFromAssocPart(associativeDeclaration);
+		} else {
+			result = associativeList + buildArgPartFromAssocPart(associativeDeclaration, true);
+		}
+		if (associativeDeclaration.type === 'id') {
+			name = associativeDeclaration.name;
+		} else {
+			name = associativeDeclaration.name.substr(1,associativeDeclaration.name.length - 2);
+		}
+		state.context.scoping.let.set(name, true);
+		state.context.args.push({name: name, default: associativeDeclaration.expression});
+		return result;
+	}
+
+	associativeDeclaration (name, type, expression) {
+		const state = this.state;
+		return {
+			name: name,
+			type: type,
+			expression: expression
+		};
 	}
 
 	controlCode (controlCode="", expression) {

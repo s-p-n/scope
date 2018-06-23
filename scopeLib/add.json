@@ -142,16 +142,16 @@
   ],
   "loc": {
     "start": {
-      "line": 1,
-      "column": 13
+      "line": 2,
+      "column": 0
     },
     "end": {
-      "line": 1,
-      "column": 13
+      "line": 2,
+      "column": 0
     }
   },
-  "raw": "print(1 + 2);",
-  "line": 1,
+  "raw": "print(1 + 2);\n",
+  "line": 2,
   "traversedBody": [
     null,
     "scope.invokeExpression(ScopeApi.print, [1 + 2])"

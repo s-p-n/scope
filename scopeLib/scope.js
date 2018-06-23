@@ -87,7 +87,35 @@ const scope = new Scope({});
 scope.invokeExpression(scope.createScope((args = []) => {
   scope.newChildContext();
 
-  scope.invokeExpression(ScopeApi.print, [1 + 2]);
+  scope.declarationExpression({
+    type: "let",
+    name: "foo",
+    value: scope.createScope((args = [{
+      key: "greeting",
+      value: "hello"
+    }, {
+      key: "name",
+      value: "scope"
+    }]) => {
+      scope.newChildContext();
+      scope.declarationExpression({
+        type: "let",
+        name: "greeting",
+        value: args[0] === undefined ? "hello" : args[0]
+      });
+      scope.declarationExpression({
+        type: "let",
+        name: "name",
+        value: args[1] === undefined ? "scope" : args[1]
+      });
+      scope.invokeExpression(ScopeApi.print, [scope.identifier("greeting"), scope.identifier("name")]);
+
+      scope.setParentContext();
+    })
+  });
+  scope.invokeExpression(scope.identifier("foo"), []);
+  scope.invokeExpression(scope.identifier("foo"), ["testing"]);
+  scope.invokeExpression(scope.identifier("foo"), ["test", "passed"]);
 
   scope.setParentContext();
 }), [])

@@ -61,7 +61,14 @@ class ScopeParser {
 		self.rules = new ScopeRules();
 		return {
 			ast: ast,
-			js: ast === true ? "" : (scopeRuntime + self.traverse(ast))
+			js: ast === true ? "" : (
+				scopeRuntime + self.rules.invokeExpression(
+					self.rules.scopeExpression(
+						self.traverse(ast)
+					),
+					[]
+				)
+			)
 		}
 	}
 }

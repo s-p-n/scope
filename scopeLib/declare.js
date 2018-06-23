@@ -2,12 +2,13 @@
 
 const ScopeApi = {
   print(value) {
-    console.log(value);
+    console.log(...value);
   }
 };
 
 class Scope {
   constructor(context) {
+    const self = this;
     this.root = context;
     this.parent = context;
     this.context = context;
@@ -16,6 +17,23 @@ class Scope {
       private: new Map(),
       protected: new Map(),
       public: new Map()
+    };
+    this.newChildContext = () => {
+      self.parent = self.context;
+      let newContext = {
+        scoping: {
+          let: new Map(),
+          private: new Map(),
+          protected: new Map(),
+          public: new Map()
+        }
+      };
+      newContext.args = [];
+      self.context = newContext;
+    };
+
+    this.setParentContext = () => {
+      self.context = self.parent;
     };
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
@@ -57,28 +75,38 @@ class Scope {
     throw `Identifier '${name}' is not defined`;
   }
 
+  createScope(f) {
+    return f;
+  }
+
   invokeExpression(f, args) {
-    return f(...args);
+    return f(args);
   }
 }
 const scope = new Scope({});
-scope.declarationExpression({
-  type: "let",
-  name: "foo",
-  value: "Hello, \nmultiline\nstring!"
-});
-scope.declarationExpression({
-  type: "let",
-  name: "bar",
-  value: true
-});
-scope.declarationExpression({
-  type: "let",
-  name: "baz",
-  value: scope.declarationExpression({
+scope.invokeExpression(scope.createScope((args = []) => {
+  scope.newChildContext();
+
+  scope.declarationExpression({
     type: "let",
-    name: "qux",
-    value: 101
-  })
-});
-scope.invokeExpression(ScopeApi.print, [scope.identifier("foo") + "kk"]);
+    name: "foo",
+    value: "Hello, \nmultiline\nstring!"
+  });
+  scope.declarationExpression({
+    type: "let",
+    name: "bar",
+    value: true
+  });
+  scope.declarationExpression({
+    type: "let",
+    name: "baz",
+    value: scope.declarationExpression({
+      type: "let",
+      name: "qux",
+      value: 101
+    })
+  });
+  scope.invokeExpression(ScopeApi.print, [scope.identifier("foo") + "kk"]);
+
+  scope.setParentContext();
+}), [])
