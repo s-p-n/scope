@@ -3,7 +3,7 @@ import * as jison from "jison";
 import * as path from "path";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
-import grammar from "./scope1.json";
+import grammar from "../scope1.json";
 //var grammar = fs.readFileSync(path.join(__dirname, "../scope.jison"), "utf8");
 
 var parser = new jison.Parser(grammar);
