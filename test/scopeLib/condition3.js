@@ -117,6 +117,29 @@ class Scope {
 const scope = new Scope({});
 module.exports = scope.invokeExpression(scope.createScope((args = []) => {
 
-  return "a string";
+  scope.declarationExpression({
+    type: "let",
+    name: "first",
+    value: scope.createScope((args = []) => {
+
+      return "first";
+
+    })
+  });
+  scope.declarationExpression({
+    type: "let",
+    name: "second",
+    value: scope.createScope((args = []) => {
+
+      return "second";
+
+    })
+  });
+  scope.declarationExpression({
+    type: "let",
+    name: "condition",
+    value: true
+  });
+  return scope.invokeExpression(ScopeApi['if'], [scope.identifier("condition"), scope.identifier("first"), scope.identifier("second")]);
 
 }), []);

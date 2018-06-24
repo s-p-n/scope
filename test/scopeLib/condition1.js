@@ -117,6 +117,14 @@ class Scope {
 const scope = new Scope({});
 module.exports = scope.invokeExpression(scope.createScope((args = []) => {
 
-  return "a string";
+  return scope.invokeExpression(ScopeApi['if'], [true, scope.createScope((args = []) => {
+
+    return "is true";
+
+  }), scope.createScope((args = []) => {
+
+    return "is false";
+
+  })]);
 
 }), []);

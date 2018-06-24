@@ -1,8 +1,15 @@
 "use strict";
 
 const ScopeApi = {
-  print(value) {
+  "print": value => {
     console.log(...value);
+  },
+
+  "if": ([condition, ifTrueScope = () => {}, ifFalseScope = () => {}]) => {
+    if (condition) {
+      return scope.invokeExpression(ifTrueScope, []);
+    }
+    return scope.invokeExpression(ifFalseScope, []);
   }
 };
 

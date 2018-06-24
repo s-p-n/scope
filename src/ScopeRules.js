@@ -1,6 +1,7 @@
 
 let api = {
-	print: "ScopeApi.print"
+	print: "ScopeApi.print",
+	if: "ScopeApi['if']"
 };
 
 let allowedUndefinedIdExpressions = [
