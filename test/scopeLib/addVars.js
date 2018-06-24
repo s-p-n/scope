@@ -41,7 +41,7 @@ class Scope {
     this.newChildContext();
   }
 
-  assignmentExpression(name, value, ctx=this.context) {
+  assignmentExpression(name, value, ctx = this.context) {
     const self = this;
     if (ctx.scoping.let.has(name)) {
       return ctx.scoping.let.set(name, value);
@@ -62,7 +62,11 @@ class Scope {
     throw `Identifier '${name}' is not defined`;
   }
 
-  declarationExpression({ type, name, value }) {
+  declarationExpression({
+    type,
+    name,
+    value
+  }) {
     const self = this;
     if (self.context.scoping.let.has(name)) {
       throw `Identifier '${name}' has already been declared`;
@@ -71,7 +75,7 @@ class Scope {
     return value;
   }
 
-  identifier(name, ctx=this.context) {
+  identifier(name, ctx = this.context) {
     const self = this;
     if (ctx.scoping.let.has(name)) {
       return ctx.scoping.let.get(name);
@@ -104,3 +108,18 @@ class Scope {
   }
 }
 const scope = new Scope({});
+module.exports = scope.invokeExpression(scope.createScope((args = []) => {
+
+  scope.declarationExpression({
+    type: "let",
+    name: "foo",
+    value: 5
+  });
+  scope.declarationExpression({
+    type: "let",
+    name: "bar",
+    value: 7
+  });
+  return scope.identifier("foo") + scope.identifier("bar");
+
+}), []);

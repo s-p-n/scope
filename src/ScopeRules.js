@@ -38,23 +38,17 @@ class ScopeRules {
 		}
 		state.errorTail = () => `[${self.state.loc.start.line}:${self.state.loc.start.column}-${self.state.loc.end.line}:${self.state.loc.end.column}]`;
 		state.root = state.context;
-	    state.parent = state.context;
 	    state.context = state.context;
-	    state.context.scoping = {
-	      let: new Map(),
-	      private: new Map(),
-	      protected: new Map(),
-	      public: new Map()
-	    };
 	    state.context.args = [];
 	    state.newChildContext = () => {
-	    	state.parent = state.context;
+	    	let parent = state.context;
 	    	let newContext = {
 	    		scoping: {
 			      let: new Map(),
 			      private: new Map(),
 			      protected: new Map(),
-			      public: new Map()
+			      public: new Map(),
+			      parent: parent
 			    },
 			    definedLocally: state.context.definedLocally,
 			    idAvailable: state.context.idAvailable
@@ -64,11 +58,9 @@ class ScopeRules {
 	    };
 
 	    state.setParentContext = () => {
-	    	state.context = state.parent;
+	    	state.context = state.context.scoping.parent;
 	    };
-
-	    state.context.definedLocally = (id="") => {
-	    	let me = state.context;
+	    state.context.definedLocally = (id = "", me = state.context) => {
 	    	if (me.scoping.let.has(id)) {
 	    		return me.scoping.let.get(id);
 	    	}
@@ -83,16 +75,28 @@ class ScopeRules {
 	    	}
 	    	return false;
 	    }
-	    state.context.idAvailable = (id="") => {
-	    	let me = state.context;
-	    	if (me.definedLocally(id)) {
+
+	    state.context.idAvailable = (id="", me = state.context) => {
+	    	if (!me) {
+	    		return false;
+	    	}
+
+	    	if (me.definedLocally !== undefined && me.definedLocally(id, me)) {
 	    		return true;
 	    	}
 
-	    	// TODO: Implement lexical scoping and shit..
+	    	if (me.scoping && me.scoping.parent && me.scoping.parent.scoping) {
+	    		return me.idAvailable(id, me.scoping.parent);
+	    	}
 
 	    	return false;
 	    }
+
+	    state.newChildContext();
+	}
+
+	assignmentExpression (name, expression) {
+		return `scope.assignmentExpression("${name}", ${expression})`;
 	}
 
 	associativeDeclaration (name, type, expression) {
@@ -149,7 +153,6 @@ class ScopeRules {
 		}
 		if (type === "let") {
 			state.context.scoping.let.set(name, true);
-			console.log(`Defined '${name}'`)
 			return `scope.declarationExpression({
 				type: "${type}",
 				name: "${name}",
@@ -168,7 +171,15 @@ class ScopeRules {
 	
 	identifier (name, children) {
 		const state = this.state;
-		console.log("parent:", this.parentNode);
+
+		if (this.parentNode === "assignmentExpression") {
+			if (state.context.idAvailable(name)) {
+				return name
+			} else {
+				throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
+			}
+		}
+
 		if (children === undefined) {
 			if (name in api) {
 				return `${api[name]}`;
@@ -181,6 +192,8 @@ class ScopeRules {
 			}
 			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
+
+
 		throw `TODO: Implement identifier children in parser ${this.state.errorTail()}`;
 
 	}
@@ -197,16 +210,18 @@ class ScopeRules {
 		return n;
 	}
 
+	returnExpression (expression) {
+		return `return ${expression}`;
+	}
+
 	scopeStart () {
 		this.state.newChildContext();
-		console.log("New scope definition is starting..");
 		return true;
 	}
 
 	scopeExpression (scopeStart, scopeArguments, controlCode) {
 		const state = this.state;
 		let argDeclarations = "";
-		console.log("scopeExpression:", scopeStart, scopeArguments, controlCode);
 		if (scopeStart !== true) {
 			controlCode = scopeArguments;
 			scopeArguments = scopeStart;
@@ -221,7 +236,6 @@ class ScopeRules {
 		}
 
 		state.context.args.forEach((arg, index) => {
-			console.log(arg);
 			argDeclarations += `scope.declarationExpression({
 				type: "let",
 				name: "${arg.name}",
@@ -232,17 +246,13 @@ class ScopeRules {
 		state.setParentContext();
 
 		return `scope.createScope((args = ${scopeArguments}) => {
-			scope.newChildContext();
 			${argDeclarations}
 			${controlCode}
-			scope.setParentContext();
 		})`;
 	}
 
 	scopeArguments (associativeList) {
 		const state = this.state;
-
-		console.log("scopeArguments:", associativeList);
 
 		return `[${associativeList}]`;
 	}
@@ -270,7 +280,7 @@ class ScopeRules {
 		}
 		return `${xmlAttributes} ${name}: ${value}`;
 	}
-	
+
 	xmlExpression (name, xmlAttributes, xmlControlCode) {
 		if (xmlControlCode === undefined) {
 			return `scope.xmlExpression("${name}", {${xmlAttributes}})`;

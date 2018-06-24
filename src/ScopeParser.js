@@ -63,7 +63,7 @@ class ScopeParser {
 			ast: ast,
 			js: ast === true ? "" : (
 				scopeRuntime + 
-				"exports.default = " +
+				"module.exports = " +
 				self.rules.invokeExpression(
 					self.rules.scopeExpression(
 						self.traverse(ast)
