@@ -84,10 +84,10 @@ class Scope {
   }
 }
 const scope = new Scope({});
-scope.invokeExpression(scope.createScope((args = []) => {
+exports.default = scope.invokeExpression(scope.createScope((args = []) => {
   scope.newChildContext();
 
   scope.invokeExpression(ScopeApi.print, [1 + 2]);
 
   scope.setParentContext();
-}), [])
+}), []);

@@ -84,7 +84,7 @@ class Scope {
   }
 }
 const scope = new Scope({});
-scope.invokeExpression(scope.createScope((args = []) => {
+exports.default = scope.invokeExpression(scope.createScope((args = []) => {
   scope.newChildContext();
 
   scope.declarationExpression({
@@ -97,4 +97,4 @@ scope.invokeExpression(scope.createScope((args = []) => {
   scope.invokeExpression(ScopeApi.print, [scope.identifier("foo") + ""]);
 
   scope.setParentContext();
-}), [])
+}), []);

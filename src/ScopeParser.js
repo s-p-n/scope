@@ -62,12 +62,15 @@ class ScopeParser {
 		return {
 			ast: ast,
 			js: ast === true ? "" : (
-				scopeRuntime + self.rules.invokeExpression(
+				scopeRuntime + 
+				"exports.default = " +
+				self.rules.invokeExpression(
 					self.rules.scopeExpression(
 						self.traverse(ast)
 					),
 					[]
-				)
+				) +
+				";"
 			)
 		}
 	}

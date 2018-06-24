@@ -95,6 +95,108 @@ class ScopeRules {
 	    }
 	}
 
+	associativeDeclaration (name, type, expression) {
+		const state = this.state;
+		return {
+			name: name,
+			type: type,
+			expression: expression
+		};
+	}
+
+	associativeList (associativeList, associativeDeclaration) {
+		const state = this.state;
+		let result = '';
+		let name = '';
+		if (associativeDeclaration === undefined) {
+			associativeDeclaration = associativeList;
+			result =  buildArgPartFromAssocPart(associativeDeclaration);
+		} else {
+			result = associativeList + buildArgPartFromAssocPart(associativeDeclaration, true);
+		}
+		if (associativeDeclaration.type === 'id') {
+			name = associativeDeclaration.name;
+		} else {
+			name = associativeDeclaration.name.substr(1,associativeDeclaration.name.length - 2);
+		}
+		state.context.scoping.let.set(name, true);
+		state.context.args.push({name: name, default: associativeDeclaration.expression});
+		return result;
+	}
+
+	binaryExpression (a, op, b) {
+		return `${a} ${op} ${b}`;
+	}
+
+	booleanLiteral (bool) {
+		return bool;
+	}
+
+	controlCode (controlCode="", expression) {
+		if (expression === undefined) {
+			return "";
+		}
+		return `${controlCode}${expression};\n`
+	}
+
+	declarationExpression (type, name, value) {
+		const state = this.state;
+		if (name in api) {
+			throw `Syntax Error: '${name}' is a reserved word ${this.state.errorTail()}`;
+		}
+		if (state.context.definedLocally(name)) {
+			throw `Syntax Error: '${name}' has already been defined in this context. ${this.state.errorTail()}`;
+		}
+		if (type === "let") {
+			state.context.scoping.let.set(name, true);
+			console.log(`Defined '${name}'`)
+			return `scope.declarationExpression({
+				type: "${type}",
+				name: "${name}",
+				value: ${value}
+			})`;
+		}
+		throw "TODO: Implement more declarations.";
+	}
+
+	expressionList (expression, expressionList) {
+		if (expressionList === undefined) {
+			return `${expression}`;
+		}
+		return `${expression}, ${expressionList}`;
+	}
+	
+	identifier (name, children) {
+		const state = this.state;
+		console.log("parent:", this.parentNode);
+		if (children === undefined) {
+			if (name in api) {
+				return `${api[name]}`;
+			}
+			if (state.context.idAvailable(name)) {
+				return `scope.identifier("${name}")`;
+			}
+			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
+				return name;
+			}
+			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
+		}
+		throw `TODO: Implement identifier children in parser ${this.state.errorTail()}`;
+
+	}
+
+	invokeExpression (name, invokeArguments) {
+		return `scope.invokeExpression(${name}, [${invokeArguments}])`;
+	}
+
+	invokeArguments (expression="") {
+		return `${expression}`;
+	}
+	
+	numericLiteral (n) {
+		return n;
+	}
+
 	scopeStart () {
 		this.state.newChildContext();
 		console.log("New scope definition is starting..");
@@ -145,90 +247,10 @@ class ScopeRules {
 		return `[${associativeList}]`;
 	}
 
-	associativeList (associativeList, associativeDeclaration) {
-		const state = this.state;
-		let result = '';
-		let name = '';
-		if (associativeDeclaration === undefined) {
-			associativeDeclaration = associativeList;
-			result =  buildArgPartFromAssocPart(associativeDeclaration);
-		} else {
-			result = associativeList + buildArgPartFromAssocPart(associativeDeclaration, true);
-		}
-		if (associativeDeclaration.type === 'id') {
-			name = associativeDeclaration.name;
-		} else {
-			name = associativeDeclaration.name.substr(1,associativeDeclaration.name.length - 2);
-		}
-		state.context.scoping.let.set(name, true);
-		state.context.args.push({name: name, default: associativeDeclaration.expression});
-		return result;
-	}
-
-	associativeDeclaration (name, type, expression) {
-		const state = this.state;
-		return {
-			name: name,
-			type: type,
-			expression: expression
-		};
-	}
-
-	controlCode (controlCode="", expression) {
-		if (expression === undefined) {
-			return "";
-		}
-		return `${controlCode}${expression};\n`
-	}
-	declarationExpression (type, name, value) {
-		const state = this.state;
-		if (name in api) {
-			throw `Syntax Error: '${name}' is a reserved word ${this.state.errorTail()}`;
-		}
-		if (state.context.definedLocally(name)) {
-			throw `Syntax Error: '${name}' has already been defined in this context. ${this.state.errorTail()}`;
-		}
-		if (type === "let") {
-			state.context.scoping.let.set(name, true);
-			console.log(`Defined '${name}'`)
-			return `scope.declarationExpression({
-				type: "${type}",
-				name: "${name}",
-				value: ${value}
-			})`;
-		}
-		throw "TODO: Implement more declarations.";
-	}
 	stringLiteral (str) {
 		return JSON.stringify(str);
 	}
-	numericLiteral (n) {
-		return n;
-	}
-	booleanLiteral (bool) {
-		return bool;
-	}
-	identifier (name, children) {
-		const state = this.state;
-		console.log("parent:", this.parentNode);
-		if (children === undefined) {
-			if (name in api) {
-				return `${api[name]}`;
-			}
-			if (state.context.idAvailable(name)) {
-				return `scope.identifier("${name}")`;
-			}
-			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
-				return name;
-			}
-			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
-		}
-		throw `TODO: Implement identifier children in parser ${this.state.errorTail()}`;
 
-	}
-	binaryExpression (a, op, b) {
-		return `${a} ${op} ${b}`;
-	}
 	xmlControlCode (xmlControlCode="", expression) {
 		if (expression === undefined) {
 			return "";
@@ -238,6 +260,7 @@ class ScopeRules {
 		}
 		return `${xmlControlCode}${expression}`;
 	}
+
 	xmlAttributes (xmlAttributes="", name, value) {
 		if (name === undefined) {
 			return "";
@@ -247,23 +270,12 @@ class ScopeRules {
 		}
 		return `${xmlAttributes} ${name}: ${value}`;
 	}
+	
 	xmlExpression (name, xmlAttributes, xmlControlCode) {
 		if (xmlControlCode === undefined) {
 			return `scope.xmlExpression("${name}", {${xmlAttributes}})`;
 		}
 		return `scope.xmlExpression("${name}", {${xmlAttributes}}, ${xmlControlCode})`;
-	}
-	invokeExpression (name, invokeArguments) {
-		return `scope.invokeExpression(${name}, [${invokeArguments}])`;
-	}
-	invokeArguments (expression="") {
-		return `${expression}`;
-	}
-	expressionList (expression, expressionList) {
-		if (expressionList === undefined) {
-			return `${expression}`;
-		}
-		return `${expression}, ${expressionList}`;
 	}
 }
 

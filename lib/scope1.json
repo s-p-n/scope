@@ -31,6 +31,7 @@
 			["let\\b",		"return 'LET';"],
 			["true\\b",	"return 'TRUE';"],
 			["false\\b",	"return 'FALSE';"],
+			["return\\b",	"return 'RETURN';"],
 			["[0-9]+(?:\\.[0-9]+)?\\b",		"return 'NUMBER';"],
 			["[a-zA-Z_][a-zA-Z0-9_]*", "return 'IDENTIFIER';"],
 			["$",		"return 'EOF';"]
@@ -51,8 +52,29 @@
 	],
 	"start": "program",
 	"bnf": {
-		"program": [
-			["controlCode EOF", "return $1"]
+		"associativeDeclaration": [
+			["IDENTIFIER : expression",
+				"$$ = new yy.scopeAst(yy, 'associativeDeclaration', [$1, 'id', $3]);"],
+			["string : expression",
+				"$$ = new yy.scopeAst(yy, 'associativeDeclaration', [$1, 'string', $3]);"]
+		],
+		"associativeList": [
+			["associativeDeclaration",
+				"$$ = new yy.scopeAst(yy, 'associativeList', [$1]);"],
+			["associativeList , associativeDeclaration",
+				"$$ = new yy.scopeAst(yy, 'associativeList', [$1, $3]);"]
+		],
+		"binaryExpression": [
+			["expression + expression",
+				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
+			["expression - expression",
+				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
+			["expression * expression",
+				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
+			["expression / expression",
+				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
+			["expression ^ expression",
+				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"]
 		],
 		"controlCode": [
 			["", 
@@ -60,11 +82,15 @@
 			["controlCode expression ;", 
 				"$$ = new yy.scopeAst(yy, 'controlCode', [$1, $2]);"]
 		],
+		"declarationExpression": [
+			["LET IDENTIFIER = expression",
+				"$$ = new yy.scopeAst(yy, 'declarationExpression', ['let', $2, $4]);"]
+		],
 		"expression": [
 			["id = expression",
 				"$$ = new yy.scopeAst(yy, 'assignmentExpression', [$1, '=', $3]);"],
-			["LET IDENTIFIER = expression",
-				"$$ = new yy.scopeAst(yy, 'declarationExpression', ['let', $2, $4]);"],
+			["declarationExpression",
+				"$$ = $1"],
 			["binaryExpression", 
 				"$$ = $1"],
 			["- expression",
@@ -77,7 +103,9 @@
 			["id",
 				"$$ = $1"],
 			["invoke",
-				"$$ = $1"]
+				"$$ = $1"],
+			["RETURN expression",
+				"$$ = new yy.scopeAst(yy, 'returnExpression', [$2]);"]
 		],
 		"expressionList": [
 			["expression", 
@@ -93,6 +121,18 @@
 			["id [ expression ]",
 				"$$ = new yy.scopeAst(yy, 'identifier', [$1, $3]);"]
 		],
+		"invoke": [
+			["id ( invokeArguments )",
+				"$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);"],
+			["scope ( invokeArguments )",
+				"$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);"]
+		],
+		"invokeArguments": [
+			["",
+				"$$ = new yy.scopeAst(yy, 'invokeArguments', []);"],
+			["expressionList",
+				"$$ = new yy.scopeAst(yy, 'invokeArguments', [$1]);"]
+		],
 		"literal": [
 			["TRUE",
 				"$$ = new yy.scopeAst(yy, 'booleanLiteral', true);"],
@@ -107,6 +147,23 @@
 			["scope",
 				"$$ = $1"]
 		],
+		"program": [
+			["controlCode EOF", "return $1"]
+		],
+		"scope": [
+			["scopeArguments scopeStart controlCode }",
+				"$$ = new yy.scopeAst(yy, 'scopeExpression', [$scopeStart, $scopeArguments, $controlCode]);"],
+			["scopeStart controlCode }",
+				"$$ = new yy.scopeAst(yy, 'scopeExpression', [$scopeStart, $controlCode]);"]
+		],
+		"scopeStart": [
+			["{",
+				"$$ = new yy.scopeAst(yy, 'scopeStart', []);"]
+		],
+		"scopeArguments": [
+			["( associativeList )",
+				"$$ = new yy.scopeAst(yy, 'scopeArguments', [$2]);"]
+		],
 		"string": [
 			["QSTRING", 
 				"$$ = $1"],
@@ -114,18 +171,6 @@
 				"$$ = $1"],
 			["BSTRING",
 				"$$ = $1"]
-		],
-		"binaryExpression": [
-			["expression + expression",
-				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
-			["expression - expression",
-				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
-			["expression * expression",
-				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
-			["expression / expression",
-				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"],
-			["expression ^ expression",
-				"$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);"]
 		],
 		"xml": [
 			["< id xmlAttributes > xmlControlCode </ id >",
@@ -144,44 +189,6 @@
 				"$$ = new yy.scopeAst(yy, 'xmlControlCode', []);"],
 			["xmlControlCode expression ;",
 				"$$ = new yy.scopeAst(yy, 'xmlControlCode', [$1, $2]);"]
-		],
-		"invoke": [
-			["id ( invokeArguments )",
-				"$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);"],
-			["scope ( invokeArguments )",
-				"$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);"]
-		],
-		"invokeArguments": [
-			["",
-				"$$ = new yy.scopeAst(yy, 'invokeArguments', []);"],
-			["expressionList",
-				"$$ = new yy.scopeAst(yy, 'invokeArguments', [$1]);"]
-		],
-		"scope": [
-			["scopeArguments scopeStart controlCode }",
-				"$$ = new yy.scopeAst(yy, 'scopeExpression', [$scopeStart, $scopeArguments, $controlCode]);"],
-			["scopeStart controlCode }",
-				"$$ = new yy.scopeAst(yy, 'scopeExpression', [$scopeStart, $controlCode]);"]
-		],
-		"scopeStart": [
-			["{",
-				"$$ = new yy.scopeAst(yy, 'scopeStart', []);"]
-		],
-		"scopeArguments": [
-			["( associativeList )",
-				"$$ = new yy.scopeAst(yy, 'scopeArguments', [$2]);"]
-		],
-		"associativeList": [
-			["associativeDeclaration",
-				"$$ = new yy.scopeAst(yy, 'associativeList', [$1]);"],
-			["associativeList , associativeDeclaration",
-				"$$ = new yy.scopeAst(yy, 'associativeList', [$1, $3]);"]
-		],
-		"associativeDeclaration": [
-			["IDENTIFIER : expression",
-				"$$ = new yy.scopeAst(yy, 'associativeDeclaration', [$1, 'id', $3]);"],
-			["string : expression",
-				"$$ = new yy.scopeAst(yy, 'associativeDeclaration', [$1, 'string', $3]);"]
 		]
 	}
 }

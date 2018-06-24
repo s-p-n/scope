@@ -79,4 +79,3 @@ class Scope {
   }
 }
 const scope = new Scope({});
-
