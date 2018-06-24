@@ -1,7 +1,8 @@
 
 let api = {
 	print: "ScopeApi.print",
-	if: "ScopeApi['if']"
+	if: "ScopeApi['if']",
+	for: "ScopeApi['for']"
 };
 
 let allowedUndefinedIdExpressions = [
@@ -55,6 +56,7 @@ class ScopeRules {
 			    idAvailable: state.context.idAvailable
 	    	}
 	    	newContext.args = [];
+	    	newContext.inArrayDefinition = false;
 	    	state.context = newContext;
 	    };
 
@@ -96,6 +98,16 @@ class ScopeRules {
 	    state.newChildContext();
 	}
 
+	arrayExpression (start, list="") {
+		this.state.setParentContext();
+		return `scope.arrayExpression(${list})`;
+	}
+
+	arrayStart () {
+		this.state.newChildContext();
+		this.state.context.inArrayDefinition = true;
+	}
+
 	assignmentExpression (name, expression) {
 		return `scope.assignmentExpression("${name}", ${expression})`;
 	}
@@ -124,8 +136,10 @@ class ScopeRules {
 		} else {
 			name = associativeDeclaration.name.substr(1,associativeDeclaration.name.length - 2);
 		}
-		state.context.scoping.let.set(name, true);
-		state.context.args.push({name: name, default: associativeDeclaration.expression});
+		if (!state.context.inArrayDefinition) {
+			state.context.scoping.let.set(name, true);
+			state.context.args.push({name: name, default: associativeDeclaration.expression});
+		}
 		return result;
 	}
 
@@ -170,7 +184,7 @@ class ScopeRules {
 		return `${expression}, ${expressionList}`;
 	}
 	
-	identifier (name, children) {
+	identifier (name, notation, children) {
 		const state = this.state;
 
 		if (this.parentNode === "assignmentExpression") {
@@ -194,7 +208,12 @@ class ScopeRules {
 			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
-
+		console.log(name, children);
+		if (notation === 'dot') {
+			return `${name}.get("${children}")`;
+		} else {
+			return `${name}.get(${children})`;
+		}
 		throw `TODO: Implement identifier children in parser ${this.state.errorTail()}`;
 
 	}

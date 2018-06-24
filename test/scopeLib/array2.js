@@ -137,14 +137,20 @@ class Scope {
 const scope = new Scope({});
 module.exports = scope.invokeExpression(scope.createScope((args = []) => {
 
-  return scope.invokeExpression(ScopeApi['if'], [true, scope.createScope((args = []) => {
-
-    return "is true";
-
-  }), scope.createScope((args = []) => {
-
-    return "is false";
-
-  })]);
+  scope.declarationExpression({
+    type: "let",
+    name: "arr",
+    value: scope.arrayExpression({
+      key: "a",
+      value: 1
+    }, {
+      key: "b",
+      value: 2
+    }, {
+      key: "c",
+      value: 3
+    })
+  });
+  return scope.identifier("arr");
 
 }), []);

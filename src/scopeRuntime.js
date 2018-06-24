@@ -1,7 +1,7 @@
 "use strict";
 
 const ScopeApi = {
-  "print": (value) => {
+  "print": value => {
     console.log(...value);
   },
 
@@ -10,6 +10,14 @@ const ScopeApi = {
       return scope.invokeExpression(ifTrueScope, []);
     }
     return scope.invokeExpression(ifFalseScope, []);
+  },
+
+  "for": ([array, block = () => {}]) => {
+    let result = new Map();
+    for (let [key, val] of array) {
+      result.set(key, scope.invokeExpression(block, [val, key]));
+    }
+    return result;
   }
 };
 
@@ -46,6 +54,18 @@ class Scope {
     };
 
     this.newChildContext();
+  }
+
+  arrayExpression(...items) {
+    let arr = new Map();
+    items.forEach((item, i) => {
+      if (typeof item === "object" && item.key !== undefined && item.value !== undefined) {
+        arr.set(item.key, item.value);
+      } else {
+        arr.set(i, item);
+      }
+    });
+    return arr;
   }
 
   assignmentExpression(name, value, ctx=this.context) {

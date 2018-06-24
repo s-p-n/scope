@@ -53,6 +53,20 @@
 	],
 	"start": "program",
 	"bnf": {
+		"array": [
+			["arrayStart ]",
+				"$$ = new yy.scopeAst(yy, 'arrayExpression', [$1]);"],
+			["arrayStart associativeList ]",
+				"$$ = new yy.scopeAst(yy, 'arrayExpression', [$1, $2]);"],
+			["arrayStart expressionList ]",
+				"$$ = new yy.scopeAst(yy, 'arrayExpression', [$1, $2]);"]
+		],
+
+		"arrayStart" : [
+			["[",
+				"$$ = new yy.scopeAst(yy, 'arrayStart', []);"]
+		],
+
 		"associativeDeclaration": [
 			["IDENTIFIER : expression",
 				"$$ = new yy.scopeAst(yy, 'associativeDeclaration', [$1, 'id', $3]);"],
@@ -118,9 +132,9 @@
 			["IDENTIFIER",
 				"$$ = new yy.scopeAst(yy, 'identifier', [$1]);"],
 			["id . IDENTIFIER",
-				"$$ = new yy.scopeAst(yy, 'identifier', [$1, $3]);"],
+				"$$ = new yy.scopeAst(yy, 'identifier', [$1, 'dot', $3]);"],
 			["id [ expression ]",
-				"$$ = new yy.scopeAst(yy, 'identifier', [$1, $3]);"]
+				"$$ = new yy.scopeAst(yy, 'identifier', [$1, 'bracket', $3]);"]
 		],
 		"invoke": [
 			["id ( invokeArguments )",
@@ -146,6 +160,8 @@
 			["xml",
 				"$$ = $1"],
 			["scope",
+				"$$ = $1"],
+			["array",
 				"$$ = $1"]
 		],
 		"program": [
