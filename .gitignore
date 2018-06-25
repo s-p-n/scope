@@ -1,6 +1,6 @@
 package-lock.json
-lib/
+#lib/
 node_modules/
 data/
 scope.jison
-test/scopeLib
+#test/scopeLib
