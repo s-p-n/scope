@@ -16,5 +16,4 @@ let Foo = {
 let foo = Foo();
 foo.someSwitch = true;
 
-print(foo);
 return foo;

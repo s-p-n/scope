@@ -252,7 +252,6 @@ module.exports = scope.invokeExpression(scope.createScope((args = []) => {
     value: scope.invokeExpression(scope.identifier("Foo"), [])
   });
   scope.assignmentExpression([scope.identifier("foo"), "someSwitch"], true);
-  scope.invokeExpression(ScopeApi.print, [scope.identifier("foo")]);
   return scope.identifier("foo");
 
 }), []);
