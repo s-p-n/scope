@@ -1,0 +1,6 @@
+package-lock.json
+lib/
+node_modules/
+data/
+scope.jison
+test/scopeLib
