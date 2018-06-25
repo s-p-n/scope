@@ -21,6 +21,9 @@ srcFiles.forEach((f) => {
 	let translation = scope.translate(srcCode);
 	//let libAst = JSON.stringify(translation.ast, null, "  ");
 	//fs.writeFileSync(astFilename, libAst);
+	if (!fs.existsSync(libDir)) {
+		fs.mkdirSync(libDir);
+	}
 	fs.writeFileSync(libFilename, beautify(translation.js, {indent_size: 2}));
 	tests.push({
 		program: require(libFilename),
