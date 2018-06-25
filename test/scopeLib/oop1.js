@@ -189,14 +189,28 @@ class Scope {
 const scope = new Scope({});
 module.exports = scope.invokeExpression(scope.createScope((args = []) => {
 
-  return scope.invokeExpression(ScopeApi['if'], [true || false, scope.createScope((args = []) => {
+  return scope.invokeExpression(scope.invokeExpression(scope.createScope((args = []) => {
 
-    return "is true";
+    scope.declarationExpression({
+      type: "private",
+      name: "foo",
+      value: "I am private"
+    });
+    scope.declarationExpression({
+      type: "public",
+      name: "bar",
+      value: "I am public"
+    });
+    scope.declarationExpression({
+      type: "public",
+      name: "getFoo",
+      value: scope.createScope((args = []) => {
 
-  }), scope.createScope((args = []) => {
+        return scope.identifier("foo");
 
-    return "is false";
+      })
+    });
 
-  })]);
+  }), []).get("getFoo"), []);
 
 }), []);

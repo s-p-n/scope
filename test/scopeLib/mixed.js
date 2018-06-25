@@ -189,14 +189,70 @@ class Scope {
 const scope = new Scope({});
 module.exports = scope.invokeExpression(scope.createScope((args = []) => {
 
-  return scope.invokeExpression(ScopeApi['if'], [true || false, scope.createScope((args = []) => {
+  scope.declarationExpression({
+    type: "let",
+    name: "Foo",
+    value: scope.createScope((args = []) => {
 
-    return "is true";
+      scope.declarationExpression({
+        type: "public",
+        name: "someXml",
+        value: scope.xmlExpression("someXml", {}, )
+      });
+      scope.declarationExpression({
+        type: "public",
+        name: "someNumber",
+        value: 42
+      });
+      scope.declarationExpression({
+        type: "public",
+        name: "someSwitch",
+        value: false
+      });
+      scope.declarationExpression({
+        type: "public",
+        name: "someArray",
+        value: scope.arrayExpression(0, 1, 2, 3, 4, 5)
+      });
+      scope.declarationExpression({
+        type: "public",
+        name: "someString",
+        value: "hello, world"
+      });
+      scope.declarationExpression({
+        type: "public",
+        name: "someMethod",
+        value: scope.createScope((args = []) => {
 
-  }), scope.createScope((args = []) => {
+          scope.invokeExpression(ScopeApi['if'], [scope.identifier("someSwitch"), scope.createScope((args = []) => {
 
-    return "is false";
+            scope.invokeExpression(ScopeApi['for'], [scope.identifier("someArray"), scope.createScope((args = [{
+              key: "val",
+              value: -$$[$0]
+            }]) => {
+              scope.declarationExpression({
+                type: "let",
+                name: "val",
+                value: args[0] === undefined ? -$$[$0] : args[0]
+              });
+              scope.invokeExpression(ScopeApi.print, [scope.identifier("val")]);
 
-  })]);
+            })]);
+
+          })]);
+
+        })
+      });
+
+    })
+  });
+  scope.declarationExpression({
+    type: "let",
+    name: "foo",
+    value: scope.invokeExpression(scope.identifier("Foo"), [])
+  });
+  scope.assignmentExpression([scope.identifier("foo"), "someSwitch"], true);
+  scope.invokeExpression(ScopeApi.print, [scope.identifier("foo")]);
+  return scope.identifier("foo");
 
 }), []);

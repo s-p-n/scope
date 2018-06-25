@@ -24,6 +24,14 @@ const ScopeApi = {
 class Scope {
   constructor(context) {
     const self = this;
+    this._scoping = {
+      let: new Map(),
+      private: new Map(),
+      protected: new Map(),
+      public: new Map(),
+      parent: null
+    };
+    /*
     this.root = context;
     this.context = context;
     this.newChildContext = () => {
@@ -40,10 +48,10 @@ class Scope {
       newContext.args = [];
       self.context = newContext;
     };
-
-    this.setParentContext = () => {
+     this.setParentContext = () => {
       self.context = self.context.scoping.parent;
     };
+    */
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
       let node = h(tag, attr, ...children);
@@ -53,7 +61,7 @@ class Scope {
       return node;
     };
 
-    this.newChildContext();
+    //this.newChildContext();
   }
 
   arrayExpression(...items) {
@@ -68,22 +76,28 @@ class Scope {
     return arr;
   }
 
-  assignmentExpression(name, value, ctx = this.context) {
+  assignmentExpression(names, value, ctx = this._scoping) {
     const self = this;
-    if (ctx.scoping.let.has(name)) {
-      return ctx.scoping.let.set(name, value);
+    let name;
+    if (names.length > 1) {
+      return names[0].set(names[1], value);
+    } else {
+      name = names[names.length - 1];
     }
-    if (ctx.scoping.private.has(name)) {
-      return ctx.scoping.private.set(name, value);
+    if (ctx.let.has(name)) {
+      return ctx.let.set(name, value);
     }
-    if (ctx.scoping.protected.has(name)) {
-      return ctx.scoping.protected.set(name, value);
+    if (ctx.private.has(name)) {
+      return ctx.private.set(name, value);
     }
-    if (ctx.scoping.public.has(name)) {
-      return ctx.scoping.public.set(name, value);
+    if (ctx.protected.has(name)) {
+      return ctx.protected.set(name, value);
     }
-    if (ctx.scoping.parent.scoping) {
-      return self.assignmentExpression(name, value, ctx.scoping.parent);
+    if (ctx.public.has(name)) {
+      return ctx.public.set(name, value);
+    }
+    if (ctx.parent) {
+      return self.assignmentExpression([name], value, ctx.parent);
     }
 
     throw `Identifier '${name}' is not defined`;
@@ -95,42 +109,80 @@ class Scope {
     value
   }) {
     const self = this;
-    if (self.context.scoping.let.has(name)) {
-      throw `Identifier '${name}' has already been declared`;
+    if (type === 'let') {
+      if (self._scoping.let.has(name)) {
+        throw `Identifier '${name}' has already been declared`;
+      }
+      self._scoping.let.set(name, value);
+      return value;
     }
-    self.context.scoping.let.set(name, value);
-    return value;
+    if (type === 'private') {
+      if (self._scoping.private.has(name)) {
+        throw `Identifier '${name}' has already been declared`;
+      }
+      self._scoping.private.set(name, value);
+      return value;
+    }
+    if (type === 'protected') {
+      if (self._scoping.protected.has(name)) {
+        throw `Identifier '${name}' has already been declared`;
+      }
+      self._scoping.protected.set(name, value);
+      return value;
+    }
+    if (type === 'public') {
+      if (self._scoping.public.has(name)) {
+        throw `Identifier '${name}' has already been declared`;
+      }
+      self._scoping.public.set(name, value);
+      return value;
+    }
+    throw "A problem occurred - unknown declaration type.";
   }
 
-  identifier(name, ctx = this.context) {
+  identifier(name, ctx = this._scoping) {
     const self = this;
-    if (ctx.scoping.let.has(name)) {
-      return ctx.scoping.let.get(name);
+    if (ctx.let.has(name)) {
+      return ctx.let.get(name);
     }
-    if (ctx.scoping.private.has(name)) {
-      return ctx.scoping.private.get(name);
+    if (ctx.private.has(name)) {
+      return ctx.private.get(name);
     }
-    if (ctx.scoping.protected.has(name)) {
-      return ctx.scoping.protected.get(name);
+    if (ctx.protected.has(name)) {
+      return ctx.protected.get(name);
     }
-    if (ctx.scoping.public.has(name)) {
-      return ctx.scoping.public.get(name);
+    if (ctx.public.has(name)) {
+      return ctx.public.get(name);
     }
-    if (ctx.scoping.parent.scoping) {
-      return self.identifier(name, ctx.scoping.parent);
+    if (ctx.parent) {
+      return self.identifier(name, ctx.parent);
     }
 
     throw `Identifier '${name}' is not defined`;
   }
 
   createScope(f) {
+    f._parent = this._scoping;
     return f;
   }
 
   invokeExpression(f, args) {
-    this.newChildContext();
+    let scoping = this._scoping;
+    if (f === undefined) {
+      throw new Error(`Call to undefined scope`);
+    }
+    this._scoping = {
+      parent: f._parent,
+      let: new Map(),
+      private: new Map(),
+      protected: new Map(),
+      public: new Map()
+    };
     let result = f(args);
-    this.setParentContext();
+    if (result === undefined) {
+      result = this._scoping.public;
+    }
+    this._scoping = scoping;
     return result;
   }
 }
@@ -173,7 +225,7 @@ module.exports = scope.invokeExpression(scope.createScope((args = []) => {
       name: "key",
       value: args[1] === undefined ? "" : args[1]
     });
-    scope.assignmentExpression("str", scope.identifier("str") + " " + scope.identifier("val"));
+    scope.assignmentExpression(["str"], scope.identifier("str") + " " + scope.identifier("val"));
 
   })]);
   return scope.identifier("str");

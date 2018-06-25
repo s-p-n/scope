@@ -7,7 +7,8 @@ let api = {
 
 let allowedUndefinedIdExpressions = [
 	"xmlExpression",
-	"xmlAttributes"
+	"xmlAttributes",
+	"invokeId"
 ];
 
 let buildArgPartFromAssocPart = (assoc, addTo = false) => {
@@ -54,7 +55,7 @@ class ScopeRules {
 			    },
 			    definedLocally: state.context.definedLocally,
 			    idAvailable: state.context.idAvailable
-	    	}
+	    	};
 	    	newContext.args = [];
 	    	newContext.inArrayDefinition = false;
 	    	state.context = newContext;
@@ -73,8 +74,8 @@ class ScopeRules {
 	    	if (me.scoping.protected.has(id)) {
 	    		return me.scoping.protected.get(id);
 	    	}
-	    	if (id in me.scoping.public) {
-	    		return me.scoping.public[id];
+	    	if (me.scoping.public.has(id)) {
+	    		return me.scoping.public.get(id);
 	    	}
 	    	return false;
 	    }
@@ -109,7 +110,7 @@ class ScopeRules {
 	}
 
 	assignmentExpression (name, expression) {
-		return `scope.assignmentExpression("${name}", ${expression})`;
+		return `scope.assignmentExpression([${name}], ${expression})`;
 	}
 
 	associativeDeclaration (name, type, expression) {
@@ -174,6 +175,30 @@ class ScopeRules {
 				value: ${value}
 			})`;
 		}
+		if (type === "private") {
+			state.context.scoping.private.set(name, true);
+			return `scope.declarationExpression({
+				type: "${type}",
+				name: "${name}",
+				value: ${value}
+			})`;
+		}
+		if (type === "protected") {
+			state.context.scoping.protected.set(name, true);
+			return `scope.declarationExpression({
+				type: "${type}",
+				name: "${name}",
+				value: ${value}
+			})`;
+		}
+		if (type === "public") {
+			state.context.scoping.public.set(name, true);
+			return `scope.declarationExpression({
+				type: "${type}",
+				name: "${name}",
+				value: ${value}
+			})`;
+		}
 		throw "TODO: Implement more declarations.";
 	}
 
@@ -186,13 +211,19 @@ class ScopeRules {
 	
 	identifier (name, notation, children) {
 		const state = this.state;
-
 		if (this.parentNode === "assignmentExpression") {
-			if (state.context.idAvailable(name)) {
-				return name
-			} else {
-				throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
+			if (children === undefined && state.context.idAvailable(name)) {
+				return `"${name}"`;
 			}
+
+			if (notation === 'dot') {
+				return `${name}, "${children}"`;
+			}
+			if (notation === "bracket") {
+				return `${name}, ${children}`;
+			}
+
+			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
 		if (children === undefined) {
@@ -205,25 +236,32 @@ class ScopeRules {
 			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
 				return name;
 			}
+			//console.log(JSON.stringify(state.context, null, "  "));
 			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
-		console.log(name, children);
 		if (notation === 'dot') {
 			return `${name}.get("${children}")`;
 		} else {
 			return `${name}.get(${children})`;
 		}
-		throw `TODO: Implement identifier children in parser ${this.state.errorTail()}`;
 
+	}
+
+	invokeArguments (expression="") {
+		return `${expression}`;
 	}
 
 	invokeExpression (name, invokeArguments) {
 		return `scope.invokeExpression(${name}, [${invokeArguments}])`;
 	}
 
-	invokeArguments (expression="") {
-		return `${expression}`;
+	invokeId (invokeExpression, notation, identifier) {
+		if (notation === 'dot') {
+			return `${invokeExpression}.get("${identifier}")`;
+		} else {
+			return `${invokeExpression}.get(${identifier})`;
+		}
 	}
 	
 	numericLiteral (n) {

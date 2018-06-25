@@ -111,7 +111,7 @@
 %left '!'
 %left NOT
 %left UMINUS
-%left '.'
+%right '.'
 %right '(' ')'
 %right '[' ']'
 %right '{' '}'
