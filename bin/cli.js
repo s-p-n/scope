@@ -175,7 +175,7 @@ if (cli.input.length === 0) {
 } 
 
 (function() {
-	const ScopeParser = require("./lib/ScopeParser.js");
+	const ScopeParser = require("../lib/ScopeParser.js");
 	const parser = new ScopeParser();
 	let rawFilename = cli.input[0];
 	let inputFile = path.join(process.cwd(), rawFilename);

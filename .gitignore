@@ -2,5 +2,4 @@ package-lock.json
 lib/
 node_modules/
 data/
-scope1.json
 test/scopeLib

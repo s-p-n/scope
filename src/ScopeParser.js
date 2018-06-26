@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as parser from "../parser.js";
+import * as parser from "./parser.js";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
 
