@@ -1,32 +1,32 @@
 %lex
 
 %%
-\s+                         /* skip whitespace */
-"//".*                      /* one line comment */
-"/*"(.|\n|\r)*?"*/"         /* block comment */
+\s+                       /* skip whitespace */
+"//".*                    /* one line comment */
+"/*"(.|\n|\r)*?"*/"       /* block comment */
 "</"                      return '</';
 "\>"                      return '/>';
 "<="                      return '<=';
 ">="                      return '>=';
-"<"                      return '<';
-">"                      return '>';
+"<"                       return '<';
+">"                       return '>';
 "{"                       return '{';
 "}"                       return '}';
 "["                       return '[';
 "]"                       return ']';
 "("                       return '(';
 ")"                       return ')';
-":"                        return ':';
+":"                       return ':';
 "."                       return '.';
-","                      return ',';
-";"                      return ';';
+","                       return ',';
+";"                       return ';';
 "+"                       return '+';
-"-"                      return '-';
+"-"                       return '-';
 "*"                       return '*';
 "/"                       return '/';
-"%"                      return '%';
+"%"                       return '%';
 "^"                       return '^';
-"="                      return '=';
+"="                       return '=';
 \'[^\']*\'                return 'ASTRING';
 \"[^\"]*\"                return 'QSTRING';
 \`[^\`]*\`                return 'BSTRING';
@@ -61,7 +61,7 @@
 %left '!'
 %left '+' '-'
 %left '*' '/'
-%left '^'
+%left '^' '%'
 %left '.'
 %right '{' '}'
 %right '[' ']'
@@ -129,6 +129,8 @@ binaryExpression
     | expression '/' expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
     | expression '^' expression
+        {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
+    | expression '%' expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
     ;
 
