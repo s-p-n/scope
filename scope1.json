@@ -3,7 +3,7 @@
 		"rules": [
 			["\\s",										"/* skip whitespace */"],
 			["//",										"/* one line comment */"],
-			["\\\\/\\\\*(.|\\n|\\r)*?\\\\*\\\\/",		"/* block comment */"],
+			["\\/\\*(.|\\n|\\r)*?\\*\\/",		"/* block comment */"],
 			["\\<\\/",									"return '</';"],
 			["\\/\\>",									"return '/>';"],
 			["<=",										"return '<=';"],

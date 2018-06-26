@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict";
 
 const ScopeApi = {
@@ -31,28 +32,6 @@ class Scope {
       public: new Map(),
       parent: null
     };
-    /*
-    this.root = context;
-    this.context = context;
-    this.newChildContext = () => {
-      let parent = self.context;
-      let newContext = {
-        scoping: {
-          let: new Map(),
-          private: new Map(),
-          protected: new Map(),
-          public: new Map(),
-          parent: parent
-        }
-      };
-      newContext.args = [];
-      self.context = newContext;
-    };
-
-    this.setParentContext = () => {
-      self.context = self.context.scoping.parent;
-    };
-    */
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
       let node = h(tag, attr, ...children);
@@ -61,8 +40,6 @@ class Scope {
       };
       return node;
     };
-
-    //this.newChildContext();
   }
 
   arrayExpression(...items) {

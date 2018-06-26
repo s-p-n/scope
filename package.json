@@ -9,6 +9,12 @@
     "sc": "node index.js",
     "test": "mocha"
   },
+  "bin": {
+    "scope": "./cli.js"
+  },
+  "man": [
+    "./man/scope.1"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/s-p-n/scope.git"
@@ -27,11 +33,15 @@
     "babel": "^6.23.0",
     "babel-traverse": "^6.26.0",
     "babylon": "^6.18.0",
+    "dateformat": "^3.0.3",
     "hyperscript": "^2.0.2",
     "jison": "^0.4.18",
-    "js-beautify": "^1.7.5"
+    "js-beautify": "^1.7.5",
+    "meow": "^5.0.0",
+    "chalk": "^1.1.3"
   },
   "devDependencies": {
+    "man-api": "^0.3.1",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "babel-preset-es2015": "^6.24.1",

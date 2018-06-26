@@ -1,16 +1,12 @@
 import * as fs from "fs";
-import * as jison from "jison";
 import * as path from "path";
+import * as parser from "../parser.js";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
-import grammar from "../scope1.json";
-//var grammar = fs.readFileSync(path.join(__dirname, "../scope.jison"), "utf8");
-
-var parser = new jison.Parser(grammar);
 
 class ScopeParser {
 	constructor () {
-		this.parser = new jison.Parser(grammar);
+		this.parser = new parser.Parser();
 		this.parser.yy.scopeAst = ScopeAst;
 		this.rules = new ScopeRules();
 	}
