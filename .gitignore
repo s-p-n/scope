@@ -1,5 +1,4 @@
 package-lock.json
-lib/
 node_modules/
 data/
 test/scopeLib
