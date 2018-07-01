@@ -4,7 +4,7 @@ A programming language for web development. Scope transpiles to CommonJS JavaScr
 ## Philosophy
 A scope is any code inside `{` and `}`, and the idea of this language is, that's all you need. A scope can be a simple block of code, a function/method, a class, an interface, or any encapsolation you need. If you write code like I do, you might start out by writing a simple bit of code, then refactor some of that code into a function, then maybe later even create a class or two with several methods. The Scope programming language makes migrating and merging paradigms easy by utilizing a single scope type.
 
-I think as an added bonus, using a single first-class scope type makes the language easier to learn and remember.
+As a bonus, using a single first-class scope type makes the language easier to learn and remember.
 
 To keep things understandable, I'll refer to the language as "Scope" (capital 'S'), and the type 'scope' (all lowercase).
 
@@ -14,7 +14,7 @@ Scope can be installed with npm:
 
 	npm i -g scope-lang
 	
-Scope also has an Tag type (as in XML tag), to make front-end web development easier. So hyperscript is also required to run your transpiled Scope programs.
+Scope also has a Tag type (as in XML tag), to make front-end web development easier. So hyperscript is also required to run your transpiled Scope programs.
 	
 	npm i hyperscript
 
@@ -30,7 +30,8 @@ In Scope, we have expressions, and lists of expressions. Control code (what you 
 ### Primitive Types in Scope:
 * A **boolean** is the token `true` or `false`.
 ```
-true or false;
+let foo = true or false; // true
+let bar = true and false; // false
 ```
 
 * A **string** can be text surrounded by `""`, or `''`, or ``.
@@ -75,9 +76,9 @@ let myComponent = <someTag with="attributes">
 		"This is a nested string in a nested tag.";
 		someVariable;
 		if(someSwitch, {
-			return "switch is true";
+			return <switch on=true />;
 		}, {
-			return "switch is false";
+			return <switch on=false />;
 		});
 	</nestedTag>;
 </someTag>;
@@ -105,7 +106,7 @@ let someExtender = extend(someClass, {
 	public printFoo = {
 		print(foo);
 	};
-};
+});
 
 someExtender().printFoo(); // "It's a foo!"
 ```
