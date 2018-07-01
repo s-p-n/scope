@@ -1,8 +1,0 @@
-(function () {
-	%id%.$values["Number"] = function (val) {
-		return function () {
-			return val;
-		}
-	}(%id%.$values["Number"]() + %value%.$values["Number"]());
-	return %id%;
-}.call(this))

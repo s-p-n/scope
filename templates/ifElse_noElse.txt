@@ -1,4 +1,0 @@
-			%ifBegin%
-		}.bind(this)());
-	}
-}.bind(this)())

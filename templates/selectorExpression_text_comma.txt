@@ -1,3 +1,0 @@
-(function ($$$context) {
-	return %context%;
-}.bind(this)(%context%))

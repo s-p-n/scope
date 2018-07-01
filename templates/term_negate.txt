@@ -1,5 +1,0 @@
-$primitive("Number", function (value) {
-	return function () {
-		return value;
-	}
-}(-%num%.$values["Number"]()))

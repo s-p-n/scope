@@ -1,3 +1,0 @@
-%ifBegin%
-	%controlBlock%
-%ifElse%

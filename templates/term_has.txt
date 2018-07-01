@@ -1,1 +1,0 @@
-%termA%.$values["Array"]().has(%termB%)

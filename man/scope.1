@@ -1,0 +1,79 @@
+.TH SCOPE 1 2018-06-26 1\&.0\&.0 GNU
+.SH NAME
+scope \- Transpile or run scope programs\&.
+.SH SYNOPSIS
+.PP
+.B scope
+[
+.I options
+]
+.I infile
+[
+.I -o outfile
+]
+[
+.I arguments
+]
+.SS options
+Command-line options seperated by spaces\&. See Options\&.
+.SS infile
+The name of the file to transpile or run\&.
+.SS outfile
+The name of the file to transpile to- optional, and only useful when not running\&.
+.SS arguments
+Arguments passed to the scope program, seperated by spaces\&.
+.SH DESCRIPTION
+This transpiler is intended to convert Scope source code into executable JavaScript programs\&. For more information, the section
+.I SEE ALSO
+is located at the bottom of this document\&.
+.SH OPTIONS
+Options are sorted in alphabetical order so they are easy to find for reference\&.
+.SS "--background [boolean]"
+For use with servers and other services\&. Runs them in the background\&.
+.SS "--force, -f [boolean]"
+Try to force operation on conflict\&.
+.SS "--help [boolean]"
+Display general help, a list of commands, and references to documentation and other resources\&.
+.SS "--outfile, -o [string]"
+Specify outfile location and filename\&.
+.SS "--run, -r [boolean]"
+Do not write to outfile, instead compile and run the program immediately\&.
+.SS "--silent, --quiet [boolean]"
+Output nothing\&. (Exit status may still be informative, but not recommended for debugging purposes)
+.SS "--verbose, -v [boolean]"
+Output additional information for debugging\&.
+.SS "--version [boolean]"
+Output version information and exit\&.
+.SH "EXIT STATUS"
+.SS 0
+Indicates a successful operation\&.
+.SS 64
+Malformed command-line options, flags, or arguments\&.
+.SS 66
+Input file cannot be opened, but not due to permission\&. Perhaps it doesn't exist?
+.SS 70
+Parser, Grammar, (syntax error), or anything relating to the scope transpiler\&. This code is generally a result of a syntax error, but could be a bug in the transpiler\&.
+.SS 73
+Can't create user output file- but not due to permission\&. Perhaps the path to the destination file doesn't exist?
+.SS 77
+Permission denied\&.
+.SH VERSIONS
+This Version: 1\&.0\&.0
+.SH "CONFORMING TO"
+This software strives to deliver a valid interpretation of the Scope programming language version 1 specification\&. However, this software is still under active development and does have known incompatibilities with the specification\&. Any incompatibilities are considerred bugs, and there is no guarentee that any programs which compile currently will compile under later versions of this software\&.
+.PP
+Please follow the specification when writing your programs, and if it appears this compiler deviates from the specification in any way, please submit a bug report on github\&. (See
+.I BUGS
+)\&.
+.PP
+
+.SH BUGS
+.PP
+Report bugs to: https://github\&.com/s-p-n/scope/issues
+.SH "SEE ALSO"
+.SS Github
+https://github\&.com/s-p-n/scope
+.SS Wiki
+https://github\&.com/s-p-n/scope/wiki
+.SS npm
+https://www\&.npmjs\&.com/package/scope-lang

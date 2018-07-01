@@ -1,4 +1,0 @@
-%forBegin%
-	%controlBlock%
-%loopElse%
-}.bind(this)());}}}.bind(this)())
