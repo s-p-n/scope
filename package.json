@@ -1,6 +1,6 @@
 {
   "name": "scope-lang",
-  "version": "1.0.0",
+  "version": "1.0.0-groundhog",
   "description": "Programming language for developing on the back-end and the front-end in the same project.",
   "main": "index.js",
   "scripts": {
