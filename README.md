@@ -9,25 +9,43 @@ As a bonus, using a single first-class scope type makes the language easier to l
 To keep things understandable, I'll refer to the language as "Scope" (capital 'S'), and the type 'scope' (all lowercase).
 
 ## Getting Started
-
-Scope can be installed with npm:
-
+### Option 1: Global Install
+>Scope can be installed with npm:
+>
 	npm i -g scope-lang
-	
-Scope also has a Tag type (as in XML tag), to make front-end web development easier. So hyperscript is also required to run your transpiled Scope programs.
-	
+>
+>Scope also has a Tag type (as in XML tag), to make front-end web development easier. So hyperscript is also required to run your transpiled Scope programs.
+>	
 	npm i hyperscript
-
-
-Once you have all that installed, you can *compile* your Scope code into JavaScript.
-	
+>
+>Once you have all that installed, you can *compile* your Scope code into JavaScript.
+>	
 	scope myProgram.sc
-	
+
+### Option 2: Dev Dependency
+>Scope can be installed as a dev dependency:
+>
+	npm i --save-dev scope-lang
+>
+>The above will install the hyperscript requirement automatically. However, scope is not a global command with this setup. So to use the scope command, you must open up your `package.json` file and add scope to the list of scripts:
+>
+	"scripts": {
+		"scope": "scope"
+	}
+>
+>Once that is all setup, you can compile your scope programs using `npm run scope`:
+>
+	npm run scope myProgram.sc
+>
+>With the dev-dependency setup, you will not be able to use the `man-page` for scope (`man scope`), and you also won't be able to use any options like `--help`, `--version` or any other useful options. So it's recommended that Scope be installed globally if full functionality is desired.
+
 ## What does Scope look like?
 In Scope, we have expressions, and lists of expressions. Control code (what you find in the root of a scope program or in every scope) is a list of expressions seperated by semi-colons. There are other parts of the language where there are lists of expressions- and those lists *technically aren't expressions.* So, what that really means, is everything in Scope is an expression or list of 0 or more expressions. Not every **list of expressions** looks the same. For example, arguments (from the scope type) and attributes (from the tag type) are lists of expressions, but are not seperated by semicolons. We'll get more into that later, but it makes sense when you see it, I promise :)
 
 
 ### Primitive Types in Scope:
+>*Please note that not everything below is completely implemented.*
+
 * A **boolean** is the token `true` or `false`.
 ```
 let foo = true or false; // true
