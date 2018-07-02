@@ -14,9 +14,10 @@ To keep things understandable, I'll refer to the language as "Scope" (capital 'S
 >
 	npm i -g scope-lang
 >
->Scope also has a Tag type (as in XML tag), to make front-end web development easier. So hyperscript is also required to run your transpiled Scope programs.
+>Scope uses the package `source-map-support` as an attempt to make runtime-errors debuggable.
+>Scope also has a Tag type (as in XML tag), to make front-end web development easier. So `hyperscript` is also required to run your transpiled Scope programs.
 >	
-	npm i hyperscript
+	npm i source-map-support hyperscript
 >
 >Once you have all that installed, you can *compile* your Scope code into JavaScript.
 >	
@@ -27,7 +28,7 @@ To keep things understandable, I'll refer to the language as "Scope" (capital 'S
 >
 	npm i --save-dev scope-lang
 >
->The above will install the hyperscript requirement automatically. However, scope is not a global command with this setup. So to use the scope command, you must open up your `package.json` file and add scope to the list of scripts:
+>The above will install the runtime requirements automatically. However, scope is not a global command with this setup. So to use the scope command, you must open up your `package.json` file and add scope to the list of scripts:
 >
 	"scripts": {
 		"scope": "scope"
@@ -44,8 +45,6 @@ In Scope, we have expressions, and lists of expressions. Control code (what you 
 
 
 ### Primitive Types in Scope:
->*Please note that not everything below is completely implemented.*
-
 * A **boolean** is the token `true` or `false`.
 ```
 let foo = true or false; // true
@@ -59,24 +58,22 @@ let bar = true and false; // false
 a multiline
 string';
 ```
-	
 * A **number** is simply a number like JavaScript's Number.
 ```
 543;
 1.25;
 ```
-
 * An **array** is a map of items, in order. Arrays, if not named, use indices just like in most programming languages. Scope also supports named arrays, and retains their order. 
 ```
 let foo = [
 	question: "What is the answer to the universe and everything?",
-	answer: 42;
+	answer: 42
 ];
 print(foo["question"]); // "What is the..."
 print(foo.answer); // 42 
 
 let bar = ["cow", "pig", "sheep"];
-each(bar, (val="") {
+each(bar, (val:"") {
 	print(val);
 });
 /*
@@ -88,18 +85,23 @@ sheep
 	
 * A **tag** is basically an XML tag- kinda like HTML. A Tag has a name and may contain attributes or children. Unlike XML/HTML, Tag children in Scope can be of any type or expression. Because of the first-class nature of Tag children, **each child of a Tag must be followed by a semi-colon**- just like everywhere else in the language. 
 ```	
+let someVariable = "I'm some variable";
+let someSwitch = true;
+
 let myComponent = <someTag with="attributes">
-	"I am some inner text.";
-	<nestedTag>
-		"This is a nested string in a nested tag.";
-		someVariable;
-		if(someSwitch, {
-			return <switch on=true />;
-		}, {
-			return <switch on=false />;
-		});
-	</nestedTag>;
+    "I am some inner text.";
+    <nestedTag>
+        "This is a nested string in a nested tag.";
+        someVariable;
+        if(someSwitch, {
+            return <switch on=true />;
+        }, {
+            return <switch on=false />;
+        });
+    </nestedTag>;
 </someTag>;
+print(myComponent.childNodes[1].childNodes[2].on); 
+//true
 ```
 * A **scope** is kind of like a function from other languages, but has support for `public` and `protected` properties. If nothing is returned, a scope does not return `void` when invoked, it instead **returns the public properties available.** When extended, the public and protected properties are made available to the scope that extends it. `private` can be thought of as a synonym for `let`, but there are subtle differences. In essence, `private` and `let` are stored exactly the same way, just in slightly different places. They both work anywhere in the language exactly the same way- so I suggest to pick one and stick with it.
 ```
@@ -113,11 +115,9 @@ let someClass = {
 let someObj = someClass();
 debug(someObj);
 /*
-	Map(
-		bar => [scope(
-			[string:name="no name"]
-		)]
-	)
+Map(
+  bar => Scope([
+    (string) name: "no name"]))
 */
 
 let someExtender = extend(someClass, {

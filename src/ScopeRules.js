@@ -1,8 +1,10 @@
 
 let api = {
 	print: "ScopeApi.print",
+	debug: "ScopeApi.debug",
 	if: "ScopeApi['if']",
-	each: "ScopeApi['each']"
+	each: "ScopeApi['each']",
+	extend: "ScopeApi['extend']"
 };
 
 let allowedUndefinedIdExpressions = [
@@ -243,7 +245,7 @@ class ScopeRules {
 			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
 				return self.sn(name);
 			}
-			return self.sn(name);
+			return self.sn(['scope.identifier("', name, '")']);
 			//console.log(JSON.stringify(state.context, null, "  "));
 			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}

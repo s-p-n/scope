@@ -4,7 +4,6 @@ import * as parser from "./parser.js";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
 import * as sourceMap from "source-map";
-import * as babelCore from "babel-core";
 
 class ScopeParser {
 	constructor () {
