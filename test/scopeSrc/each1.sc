@@ -5,7 +5,7 @@ let arr = [
 ];
 let str = "";
 
-for(arr, (val: "", key: "") {
+each(arr, (val: "", key: "") {
 	str = str + " " + val;
 });
 return str;

@@ -6,7 +6,7 @@ let Foo = {
 	public someString = "hello, world";
 	public someMethod = {
 		if(someSwitch, {
-			for(someArray, (val:-1) {
+			each(someArray, (val:-1) {
 				print(val);
 			});
 		});

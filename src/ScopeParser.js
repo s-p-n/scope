@@ -3,6 +3,8 @@ import * as path from "path";
 import * as parser from "./parser.js";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
+import * as sourceMap from "source-map";
+import * as babelCore from "babel-core";
 
 class ScopeParser {
 	constructor () {
@@ -17,6 +19,7 @@ class ScopeParser {
 
 	traverse (obj) {
 		const self = this;
+		let result = "";
 		if (obj === null) {
 			return null;
 		}
@@ -50,25 +53,74 @@ class ScopeParser {
 		return "Not implemented";
 	}
 
-	translate (code) {
+	translate (code, srcFilename="NO SOURCE FILE", mapFilename="NO MAP FILE") {
 		let self = this;
 		let ast = this.parse(code);
+		let astJSON = JSON.stringify(ast, null, '  ');
 		let scopeRuntime = fs.readFileSync(path.join(__dirname, "scopeRuntime.js"), "utf8");
+		let scopeRuntimeErrorHandler = fs.readFileSync(path.join(__dirname, "scopeRuntimeErrorHandler.js"), "utf8");
+		let result;
+		let traversal;
+		let locsMapped = [];
+		self.sn = (chunk) => {
+			let loc = self.rules.state.loc.start;
+			let alreadyMapped = false;
+			locsMapped.forEach((val) => {
+				if (val.line === loc.line && val.column === loc.column) {
+					alreadyMapped = true;
+				}
+			});
+			//if (!alreadyMapped) {
+				//console.log(loc, chunk);
+				locsMapped.push({
+					line: loc.line,
+					column: loc.column
+				});
+				return new sourceMap.SourceNode(
+					loc.line, 
+					loc.column, 
+					srcFilename, 
+					chunk
+				);
+			//}
+			//return new sourceMap.SourceNode();
+		};
+		let node = self.sn("");
+		let map;
 		self.rules = new ScopeRules();
-		return {
-			ast: ast,
-			js: ast === true ? "" : (
-				scopeRuntime + 
-				"module.exports = " +
-				self.rules.invokeExpression(
-					self.rules.scopeExpression(
-						self.traverse(ast)
-					),
-					[]
-				) +
-				";"
-			)
-		}
+		self.rules.node = node;
+		self.rules.sn = self.sn;
+		//scopeRuntime = babelCore.transform(scopeRuntime, {presets: ['minify-es2015']});
+		//console.log(scopeRuntime);
+		traversal = self.sn([
+			scopeRuntime,
+			`scope.sourceMapFilename="${mapFilename}";`,
+			//scopeRuntimeErrorHandler,
+			"module.exports=", 
+			self.rules.invokeExpression(
+				self.rules.scopeExpression(
+					self.traverse(ast)
+				),
+				[]
+			),
+			";",
+			`\n//# sourceMappingURL=${mapFilename}`
+		]);
+		traversal.setSourceContent({
+			sourceFile: srcFilename,
+			sourceContent: code
+		});
+		//console.log(traversal);
+		map = traversal.toStringWithSourceMap({
+			file: mapFilename
+		});
+		//console.log(map);
+		result = {
+			ast: astJSON,
+			map: map.map,
+			code: map.code
+		};
+		return result;
 	}
 }
 

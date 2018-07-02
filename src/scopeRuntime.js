@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+require('source-map-support').install();
 
 const ScopeApi = {
   "print": value => {
@@ -13,7 +14,7 @@ const ScopeApi = {
     return scope.invokeExpression(ifFalseScope, []);
   },
 
-  "for": ([array, block = () => {}]) => {
+  "each": ([array, block = () => {}]) => {
     let result = new Map();
     for (let [key, val] of array) {
       result.set(key, scope.invokeExpression(block, [val, key]));

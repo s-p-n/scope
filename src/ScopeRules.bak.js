@@ -100,9 +100,8 @@ class ScopeRules {
 	}
 
 	arrayExpression (start, list="") {
-		let self = this;
 		this.state.setParentContext();
-		return self.sn(['scope.arrayExpression(', list, ')']);
+		return `scope.arrayExpression(${list})`;
 	}
 
 	arrayStart () {
@@ -111,8 +110,7 @@ class ScopeRules {
 	}
 
 	assignmentExpression (name, expression) {
-		let self = this;
-		return self.sn(['scope.assignmentExpression([', name, '],', expression, ')']);
+		return `scope.assignmentExpression([${name}], ${expression})`;
 	}
 
 	associativeDeclaration (name, type, expression) {
@@ -128,7 +126,6 @@ class ScopeRules {
 		const state = this.state;
 		let result = '';
 		let name = '';
-		let self = this;
 		if (associativeDeclaration === undefined) {
 			associativeDeclaration = associativeList;
 			result =  buildArgPartFromAssocPart(associativeDeclaration);
@@ -144,25 +141,26 @@ class ScopeRules {
 			state.context.scoping.let.set(name, true);
 			state.context.args.push({name: name, default: associativeDeclaration.expression});
 		}
-		return self.sn(result);
+		return result;
 	}
 
 	binaryExpression (a, op, b) {
-		let self = this;
-		return self.sn([a, op, b]);
+		return `${a} ${op} ${b}`;
 	}
 
 	booleanLiteral (bool) {
-		let self = this;
-		return self.sn(bool.toString());
+		return bool.toString();
 	}
 
 	controlCode (controlCode="", expression) {
 		let self = this;
+		let result;
 		if (expression === undefined) {
-			return self.sn("");
+			return "";
 		}
-		return self.sn([controlCode, expression, ';']);
+		result = `${controlCode}${expression};\n`;
+		self.node.add(self.sn(`${expression};\n`));
+		return result;
 	}
 
 	declarationExpression (type, name, value) {
@@ -208,26 +206,24 @@ class ScopeRules {
 	}
 
 	expressionList (expression, expressionList) {
-		let self = this;
 		if (expressionList === undefined) {
-			return self.sn(expression);
+			return `${expression}`;
 		}
-		return self.sn([expression, ',', expressionList]);
+		return `${expression}, ${expressionList}`;
 	}
 	
 	identifier (name, notation, children) {
 		const state = this.state;
-		let self = this;
 		if (this.parentNode === "assignmentExpression") {
 			if (children === undefined && state.context.idAvailable(name)) {
-				return self.sn(['"', name, '"']);
+				return `"${name}"`;
 			}
 
 			if (notation === 'dot') {
-				return self.sn([name, ',"', children, '"']);
+				return `${name}, "${children}"`;
 			}
 			if (notation === "bracket") {
-				return self.sn([name, ',', children]);
+				return `${name}, ${children}`;
 			}
 
 			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
@@ -235,53 +231,48 @@ class ScopeRules {
 
 		if (children === undefined) {
 			if (name in api) {
-				return self.sn(api[name]);
+				return `${api[name]}`;
 			}
 			if (state.context.idAvailable(name)) {
-				return self.sn(['scope.identifier("', name, '")']);
+				return `scope.identifier("${name}")`;
 			}
 			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
-				return self.sn(name);
+				return name;
 			}
-			return self.sn(name);
 			//console.log(JSON.stringify(state.context, null, "  "));
-			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
+			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
 		if (notation === 'dot') {
-			return self.sn([name, '.get("', children, '")']);
+			return `${name}.get("${children}")`;
 		} else {
-			return self.sn([name, '.get(', children, ')']);
+			return `${name}.get(${children})`;
 		}
 
 	}
 
 	invokeArguments (expression="") {
-		let self = this;
-		return self.sn(expression);
+		return `${expression}`;
 	}
 
 	invokeExpression (name, invokeArguments) {
-		let self = this;
-		return self.sn(['scope.invokeExpression(', name, ',[', invokeArguments, '])']);
+		return `scope.invokeExpression(${name}, [${invokeArguments}])`;
 	}
 
 	invokeId (invokeExpression, notation, identifier) {
-		let self = this;
 		if (notation === 'dot') {
-			return self.sn([invokeExpression, '.get("', identifier, '")']);
+			return `${invokeExpression}.get("${identifier}")`;
 		} else {
-			return self.sn([invokeExpression, '.get(', identifier, ')']);
+			return `${invokeExpression}.get(${identifier})`;
 		}
 	}
 	
 	numericLiteral (n) {
-		return this.sn(n.toString());
+		return n.toString();
 	}
 
 	returnExpression (expression) {
-		let self = this;
-		return self.sn(["return ", expression]);
+		return `return ${expression}`;
 	}
 
 	scopeStart () {
@@ -291,7 +282,6 @@ class ScopeRules {
 
 	scopeExpression (scopeStart, scopeArguments, controlCode) {
 		const state = this.state;
-		let self = this;
 		let argDeclarations = "";
 		if (scopeStart !== true) {
 			controlCode = scopeArguments;
@@ -311,58 +301,52 @@ class ScopeRules {
 				type: "let",
 				name: "${arg.name}",
 				value: args[${index}] === undefined ? ${arg.default} : args[${index}]
-			});\n`;
+			});`;
 		});
 
 		state.setParentContext();
 
-		return self.sn(['scope.createScope((args=', scopeArguments, ')=>{',
-			argDeclarations,
-			controlCode,
-			"})"
-		]);
+		return `scope.createScope((args = ${scopeArguments}) => {
+			${argDeclarations}
+			${controlCode}
+		})`;
 	}
 
 	scopeArguments (associativeList) {
 		const state = this.state;
-		let self = this;
 
-		return self.sn(['[', associativeList, ']']);
+		return `[${associativeList}]`;
 	}
 
 	stringLiteral (str) {
-		let self = this;
-		return self.sn(JSON.stringify(str));
+		return JSON.stringify(str);
 	}
 
 	xmlControlCode (xmlControlCode="", expression) {
-		let self = this;
 		if (expression === undefined) {
 			return "";
 		}
 		if (xmlControlCode !== "") {
-			xmlControlCode.add(",");
+			xmlControlCode += ", \n";
 		}
-		return self.sn([xmlControlCode, expression]);
+		return `${xmlControlCode}${expression}`;
 	}
 
 	xmlAttributes (xmlAttributes="", name, value) {
-		let self = this;
 		if (name === undefined) {
 			return "";
 		}
 		if (xmlAttributes !== "") {
-			xmlAttributes.add(", ");
+			xmlAttributes += ", ";
 		}
-		return self.sn([xmlAttributes, name, ":", value]);
+		return `${xmlAttributes} ${name}: ${value}`;
 	}
 
 	xmlExpression (name, xmlAttributes, xmlControlCode) {
-		let self = this;
 		if (xmlControlCode === undefined) {
-			return self.sn(['scope.xmlExpression("', name, '",{', xmlAttributes, '})']);
+			return `scope.xmlExpression("${name}", {${xmlAttributes}})`;
 		}
-		return self.sn(['scope.xmlExpression("', name, '",{', xmlAttributes, '},', xmlControlCode, ')']);
+		return `scope.xmlExpression("${name}", {${xmlAttributes}}, ${xmlControlCode})`;
 	}
 }
 

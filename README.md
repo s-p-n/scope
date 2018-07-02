@@ -76,7 +76,7 @@ print(foo["question"]); // "What is the..."
 print(foo.answer); // 42 
 
 let bar = ["cow", "pig", "sheep"];
-for(bar, (val="") {
+each(bar, (val="") {
 	print(val);
 });
 /*

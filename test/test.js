@@ -16,15 +16,15 @@ srcFiles.forEach((f) => {
 	let srcFilename = path.join(srcDir, f);
 	let libFilename = path.join(libDir, f.replace(".sc", ".js"));
 	let expectFilename = path.join(expectDir, f.replace(".sc", ".js"));
-	//let astFilename = path.join(libDir, f.replace(".sc", ".json"));
+	let mapFilename = path.join(libDir, f.replace(".sc", ".map.js"));
 	let srcCode = fs.readFileSync(srcFilename, "utf8");
-	let translation = scope.translate(srcCode);
-	//let libAst = JSON.stringify(translation.ast, null, "  ");
-	//fs.writeFileSync(astFilename, libAst);
+	let translation = scope.translate(srcCode, srcFilename, mapFilename);
+	
+	fs.writeFileSync(mapFilename, translation.map);
 	if (!fs.existsSync(libDir)) {
 		fs.mkdirSync(libDir);
 	}
-	fs.writeFileSync(libFilename, beautify(translation.js, {indent_size: 2}));
+	fs.writeFileSync(libFilename, translation.code);
 	tests.push({
 		program: require(libFilename),
 		expectation: require(expectFilename)
