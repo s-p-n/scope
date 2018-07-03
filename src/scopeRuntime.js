@@ -1,9 +1,52 @@
 #!/usr/bin/env node
 "use strict";
+require('source-map-support').install();
 
 const ScopeApi = {
   "print": value => {
     console.log(...value);
+  },
+
+  "debug": value => {
+    value.forEach((val) => {
+      ScopeApi.print([ScopeApi.__debugReturn(val)]);
+    });
+  },
+
+  "__debugReturn": (value, spaces=2) => {
+    let result = "";
+    let spacef = () => {
+      let r = '';
+      for (let i = 0; i < spaces; i += 1) {
+        r += ' ';
+      }
+      return r;
+    };
+    if (typeof value === "object" && value instanceof Map) {
+      result += "Map(";
+      for (let [key, val] of value) {
+        result += `\n${spacef()}${key} => ${ScopeApi.__debugReturn(val, spaces + 2)}`
+      }
+      return `${result})`;
+    } else if (typeof value === "function") {
+      let source = value.toString();
+      let args = source.match(/^\(args\=(.*)\)/);
+      if (args[1]) {
+        args = eval(args[1]);
+      } else {
+        args = [];
+      }
+      //console.log('args:', args);
+      result += "Scope([";
+      args.forEach((arg) => {
+        result += `\n${spacef()}(${typeof arg.value}) ${arg.key}: ${ScopeApi.__debugReturn(arg.value, spaces + 2)}`;
+      });
+      return `${result}])`;
+    } else if (typeof value === "string") {
+      return `"${value}"`;
+    } else {
+      return value;
+    }
   },
 
   "if": ([condition, ifTrueScope = () => {}, ifFalseScope = () => {}]) => {
@@ -13,12 +56,42 @@ const ScopeApi = {
     return scope.invokeExpression(ifFalseScope, []);
   },
 
-  "for": ([array, block = () => {}]) => {
+  "each": ([array, block = () => {}]) => {
     let result = new Map();
     for (let [key, val] of array) {
       result.set(key, scope.invokeExpression(block, [val, key]));
     }
     return result;
+  },
+
+  "extend": scopes => {
+    let extensions = scopes;
+    let lastScope = extensions.pop();
+    return (...args) => {
+      let pub = new Map();
+      let prot = new Map();
+      let result;
+      extensions.forEach(E => {
+        let e = scope.invokeExpression(E, args, true);
+        if (e instanceof Map) {
+          if (e.has("protected")) {
+            for (let [key, val] of e.get("protected")) {
+              prot.set(key, val);
+            }
+          }
+          if (e.has("public")) {
+            for (let [key, val] of e.get("public")) {
+              pub.set(key, val);
+            }
+          }
+        }
+      });
+      result = scope.invokeExpression(lastScope, args, new Map([
+        ["public", pub],
+        ["protected", prot]
+      ]));
+      return result;
+    };
   }
 };
 
@@ -38,6 +111,12 @@ class Scope {
       node.toString = () => {
         return node.outerHTML;
       };
+      node.get = key => {
+        return node[key];
+      };
+      node.childNodes.get = key => {
+        return node.childNodes[key];
+      }
       return node;
     };
   }
@@ -140,7 +219,7 @@ class Scope {
     return f;
   }
 
-  invokeExpression(f, args) {
+  invokeExpression(f, args, extension = false) {
     let scoping = this._scoping;
     if (f === undefined) {
       throw new Error(`Call to undefined scope`);
@@ -152,9 +231,28 @@ class Scope {
       protected: new Map(),
       public: new Map()
     };
+    if (extension instanceof Map) {
+      if (extension.has("protected")) {
+        for (let [key, val] of extension.get("protected")) {
+          this._scoping.protected.set(key, val);
+        }
+      }
+      if (extension.has("public")) {
+        for (let [key, val] of extension.get("public")) {
+          this._scoping.public.set(key, val);
+        }
+      }
+    }
     let result = f(args);
     if (result === undefined) {
-      result = this._scoping.public;
+      if (extension === true) {
+        result = new Map([
+          ["public", this._scoping.public],
+          ["protected", this._scoping.protected]
+        ]);
+      } else {
+        result = this._scoping.public;
+      }
     }
     this._scoping = scoping;
     return result;

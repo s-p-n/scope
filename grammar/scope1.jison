@@ -5,7 +5,7 @@
 "//".*                    /* one line comment */
 "/*"(.|\n|\r)*?"*/"       /* block comment */
 "</"                      return '</';
-"\>"                      return '/>';
+"/>"                      return '/>';
 "<="                      return '<=';
 ">="                      return '>=';
 "<"                       return '<';
@@ -66,7 +66,8 @@
 %right '{' '}'
 %right '[' ']'
 %right '(' ')'
-%right '<' '>' '</' '/>'
+%right '</' '/>'
+%right '<' '>'
 %right UMINUS
 %right ';'
 

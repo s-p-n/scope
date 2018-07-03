@@ -188,6 +188,10 @@ if (cli.input.length === 0) {
 		path.dirname(inputFile), 
 		path.basename(rawFilename).replace(/.sc$/i, '') + '.js'
 	);
+	let mapFile = path.join(
+		path.dirname(inputFile),
+		path.basename(rawFilename).replace(/.sc$/i, '') + '.js.map'
+	);
 	debug(1, `Reading source file '${inputFile}'`);
 	fs.readFile(inputFile, "utf8", (err, data) => {
 		let code;
@@ -202,7 +206,9 @@ if (cli.input.length === 0) {
 		}
 		debug(1, 'Got file. Attempting to parse..');
 		try {
-			code = parser.translate(data).js;
+			let translation = parser.translate(data, inputFile, mapFile);
+			let map = translation.map;
+			code = translation.code;
 			debug(1, "Finished parsing & writing code. Writing to file..");
 			fs.writeFile(outputFile, code, (err) => {
 				if (err) {
@@ -224,6 +230,11 @@ if (cli.input.length === 0) {
 					debug(1, "Successfully marked as executable.");
 					process.exit(0);
 				});
+			});
+			fs.writeFile(mapFile, map, (err) => {
+				if (err) {
+					debug(0, `WARN: Cannot write to map file '${mapFile}'`);
+				}
 			});
 		} catch (e) {
 			debug(0, e);
