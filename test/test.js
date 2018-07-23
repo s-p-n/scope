@@ -20,10 +20,10 @@ srcFiles.forEach((f) => {
 	let srcCode = fs.readFileSync(srcFilename, "utf8");
 	let translation = scope.translate(srcCode, srcFilename, mapFilename);
 	
-	fs.writeFileSync(mapFilename, translation.map);
 	if (!fs.existsSync(libDir)) {
 		fs.mkdirSync(libDir);
 	}
+	fs.writeFileSync(mapFilename, translation.map);
 	fs.writeFileSync(libFilename, translation.code);
 	tests.push({
 		program: require(libFilename),
