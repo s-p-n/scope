@@ -90,10 +90,9 @@ class ScopeParser {
 		self.rules.node = node;
 		self.rules.sn = self.sn;
 		//scopeRuntime = babelCore.transform(scopeRuntime, {presets: ['minify-es2015']});
-		//console.log(scopeRuntime);
 		traversal = self.sn([
 			scopeRuntime,
-			`scope.sourceMapFilename="${mapFilename}";`,
+			`scope.sourceMapFilename=${JSON.stringify(mapFilename)};`,
 			//scopeRuntimeErrorHandler,
 			"module.exports=", 
 			self.rules.invokeExpression(
