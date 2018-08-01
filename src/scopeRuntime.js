@@ -66,7 +66,7 @@ const ScopeApi = {
   /**
     inject: Injects all of the entities (except for the last entity)
             into the last entity.
-  **/
+  ** /
   "inject": entities => {
     let extensions = entities;
     let lastScope = extensions.pop();
@@ -95,7 +95,7 @@ const ScopeApi = {
       ]));
       return result;
     };
-  }
+  } */
 };
 
 class Scope {
