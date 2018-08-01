@@ -30,9 +30,8 @@
 \'[^\']*\'                return 'ASTRING';
 \"[^\"]*\"                return 'QSTRING';
 \`[^\`]*\`                return 'BSTRING';
-"use"                     return 'USE';
-"inject"                  return 'INJECT';
 "import"                  return 'IMPORT';
+"use"                     return 'USE';
 "only"                    return 'ONLY';
 "into"                    return 'INTO';
 "as"                      return 'AS';
@@ -59,7 +58,8 @@
 <<EOF>>                   return 'EOF';
 
 /lex
-%left USE IMPORT INJECT
+%left USE
+%left IMPORT
 %left ONLY INTO AS
 %left RETURN
 %left '=' ':'
@@ -70,6 +70,7 @@
 %left '*' '/'
 %left '^' '%'
 %left '.'
+%left ','
 %right '{' '}'
 %right '[' ']'
 %right '(' ')'
@@ -165,7 +166,7 @@ expression
         {$$ = new yy.scopeAst(yy, 'assignmentExpression', [$1, $3]);}
     | import
         {$$ = $1}
-    | inject
+    | use
         {$$ = $1}
     | declarationExpression
         {$$ = $1}
@@ -215,30 +216,10 @@ import
         {$$ = new yy.scopeAst(yy, 'importExpression', [$2]);}
     ;
 
-inject
-    : INJECT injectable INTO scope
-        {$$ = new yy.scopeAst(yy, 'injectExpression', [$2, $4]);}
-    | INJECT injectable INTO id
-        {$$ = new yy.scopeAst(yy, 'injectExpression', [$2, $4]);}
-    ;
-
-injectable
-    : scope
-        {$$ = new yy.scopeAst(yy, 'injectable', [$1]);}
-    | id
-        {$$ = new yy.scopeAst(yy, 'injectable', [$1]);}
-    | injectable ',' scope
-        {$$ = new yy.scopeAst(yy, 'injectable', [$1, $3]);}
-    | injectable ',' id
-        {$$ = new yy.scopeAst(yy, 'injectable', [$1, $3]);}
-    ;
-
 invoke
     : id '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | scope '(' invokeArguments ')'
-        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
-    | inject '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | invoke '.' id
         {$$ = new yy.scopeAst(yy, 'invokeId', [$1, 'dot', $3]);}
@@ -303,9 +284,31 @@ string
         {$$ = $1}
     ;
 
+use
+    : USE usable
+        {$$ = new yy.scopeAst(yy, 'useExpression', [$2]);}
+    | USE usable useOnly
+        {$$ = new yy.scopeAst(yy, 'useExpression', [$2, $3]);}
+    ;
+
+usable
+    : scope
+        {$$ = new yy.scopeAst(yy, 'usable', [$1]);}
+    | id
+        {$$ = new yy.scopeAst(yy, 'usable', [$1]);}
+    | import
+        {$$ = new yy.scopeAst(yy, 'usable', [$1]);}
+    | usable ',' scope
+        {$$ = new yy.scopeAst(yy, 'usable', [$1, $3]);}
+    | usable ',' id
+        {$$ = new yy.scopeAst(yy, 'usable', [$1, $3]);}
+    | usable ',' import
+        {$$ = new yy.scopeAst(yy, 'usable', [$1, $3]);}
+    ;
+
 useOnly
-    : ONLY '(' idList ')'
-        {$$ = new yy.scopeAst(yy, 'useOnly', [$2]);}
+    : ONLY '(' expressionList ')'
+        {$$ = new yy.scopeAst(yy, 'useOnly', [$3]);}
     ;
 
 xml
