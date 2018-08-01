@@ -1,10 +1,12 @@
+import * as fs from "fs";
+import * as path from "path";
 
 let api = {
 	print: "ScopeApi.print",
 	debug: "ScopeApi.debug",
 	if: "ScopeApi['if']",
 	each: "ScopeApi['each']",
-	extend: "ScopeApi['extend']"
+	inject: "ScopeApi['inject']"
 };
 
 let allowedUndefinedIdExpressions = [
@@ -26,6 +28,15 @@ let buildArgPartFromAssocPart = (assoc, addTo = false) => {
 	return result;
 }
 
+let randStr = (len=16) => {
+	let result = "";
+	let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	for (let i = 0; i < len; i += 1) {
+		result += chars[Math.floor(Math.random() * chars.length)];
+	}
+	return result;
+}
+
 class ScopeRules {
 	constructor (state = {context: {}}) {
 		const self = this;
@@ -42,6 +53,8 @@ class ScopeRules {
 			}
 		}
 		state.errorTail = () => `[${self.state.loc.start.line}:${self.state.loc.start.column}-${self.state.loc.end.line}:${self.state.loc.end.column}]`;
+		
+		state.importExpressions = new Map();
 		state.root = state.context;
 	    state.context = state.context;
 	    state.context.args = [];
@@ -66,6 +79,16 @@ class ScopeRules {
 	    state.setParentContext = () => {
 	    	state.context = state.context.scoping.parent;
 	    };
+
+	    state.newImportExpression = (expression) => {
+	    	let id = `%%import:${randStr(16)}%%`;
+	    	if (state.importExpressions.has(id)) {
+	    		return state.newImportExpression(expression);
+	    	}
+	    	state.importExpressions.set(id, expression);
+	    	return id;
+	    };
+
 	    state.context.definedLocally = (id = "", me = state.context) => {
 	    	if (me.scoping.let.has(id)) {
 	    		return me.scoping.let.get(id);
@@ -221,9 +244,9 @@ class ScopeRules {
 		const state = this.state;
 		let self = this;
 		if (this.parentNode === "assignmentExpression") {
-			if (children === undefined && state.context.idAvailable(name)) {
+			/*if (children === undefined && state.context.idAvailable(name)) {
 				return self.sn(['"', name, '"']);
-			}
+			}*/
 
 			if (notation === 'dot') {
 				return self.sn([name, ',"', children, '"']);
@@ -231,22 +254,21 @@ class ScopeRules {
 			if (notation === "bracket") {
 				return self.sn([name, ',', children]);
 			}
-
-			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
+			return self.sn(['"', name, '"']);
+			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
 		if (children === undefined) {
 			if (name in api) {
 				return self.sn(api[name]);
 			}
-			if (state.context.idAvailable(name)) {
+			/*if (state.context.idAvailable(name)) {
 				return self.sn(['scope.identifier("', name, '")']);
-			}
+			}*/
 			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
 				return self.sn(name);
 			}
 			return self.sn(['scope.identifier("', name, '")']);
-			//console.log(JSON.stringify(state.context, null, "  "));
 			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
@@ -256,6 +278,32 @@ class ScopeRules {
 			return self.sn([name, '.get(', children, ')']);
 		}
 
+	}
+
+	idList (identifier, idList) {
+		let self = this;
+		if (idList === undefined) {
+			return self.sn([identifier]);
+		}
+		return self.sn([identifier, ",", idList]);
+	}
+
+	importExpression (string) {
+		let self = this;
+		return self.sn([self.state.newImportExpression(string)]);
+	}
+
+	injectExpression (injectable, scope) {
+		let self = this;
+		return self.sn(['ScopeApi.inject([', injectable, ',', scope, '])']);
+	}
+
+	injectable (injectable1, injectable2) {
+		let self = this;
+		if (injectable2 === undefined) {
+			return injectable1;
+		}
+		return self.sn([injectable1, ",", injectable2]);
 	}
 
 	invokeArguments (expression="") {
@@ -287,7 +335,8 @@ class ScopeRules {
 	}
 
 	scopeStart () {
-		this.state.newChildContext();
+		let self = this;
+		self.state.newChildContext();
 		return true;
 	}
 
@@ -307,6 +356,7 @@ class ScopeRules {
 		if (scopeArguments === undefined) {
 			scopeArguments = "[]";
 		}
+
 
 		state.context.args.forEach((arg, index) => {
 			argDeclarations += `scope.declarationExpression({
@@ -335,6 +385,11 @@ class ScopeRules {
 	stringLiteral (str) {
 		let self = this;
 		return self.sn(JSON.stringify(str));
+	}
+
+	useOnly (idList) {
+		let self = this;
+		return idList;
 	}
 
 	xmlControlCode (xmlControlCode="", expression) {

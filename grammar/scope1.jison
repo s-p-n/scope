@@ -30,6 +30,12 @@
 \'[^\']*\'                return 'ASTRING';
 \"[^\"]*\"                return 'QSTRING';
 \`[^\`]*\`                return 'BSTRING';
+"use"                     return 'USE';
+"inject"                  return 'INJECT';
+"import"                  return 'IMPORT';
+"only"                    return 'ONLY';
+"into"                    return 'INTO';
+"as"                      return 'AS';
 "let"                     return 'LET';
 "public"                  return 'PUBLIC';
 "protected"               return 'PROTECTED';
@@ -53,7 +59,8 @@
 <<EOF>>                   return 'EOF';
 
 /lex
-
+%left USE IMPORT INJECT
+%left ONLY INTO AS
 %left RETURN
 %left '=' ':'
 %left AND OR
@@ -156,6 +163,10 @@ declarationExpression
 expression
     : id '=' expression
         {$$ = new yy.scopeAst(yy, 'assignmentExpression', [$1, $3]);}
+    | import
+        {$$ = $1}
+    | inject
+        {$$ = $1}
     | declarationExpression
         {$$ = $1}
     | binaryExpression
@@ -192,10 +203,42 @@ id
         {$$ = new yy.scopeAst(yy, 'identifier', [$1, 'bracket', $3]);}
     ;
 
+idList
+    : IDENTIFIER
+        {$$ = new yy.scopeAst(yy, 'idList', [$1]);}
+    | IDENTIFIER ',' idList
+        {$$ = new yy.scopeAst(yy, 'idList', [$1, $3]);}
+    ;
+
+import
+    : IMPORT string
+        {$$ = new yy.scopeAst(yy, 'importExpression', [$2]);}
+    ;
+
+inject
+    : INJECT injectable INTO scope
+        {$$ = new yy.scopeAst(yy, 'injectExpression', [$2, $4]);}
+    | INJECT injectable INTO id
+        {$$ = new yy.scopeAst(yy, 'injectExpression', [$2, $4]);}
+    ;
+
+injectable
+    : scope
+        {$$ = new yy.scopeAst(yy, 'injectable', [$1]);}
+    | id
+        {$$ = new yy.scopeAst(yy, 'injectable', [$1]);}
+    | injectable ',' scope
+        {$$ = new yy.scopeAst(yy, 'injectable', [$1, $3]);}
+    | injectable ',' id
+        {$$ = new yy.scopeAst(yy, 'injectable', [$1, $3]);}
+    ;
+
 invoke
     : id '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | scope '(' invokeArguments ')'
+        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
+    | inject '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | invoke '.' id
         {$$ = new yy.scopeAst(yy, 'invokeId', [$1, 'dot', $3]);}
@@ -258,6 +301,11 @@ string
         {$$ = $1}
     | BSTRING
         {$$ = $1}
+    ;
+
+useOnly
+    : ONLY '(' idList ')'
+        {$$ = new yy.scopeAst(yy, 'useOnly', [$2]);}
     ;
 
 xml
