@@ -105,7 +105,7 @@ class ScopeParser {
 		} else {
 			traversal = self.sn([
 				scopeRuntime,
-				`scope.sourceMapFilename="${mapFilename}";`,
+				`scope.sourceMapFilename=${JSON.stringify(mapFilename)};`,
 				//scopeRuntimeErrorHandler,
 				"module.exports=", 
 				self.rules.invokeExpression(
