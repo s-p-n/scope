@@ -79,13 +79,19 @@ class ScopeRules {
 	    	state.context = state.context.scoping.parent;
 	    };
 
-	    state.newImportExpression = (expression) => {
+	    state.newImportExpression = (str) => {
+	    	let self = this;
+	    	let result = self.parser.import(self.srcFilename, str, self.state.loc.start.line);
+	    	console.log(result);
+	    	return result;
+	    	/*
 	    	let id = `%%import:${randStr(16)}%%`;
 	    	if (state.importExpressions.has(id)) {
 	    		return state.newImportExpression(expression);
 	    	}
 	    	state.importExpressions.set(id, expression);
 	    	return id;
+	    	*/
 	    };
 
 	    state.context.definedLocally = (id = "", me = state.context) => {

@@ -5,6 +5,8 @@ import * as parser from "./parser.js";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
 import * as sourceMap from "source-map";
+import * as combineSourceMap from "combine-source-map";
+import * as convertSourceMap from "convert-source-map";
 
 class ScopeParser {
 	constructor () {
@@ -53,6 +55,15 @@ class ScopeParser {
 		return "Not implemented";
 	}
 
+	import (srcFilename, filename, lineOffset) {
+		let self = this;
+		let mSrcFilename = path.resolve(path.dirname(srcFilename), JSON.parse(filename));
+		let mCode = fs.readFileSync(mSrcFilename, 'utf8');
+		let mResult = new ScopeParser().translate(mCode, mSrcFilename, "NO MAP FILE", true);
+		self.imported.push({srcFilename: filename, code: mCode, offset: lineOffset});
+		return mResult;
+	}
+
 	translate (code, srcFilename="NO SOURCE FILE", mapFilename="NO MAP FILE", asInclude=false) {
 		let self = this;
 		let ast = this.parse(code);
@@ -87,7 +98,9 @@ class ScopeParser {
 		};
 		let node = self.sn("");
 		let map;
+		self.imported = [];
 		self.rules = new ScopeRules();
+		self.rules.parser = self;
 		self.rules.srcFilename = srcFilename;
 		self.rules.node = node;
 		self.rules.sn = self.sn;
@@ -102,6 +115,8 @@ class ScopeParser {
 					[]
 				)
 			]);
+			//traversal.setSourceContent(srcFilename, code);
+			return traversal;
 		} else {
 			traversal = self.sn([
 				scopeRuntime,
@@ -118,9 +133,9 @@ class ScopeParser {
 				`\n//# sourceMappingURL=${mapFilename}`
 			]);
 		}
-		traversal.setSourceContent({
-			sourceFile: srcFilename,
-			sourceContent: code
+		//traversal.setSourceContent(srcFilename, code);
+		self.imported.forEach(o => {
+			//traversal.setSourceContent(o.srcFilename, o.code);
 		});
 		//console.log(traversal);
 		map = traversal.toStringWithSourceMap({
@@ -132,16 +147,17 @@ class ScopeParser {
 			map: map.map,
 			code: map.code
 		};
+		/*
 		if (self.rules.state.importExpressions.size > 0) {
 			let importExpressions = self.rules.state.importExpressions;
 			for (let [id, str] of importExpressions) {
 				let mSrcFilename = path.resolve(path.dirname(srcFilename), JSON.parse(str));
 				let mCode = fs.readFileSync(mSrcFilename, 'utf8');
 				let mResult = self.translate(mCode, mSrcFilename, mSrcFilename.replace(/\.sc$/, '') + ".js.map", true);
-
 				result.code = result.code.replace(id, mResult.code);
 			}
 		}
+		*/
 		return result;
 	}
 }
