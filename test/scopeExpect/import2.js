@@ -1,6 +1,7 @@
 module.exports = (assert, test) => {
 	describe('import2.sc', () => {
 		it('should return a map of the public properties from the imported scope', () => {
+			console.log(test);
 			assert.deepEqual(test.get(0), new Map([
 				["foo", "im foo"],
 				["bar", "im bar"]

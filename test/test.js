@@ -20,11 +20,9 @@ srcFiles.forEach((f) => {
 	let srcFilename = path.join(srcDir, f);
 	let libFilename = path.join(libDir, f.replace(".sc", ".js"));
 	let expectFilename = path.join(expectDir, f.replace(".sc", ".js"));
-	let mapFilename = path.join(libDir, f.replace(".sc", ".map.js"));
 	let srcCode = fs.readFileSync(srcFilename, "utf8");
-	let translation = scope.translate(srcCode, srcFilename, mapFilename);
+	let translation = scope.translate(srcCode, srcFilename, libFilename);
 	
-	fs.writeFileSync(mapFilename, translation.map);
 	if (!fs.existsSync(libDir)) {
 		fs.mkdirSync(libDir);
 	}

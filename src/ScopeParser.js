@@ -5,8 +5,9 @@ import * as parser from "./parser.js";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
 import * as sourceMap from "source-map";
-import * as combineSourceMap from "combine-source-map";
-import * as convertSourceMap from "convert-source-map";
+import * as combine from "combine-source-map";
+import * as convert from "convert-source-map";
+import * as shell from "shelljs";
 
 class ScopeParser {
 	constructor () {
@@ -55,25 +56,49 @@ class ScopeParser {
 		return "Not implemented";
 	}
 
-	import (srcFilename, filename, lineOffset) {
+	import (srcFilename, libFilename, filename, lineOffset) {
 		let self = this;
 		let mSrcFilename = path.resolve(path.dirname(srcFilename), JSON.parse(filename));
-		let mCode = fs.readFileSync(mSrcFilename, 'utf8');
-		let mResult = new ScopeParser().translate(mCode, mSrcFilename, "NO MAP FILE", true);
-		self.imported.push({srcFilename: filename, code: mCode, offset: lineOffset});
-		return mResult;
+		if (!fs.existsSync(mSrcFilename)) {
+			throw new Error(`File ${filename} doesn't exist ${self.rules.state.errorTail()}`);
+		}
+		if (/\.sc$/.test(mSrcFilename)) {
+			let mLibFilename = path.resolve(path.dirname(libFilename), JSON.parse(filename).replace(/\.sc$/, ".js"));
+			let mCode = fs.readFileSync(mSrcFilename, 'utf8');
+			let mResult = new ScopeParser().translate(mCode, mSrcFilename, libFilename);
+			let mLibDirname = path.dirname(mLibFilename);
+			shell.mkdir('-p', mLibDirname);
+			fs.writeFileSync(mLibFilename, mResult.code);
+			let file = {
+				source: mResult.code,
+				sourceFile: mLibFilename
+			};
+			self.imported.push({
+				file: file,
+				offset: {
+					line: lineOffset
+				}
+			});
+			return `scope.import(${JSON.stringify(mLibFilename)})`;
+		} else {
+			return `scope.import(${JSON.stringify(mSrcFilename)})`;
+		}
 	}
 
-	translate (code, srcFilename="NO SOURCE FILE", mapFilename="NO MAP FILE", asInclude=false) {
+	translate (code, srcFilename="NO SOURCE FILE", libFilename="NO LIB FILE", asInclude=false) {
 		let self = this;
 		let ast = this.parse(code);
 		let astJSON = JSON.stringify(ast, null, '  ');
-		let scopeRuntime = fs.readFileSync(path.join(__dirname, "scopeRuntime.js"), "utf8");
+		let scopeRuntime = `#!/usr/bin/env node
+\	\	\	"use strict";
+\	\	\	require('source-map-support').install();
+\	\	\	const scope = require("${path.join(__dirname, "scopeRuntime.js")}");
+\	\	\	const ScopeApi = require("${path.join(__dirname, "scopeRuntimeApi.js")}")(scope);`;
 		let scopeRuntimeErrorHandler = fs.readFileSync(path.join(__dirname, "scopeRuntimeErrorHandler.js"), "utf8");
 		let result;
 		let traversal;
 		let locsMapped = [];
-		self.sn = (chunk) => {
+		self.sn = (chunk, name="<anonymouse>") => {
 			let loc = self.rules.state.loc.start;
 			let alreadyMapped = false;
 			locsMapped.forEach((val) => {
@@ -81,8 +106,6 @@ class ScopeParser {
 					alreadyMapped = true;
 				}
 			});
-			//if (!alreadyMapped) {
-				//console.log(loc, chunk);
 				locsMapped.push({
 					line: loc.line,
 					column: loc.column
@@ -91,23 +114,23 @@ class ScopeParser {
 					loc.line, 
 					loc.column, 
 					srcFilename, 
-					chunk
+					chunk,
+					name
 				);
-			//}
-			//return new sourceMap.SourceNode();
 		};
 		let node = self.sn("");
-		let map;
+		let sm;
 		self.imported = [];
 		self.rules = new ScopeRules();
 		self.rules.parser = self;
 		self.rules.srcFilename = srcFilename;
+		self.rules.libFilename = libFilename;
 		self.rules.node = node;
 		self.rules.sn = self.sn;
 		//scopeRuntime = babelCore.transform(scopeRuntime, {presets: ['minify-es2015']});
 		//console.log(scopeRuntime);
 		if (asInclude) {
-			traversal = self.sn([
+			return self.sn([
 				self.rules.invokeExpression(
 					self.rules.scopeExpression(
 						self.traverse(ast)
@@ -115,12 +138,9 @@ class ScopeParser {
 					[]
 				)
 			]);
-			//traversal.setSourceContent(srcFilename, code);
-			return traversal;
 		} else {
 			traversal = self.sn([
 				scopeRuntime,
-				`scope.sourceMapFilename=${JSON.stringify(mapFilename)};`,
 				//scopeRuntimeErrorHandler,
 				"module.exports=", 
 				self.rules.invokeExpression(
@@ -129,35 +149,31 @@ class ScopeParser {
 					),
 					[]
 				),
-				";",
-				`\n//# sourceMappingURL=${mapFilename}`
+				";"
 			]);
 		}
-		//traversal.setSourceContent(srcFilename, code);
+		sm = traversal.toStringWithSourceMap();
+		sm.map = JSON.parse(sm.map.toString());
+		sm.map.sourcesContent = [code];
+		sm.comment = convert.fromObject(sm.map).toComment();
+		let mainFile = {
+			source: sm.code + `\n${sm.comment}`,
+			sourceFile: libFilename
+		};
+		let combination = combine.
+			create(libFilename.replace(/\.js$/, ".min.js")).
+			addFile(mainFile, {line: 1});
+		
 		self.imported.forEach(o => {
-			//traversal.setSourceContent(o.srcFilename, o.code);
+			combination.addFile(o.file, o.offset);
 		});
-		//console.log(traversal);
-		map = traversal.toStringWithSourceMap({
-			file: mapFilename
-		});
-		//console.log(map);
+		let base64 = combination.base64();
+		let newSm = convert.fromBase64(base64).toObject();
 		result = {
 			ast: astJSON,
-			map: map.map,
-			code: map.code
+			map: newSm,
+			code: sm.code + `\n${sm.comment}`
 		};
-		/*
-		if (self.rules.state.importExpressions.size > 0) {
-			let importExpressions = self.rules.state.importExpressions;
-			for (let [id, str] of importExpressions) {
-				let mSrcFilename = path.resolve(path.dirname(srcFilename), JSON.parse(str));
-				let mCode = fs.readFileSync(mSrcFilename, 'utf8');
-				let mResult = self.translate(mCode, mSrcFilename, mSrcFilename.replace(/\.sc$/, '') + ".js.map", true);
-				result.code = result.code.replace(id, mResult.code);
-			}
-		}
-		*/
 		return result;
 	}
 }
