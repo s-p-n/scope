@@ -11,6 +11,9 @@ class Scope {
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
       let node = h(tag, attr, ...children);
+      for (let a in attr) {
+        node.setAttribute(a, attr[a]);
+      }
       node.toString = () => {
         return node.outerHTML;
       };

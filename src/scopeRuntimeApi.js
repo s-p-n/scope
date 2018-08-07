@@ -1,5 +1,5 @@
 module.exports = (scope) => {
-  return {
+  const ScopeApi = {
     "print": value => {
     console.log(...value);
     },
@@ -61,4 +61,5 @@ module.exports = (scope) => {
     return result;
     }
   };
+  return ScopeApi;
 };

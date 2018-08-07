@@ -16,6 +16,13 @@ class ScopeParser {
 		this.rules = new ScopeRules();
 	}
 
+	libraryUtils () {
+		return {
+			runtime: require('./scopeRuntime.js'),
+			api: require('./scopeRuntimeApi.js')
+		};
+	}
+
 	parse (code) {
 		return this.parser.parse(code);
 	}
