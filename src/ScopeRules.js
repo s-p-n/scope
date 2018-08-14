@@ -364,6 +364,11 @@ class ScopeRules {
 		return self.sn(JSON.stringify(str));
 	}
 
+	unaryExpression (operator, expression) {
+		let self = this;
+		return self.sn([operator, expression]);
+	}
+
 	useExpression (usable, useOnly) {
 		let self = this;
 		if (useOnly === undefined) {
@@ -404,7 +409,7 @@ class ScopeRules {
 		if (xmlAttributes !== "") {
 			xmlAttributes.add(", ");
 		}
-		return self.sn([xmlAttributes, name, ":", value]);
+		return self.sn([xmlAttributes, '"', name, '"', ":", value]);
 	}
 
 	xmlExpression (name, xmlAttributes, xmlControlCode) {

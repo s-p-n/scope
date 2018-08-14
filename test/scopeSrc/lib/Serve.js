@@ -14,9 +14,9 @@ function setupServerUtils (port) {
 			console.log("connected");
 		});
 
-		$('[bindIn]').each(function () {
-			console.log($(this), $(this).attr('bindIn'));
-			var binder = $(this).attr('bindIn').split(':');
+		$('[bind-in]').each(function () {
+			console.log($(this), $(this).attr('bind-in'));
+			var binder = $(this).attr('bind-in').split(':');
 			var event = binder[0];
 			var id = binder[1];
 			$(this).on(event, function (e) {
@@ -24,8 +24,8 @@ function setupServerUtils (port) {
 			});
 		});
 
-		$('[bindOut]').each(function () {
-			var channel = $(this).attr('bindOut');
+		$('[bind-out]').each(function () {
+			var channel = $(this).attr('bind-out');
 			var el = $(this);
 			socket.on(channel, function (data) {
 				el.html(data);
@@ -82,6 +82,14 @@ function Serve () {
 		app.get('/Serve/serveUtils.js', (req, res, next) => {
 			res.send(setupServerUtils(port));
 		});
+		/** TODO: Implement scope runtime for client
+		app.get('/Serve/scopeRuntime.js', (req, res, next) => {
+			res.sendFile("/home/spence/Projects/scope/lib/scopeRuntime.js");
+		});
+		app.get('/Serve/scopeRuntimeApi.js', (req, res, next) => {
+			res.sendFile("/home/spence/Projects/scope/lib/scopeRuntimeApi.js");
+		});
+		**/
 	});
 
 	self.set('on', (args) => {
@@ -94,6 +102,11 @@ function Serve () {
 			let channel = args[0];
 			let data = args[1];
 			client.emit(channel, data);
+		});
+		scClient.set("broadcast", (args) => {
+			let channel = args[0];
+			let data = args[1];
+			client.broadcast(channel, data);
 		});
 		for (let [channel, handle] of ioListeners) {
 			client.on(channel, function (data) {
@@ -120,6 +133,10 @@ function Serve () {
 							node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}));
 							node.appendChild(h('script', {src: '/socket.io/socket.io.js'}));
 							node.appendChild(h('script', {src: '/Serve/serveUtils.js'}));
+							/** TODO: Implement scope runtime for client
+							node.appendChild(h('script', {src: '/Serve/scopeRuntime.js'}));
+							node.appendChild(h('script', {src: '/Serve/scopeRuntimeApi.js'}));
+							**/
 						}
 					});
 				}

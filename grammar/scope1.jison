@@ -54,7 +54,7 @@
 "or"                      return 'OR';
 "!"                       return '!';
 [0-9]+(?:.[0-9]+)?        return 'NUMBER';
-[a-zA-Z_][a-zA-Z0-9_]*    return 'IDENTIFIER';
+[a-zA-Z_-][a-zA-Z0-9_-]*  return 'IDENTIFIER';
 <<EOF>>                   return 'EOF';
 
 /lex
@@ -170,10 +170,10 @@ expression
         {$$ = $1}
     | declarationExpression
         {$$ = $1}
+    | '-' expression %prec UMINUS
+        {$$ = new yy.scopeAst(yy, 'unaryExpression',['-', $expression]);}
     | binaryExpression
         {$$ = $1}
-    | '-' expression %prec UMINUS
-        {$$ = '- $2';}
     | '(' expression ')'
         {$$ = $2}
     | literal
@@ -185,7 +185,7 @@ expression
     | RETURN expression
         {$$ = new yy.scopeAst(yy, 'returnExpression', [$2]);}
     | '!' expression
-        {$$ = '! $2';}
+        {$$ = new yy.scopeAst(yy, 'unaryExpression',['!', $expression]);}
     ;
 
 expressionList

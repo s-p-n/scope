@@ -7,6 +7,7 @@ server.get("/", (client: []) {
 });
 
 server.on("say", (client: [], data: "") {
+	print("Client says:", data);
 	client.emit("echo", data);
 });
 
@@ -14,9 +15,31 @@ server.listen([port: 8080], {
 	print("Server running on port 8080");
 });
 
+let stylesheet = [
+	"h1": [
+		font-family: "sans-serif",
+		color: "#AAA",
+		margin: 0,
+		padding: 0 
+	],
+	"input": [
+		padding: "5px",
+		border: "none",
+		outline: "none",
+		box-shadow: "0px 0px 5px #DDDDDD",
+		":focus": [
+			border: "none",
+			outline: "none",
+			box-shadow: "0px 0px 5px #00DDDD"
+		],
+		border-radius: "2px",
+		transition: ".3s ease-in-out"
+	]
+];
+
 let siteIo = <div id="io">
-	<input type="text" bindIn="keyup:say" />;
-	<div bindOut="echo" />;
+	<input type="text" bind-in="keyup:say" />;
+	<div bind-out="echo" />;
 </div>;
 
 let site = 
@@ -25,6 +48,9 @@ let site =
 		<title>
 			"Scope Server Test";
 		</title>;
+		<style>
+			stylesheet;
+		</style>;
 	</head>;
 	<body>
 		<h1>
