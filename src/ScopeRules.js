@@ -10,7 +10,6 @@ let api = {
 
 let allowedUndefinedIdExpressions = [
 	"xmlExpression",
-	"xmlAttributes",
 	"invokeId"
 ];
 

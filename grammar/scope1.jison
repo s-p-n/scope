@@ -321,7 +321,7 @@ xml
 xmlAttributes
     : 
         {$$ = new yy.scopeAst(yy, 'xmlAttributes', []);}
-    | xmlAttributes id '=' expression
+    | xmlAttributes IDENTIFIER '=' expression
         {$$ = new yy.scopeAst(yy, 'xmlAttributes', [$1, $2, $4]);}
     ;
 

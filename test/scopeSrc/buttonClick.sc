@@ -14,9 +14,11 @@ server.listen([port: 8080], {
 	print("Server running on port 8080");
 });
 
-let button = <button onclick=(e: []) {
+let tellServer = (e: []) {
 	socket.emit("buttonClick");
-}>
+};
+
+let button = <button onclick=tellServer>
 	"Click me";
 </button>;
 
