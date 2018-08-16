@@ -11,6 +11,10 @@ server.on("say", (client: [], data: "") {
 	client.emit("echo", data);
 });
 
+server.on("clicked", (client: [], data: "") {
+	print("clicked");
+});
+
 server.listen([port: 8080], {
 	print("Server running on port 8080");
 });
@@ -40,6 +44,11 @@ let stylesheet = [
 let siteIo = <div id="io">
 	<input type="text" bind-in="keyup:say" />;
 	<div bind-out="echo" />;
+	<button onclick=(e: []) {
+		socket.emit("clicked");
+	}>
+		"Send to 'clicked' channel";
+	</button>;
 </div>;
 
 let site = 

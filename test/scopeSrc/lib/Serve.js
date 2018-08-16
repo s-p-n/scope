@@ -7,34 +7,6 @@ const scope = libUtils.runtime;
 const ScopeApi = libUtils.api(scope);
 const h = require('hyperscript');
 
-function setupServerUtils (port) {
-	return `(function serveUtils () {
-		var socket = io.connect('http://localhost:${port}');
-		socket.on("connect", function () {
-			console.log("connected");
-		});
-
-		$('[bind-in]').each(function () {
-			console.log($(this), $(this).attr('bind-in'));
-			var binder = $(this).attr('bind-in').split(':');
-			var event = binder[0];
-			var id = binder[1];
-			$(this).on(event, function (e) {
-				socket.emit(id, $(this).val());
-			});
-		});
-
-		$('[bind-out]').each(function () {
-			var channel = $(this).attr('bind-out');
-			var el = $(this);
-			socket.on(channel, function (data) {
-				el.html(data);
-			});
-		});
-	}());`;
-}
-
-
 function scopify (item, ctx = null) {
 	if (item !== null && typeof item === "object") {
 		if (item instanceof Map) {
@@ -79,17 +51,9 @@ function Serve () {
 		} else {
 			server.listen(port);
 		}
-		app.get('/Serve/serveUtils.js', (req, res, next) => {
-			res.send(setupServerUtils(port));
+		app.get('/Serve/client.js', (req, res, next) => {
+			res.sendFile("/home/spence/Projects/scope/test/scopeSrc/lib/client.js");
 		});
-		/** TODO: Implement scope runtime for client
-		app.get('/Serve/scopeRuntime.js', (req, res, next) => {
-			res.sendFile("/home/spence/Projects/scope/lib/scopeRuntime.js");
-		});
-		app.get('/Serve/scopeRuntimeApi.js', (req, res, next) => {
-			res.sendFile("/home/spence/Projects/scope/lib/scopeRuntimeApi.js");
-		});
-		**/
 	});
 
 	self.set('on', (args) => {
@@ -132,11 +96,7 @@ function Serve () {
 						if (node.tagName === 'body') {
 							node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}));
 							node.appendChild(h('script', {src: '/socket.io/socket.io.js'}));
-							node.appendChild(h('script', {src: '/Serve/serveUtils.js'}));
-							/** TODO: Implement scope runtime for client
-							node.appendChild(h('script', {src: '/Serve/scopeRuntime.js'}));
-							node.appendChild(h('script', {src: '/Serve/scopeRuntimeApi.js'}));
-							**/
+							node.appendChild(h('script', {'src': "Serve/client.js"}));
 						}
 					});
 				}

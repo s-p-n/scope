@@ -40,6 +40,9 @@ class Scope {
         } else {
           val = attr[a];
         }
+        if (typeof val === "function") {
+          val = `scope.invokeExpression(scope.createScope(${val.toString()}), [this])`;
+        }
         node.setAttribute(a, val);
       }
       node.toString = () => {
