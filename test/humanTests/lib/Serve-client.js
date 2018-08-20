@@ -18,12 +18,10 @@ if (!window.ServedOnce) {
 			])
 		});
 
-		socket.on("connect", function () {
-			console.log("connected");
-		});
+		//socket.on("connect", function () {
+		//});
 
 		$('[bind-in]').each(function () {
-			console.log($(this), $(this).attr('bind-in'));
 			var binder = $(this).attr('bind-in').split(':');
 			var event = binder[0];
 			var id = binder[1];

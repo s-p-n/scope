@@ -6,7 +6,7 @@ const libUtils = new ScopeParser().libraryUtils();
 const scope = libUtils.runtime;
 const ScopeApi = libUtils.api(scope);
 const h = require('hyperscript');
-
+/*
 function scopify (item, ctx = null) {
 	if (item !== null && typeof item === "object") {
 		if (item instanceof Map) {
@@ -25,11 +25,10 @@ function scopify (item, ctx = null) {
 		return item;
 	}
 }
-
+*/
 function get (id) {
 	return this[id];
 }
-
 
 function Serve () {
 	let self = new Map();
@@ -52,14 +51,15 @@ function Serve () {
 			server.listen(port);
 		}
 		app.get('/Serve/client.js', (req, res, next) => {
-			res.sendFile("/home/spence/Projects/scope/test/scopeSrc/lib/client.js");
+			res.sendFile("/home/spence/Projects/scope/test/humanTests/lib/client.js");
 		});
 	});
+	self.get("listen")._isScope = true;
 
-	self.set('on', (args) => {
-		ioListeners.set(args[0], args[1]);
+	self.set('on', (channel, data) => {
+		ioListeners.set(channel, data);
 	});
-
+	
 	io.on("connection", function (client) {
 		let scClient = new Map();
 		scClient.set("emit", (args) => {
@@ -77,11 +77,11 @@ function Serve () {
 				scope.invokeExpression(handle, [scClient, data]);
 			});
 		}
+		scClient.get("emit")._isScope = true;
+		scClient.get("broadcast")._isScope = true;
 	});
 
-	self.set("get", (args) => {
-		let url = args[0];
-		let handle = args[1];
+	self.set("get", (url, handle) => {
 		app.get(url, (req, res, next) => {
 			let client = new Map();
 			let request = new Map();
@@ -89,8 +89,7 @@ function Serve () {
 			req.get = get;
 			res.get = get;
 
-			response.set("send", (args) => {
-				let xmlType = args[0];
+			response.set("send", (xmlType) => {
 				if (xmlType.tagName === "html") {
 					xmlType.childNodes.forEach((node) => {
 						if (node.tagName === 'body') {
@@ -109,7 +108,6 @@ function Serve () {
 			scope.invokeExpression(handle, [client]);
 		});
 	});
-
 	return self;
 }
 

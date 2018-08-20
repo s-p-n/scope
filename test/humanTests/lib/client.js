@@ -19,6 +19,7 @@ class Scope {
       function processStyle(m) {
         let style = "";
         for (let [selector, body] of m) {
+          //console.log(selector);
           style += `${selector}{`;
           for (let [name, value] of body) {
             if (value instanceof Map) {
@@ -33,6 +34,15 @@ class Scope {
       }
       if (tag === "style" && children[0] instanceof Map) {
         node = h(tag, [processStyle(children[0])]);
+        node.__defineGetter__('textContent', function () {
+          return this.childNodes[0].value;
+        });
+        node.__defineGetter__('innerHTML', function () {
+          return this.textContent;
+        });
+        node.__defineGetter__('outerHTML', function () {
+          return `<style>${this.innerHTML}</style>`;
+        });
       } else {
         node = h(tag, ...children);
       }
@@ -50,13 +60,25 @@ class Scope {
         }
         node.setAttribute(a, val);
       }
-      node.toString = () => {
+      node.toString = function () {
+        if (node.tagName === "style") {
+          return node.outerHTML.replace(/gt\;/, ">");
+        }
+        console.log(node);
+
         return node.outerHTML;
       };
-      node.get = key => {
+      node.get = function (key) {
+        if (typeof node[key] === "function") {
+          console.log(node[key].toString());
+          return node[key].bind(node);
+        }
         return node[key];
       };
-      node.childNodes.get = key => {
+      node.childNodes.get = function (key) {
+        if (typeof node.childNodes[key] === "function") {
+          //return node.childNodes[key].bind(node);
+        }
         return node.childNodes[key];
       };
       return node;
@@ -157,11 +179,15 @@ class Scope {
   }
 
   createScope(f) {
+    f._isScope = true;
     f._parent = this._scoping;
     return f;
   }
 
   invokeExpression(f, args, extension = false) {
+    if (!f._isScope) {
+      return f.apply(args);
+    }
     let scoping = this._scoping;
     if (f === undefined) {
       throw new Error(`Call to undefined scope`);
@@ -209,18 +235,18 @@ class Scope {
       if (typeof sc !== "function") {
         throw new Error("Attempt to use non-scope");
       }
-      console.log(sc);
+      //console.log(sc);
       let temp = self.invokeExpression(sc, [], true);
-      console.log(temp);
+      //console.log(temp);
       for (let [key, val] of temp.get("protected")) {
         if (useOnly === undefined || useOnly.indexOf(key) !== -1) {
-          console.log(key, val);
+          //console.log(key, val);
           self._scoping.protected.set(key, val);
         }
       }
       for (let [key, val] of temp.get("public")) {
         if (useOnly === undefined || useOnly.indexOf(key) !== -1) {
-          console.log(key, val);
+          //console.log(key, val);
           self._scoping.public.set(key, val);
         }
       }
@@ -700,12 +726,10 @@ if (!window.ServedOnce) {
 			])
 		});
 
-		socket.on("connect", function () {
-			console.log("connected");
-		});
+		//socket.on("connect", function () {
+		//});
 
 		$('[bind-in]').each(function () {
-			console.log($(this), $(this).attr('bind-in'));
 			var binder = $(this).attr('bind-in').split(':');
 			var event = binder[0];
 			var id = binder[1];
