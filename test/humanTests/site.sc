@@ -52,19 +52,20 @@ server.get("/", (client: []) {
 server.get(template.styleLink, (client: []) {
 	client.response.sendStyle(template.stylesheet);
 });
-
-server.get("/:page", (client: []) {
-	let renderred = false;
-	each(loader.pages, (sc: {}, name: "") {
-		if (name is client.request.params.page, {
-			use sc;
-			client.response.render(page(template.generate));
-			renderred = true;
+promise.all(loader.promises).then((pages: []) {
+	server.get("/:page", (client: []) {
+		let renderred = false;
+		each(pages, (sc: {}, name: "") {
+			if (name is client.request.params.page, {
+				use sc;
+				client.response.render(page(template.generate));
+				renderred = true;
+			});
 		});
-	});
-	if (!renderred, {
-		client.response.status(404);
-		client.response.render(template.generate(notFound));
+		if (!renderred, {
+			client.response.status(404);
+			client.response.render(template.generate(notFound));
+		});
 	});
 });
 
