@@ -1,6 +1,8 @@
 const express = require('express');
 const socketIo = require('socket.io');
-const http = require('http');
+const spdy = require('spdy');
+const fs = require('fs');
+const path = require('path');
 const ScopeParser = require('../../../lib/ScopeParser.js');//require('scope-lang');
 const libUtils = new ScopeParser().libraryUtils();
 const scope = libUtils.runtime;
@@ -26,6 +28,18 @@ function scopify (item, ctx = null) {
 	}
 }
 */
+
+function mapToObj (m) {
+	if (m instanceof Map) {
+		let obj = Object.create(null);
+		for (let [key, val] of m) {
+			obj[key] = mapToObj(val);
+		}
+		return obj;
+	}
+	return m;
+}
+
 function get (id) {
 	return this[id];
 }
@@ -33,28 +47,36 @@ function get (id) {
 function Serve () {
 	let self = new Map();
 	let app = express();
-	let server = http.Server(app);
+	let server = spdy.createServer({
+		key: fs.readFileSync(path.join(__dirname, '/server.key')),
+		cert: fs.readFileSync(path.join(__dirname, '/server.cert'))
+	}, app);
 	let io = socketIo(server);
 	let clients = new Map();
-
+	let clientScope = true;
 	let ioListeners = new Map();
 
-	self.set("listen", (args) => {
-		let props = args[0];
-		let port = 8888;
-		if (props.has('port')) {
-			port = props.get('port');
+	self.set("listen", (props, callback) => {
+		if (!props.has('port')) {
+			// TODO: set to random available port
+			props.set('port', 8000);
 		}
-		if (args[1] !== undefined) {
-			server.listen(port, args[1]);
+		if (callback !== undefined) {
+			server.listen(props.get('port'), callback);
 		} else {
-			server.listen(port);
+			server.listen(props.get('port'));
 		}
-		app.get('/Serve/client.js', (req, res, next) => {
-			res.sendFile("/home/spence/Projects/scope/test/humanTests/lib/client.js");
-		});
+		if (!props.has('clientScope')) {
+			props.set('clientScope', true);
+		}
+		if (props.get('clientScope')) {
+			app.get('/Serve/client.js', (req, res, next) => {
+				res.sendFile("/home/spence/Projects/scope/test/humanTests/lib/client.js");
+			});
+		} else {
+			clientScope = false;
+		}
 	});
-	self.get("listen")._isScope = true;
 
 	self.set('on', (channel, data) => {
 		ioListeners.set(channel, data);
@@ -88,24 +110,46 @@ function Serve () {
 			let response = new Map();
 			req.get = get;
 			res.get = get;
+			req.params.get = get;
+			request.set("params", req.params);
 
-			response.set("send", (xmlType) => {
-				if (xmlType.tagName === "html") {
+			response.set("status", res.status.bind(res));
+			response.set("sendStyle", (stylesheet) => {
+				let css = scope.xmlExpression('style', {}, stylesheet).childNodes[0].value;
+				res.type('css').end(css);
+			});
+			response.set("render", (xmlType) => {
+				if (clientScope && xmlType.tagName === "html") {
 					xmlType.childNodes.forEach((node) => {
 						if (node.tagName === 'body') {
-							node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}));
-							node.appendChild(h('script', {src: '/socket.io/socket.io.js'}));
-							node.appendChild(h('script', {'src': "Serve/client.js"}));
+							node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}, ["JavaScript needed for full functionality"]));
+							node.appendChild(h('script', {src: '/socket.io/socket.io.js'}, ["JavaScript needed for full functionality"]));
+							node.appendChild(h('script', {'src': "Serve/client.js"}, ["JavaScript needed for full functionality"]));
 						}
 					});
 				}
 				res.send(xmlType.toString());
 			});
 
+			response.set("redirect", (status, path) => {
+				if (!path) {
+					path = status;
+					status = 302;
+				}
+				res.redirect(status, path);
+			});
+
 			client.set("request", request);
 			client.set("response", response);
 			client.set("next", next);
 			scope.invokeExpression(handle, [client]);
+		});
+	});
+
+	self.set("manifest", (m) => {
+		let o = mapToObj(m);
+		app.get("/manifest.webmanifest", (req, res) => {
+			res.send(JSON.stringify(o));
 		});
 	});
 	return self;

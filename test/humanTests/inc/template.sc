@@ -35,6 +35,7 @@ public stylesheet = [
 
 	]
 ];
+public manifest = [];
 public nav = [];
 public generate = (data: [
 	title: "No title",
@@ -47,12 +48,25 @@ public generate = (data: [
 		</li>);
 	});
 	return 
-	<html>
+	<html lang="en">
 		<head>
 			<title>data.title;</title>;
-			<style>
-				stylesheet;
-			</style>;
+			<meta name="viewport" content="width=device-width, initial-scale=1" />;
+			if(data.description, {
+				return <meta name="Description" content=data.description />;
+			});
+
+			if (template.manifest.theme_color, {
+				return <meta name="theme-color" content=template.manifest.theme_color />;
+			});
+			if (template.styleLink, {
+				return <link rel="stylesheet" href=template.styleLink />;
+			}, {
+				return <style>
+					stylesheet;
+				</style>;
+			});
+			<link rel="manifest" href="/manifest.webmanifest" />;
 		</head>;
 		<body>
 			<h1>data.title;</h1>;
