@@ -7,7 +7,6 @@ import ScopeRules from "./ScopeRules.js";
 import * as sourceMap from "source-map";
 import * as combine from "combine-source-map";
 import * as convert from "convert-source-map";
-import * as shell from "shelljs";
 
 class ScopeParser {
 	constructor () {
@@ -65,16 +64,29 @@ class ScopeParser {
 
 	import (srcFilename, libFilename, filename, lineOffset) {
 		let self = this;
-		let mSrcFilename = path.resolve(path.dirname(srcFilename), JSON.parse(filename));
+		filename = JSON.parse(filename);
+		let mSrcFilename = path.resolve(path.dirname(srcFilename), filename);
 		if (!fs.existsSync(mSrcFilename)) {
-			throw new Error(`File ${filename} doesn't exist ${self.rules.state.errorTail()}`);
+			let packagesDir = path.resolve(__dirname, "../packages");
+			let packages = fs.readdirSync(packagesDir);
+			if (packages.indexOf(filename) !== -1) {
+				let scopePackageDir = path.join(packagesDir, filename);
+				let spn = require(path.join(scopePackageDir, "spn.json"));
+				let main = path.join(scopePackageDir, spn.main);
+				mSrcFilename = path.resolve(path.dirname(srcFilename), main);
+				
+			} else {
+				throw new Error(`File "${filename}" doesn't exist ${self.rules.state.errorTail()}`);
+			}
 		}
 		if (/\.sc$/.test(mSrcFilename)) {
-			let mLibFilename = path.resolve(path.dirname(libFilename), JSON.parse(filename).replace(/\.sc$/, ".js"));
+			let mLibFilename = path.resolve(path.dirname(libFilename), filename.replace(/\.sc$/, ".js"));
 			let mCode = fs.readFileSync(mSrcFilename, 'utf8');
-			let mResult = new ScopeParser().translate(mCode, mSrcFilename, libFilename);
+			let mResult = new ScopeParser().translate(mCode, mSrcFilename, mLibFilename);
 			let mLibDirname = path.dirname(mLibFilename);
-			shell.mkdir('-p', mLibDirname);
+			if (!fs.existsSync(mLibDirname)) {
+				fs.mkdirSync(mLibDirname);
+			}
 			fs.writeFileSync(mLibFilename, mResult.code);
 			let file = {
 				source: mResult.code,
@@ -96,12 +108,19 @@ class ScopeParser {
 		let self = this;
 		let ast = this.parse(code);
 		let astJSON = JSON.stringify(ast, null, '  ');
-		let scopeRuntime = `#!/usr/bin/env node
-\	\	\	"use strict";
-\	\	\	require('source-map-support').install();
-\	\	\	const scope = require("${path.join(__dirname, "scopeRuntime.js")}");
-\	\	\	const ScopeApi = require("${path.join(__dirname, "scopeRuntimeApi.js")}")(scope);`;
-		let scopeRuntimeErrorHandler = fs.readFileSync(path.join(__dirname, "scopeRuntimeErrorHandler.js"), "utf8");
+		let scopeRuntime = "";
+		if (typeof window === "undefined") {
+			scopeRuntime += `#!/usr/bin/env node
+\	\	\	\	"use strict";
+\	\	\	\	global.__scopedir = __dirname;
+\	\	\	\	require('source-map-support').install();
+\	\	\	\	const scope = require("${path.join(__dirname, "scopeRuntime.js")}");
+\	\	\	\	const ScopeApi = require("${path.join(__dirname, "scopeRuntimeApi.js")}")(scope);`;
+		} else {
+			scopeRuntime += `"use strict";\n`;
+		}
+	scopeRuntime += ``;
+		//let scopeRuntimeErrorHandler = fs.readFileSync(path.join(__dirname, "scopeRuntimeErrorHandler.js"), "utf8");
 		let result;
 		let traversal;
 		let locsMapped = [];

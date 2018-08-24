@@ -1,4 +1,7 @@
-let server = import "lib/Serve.js"();
+let server = import "serve"(/*[
+	key: "lib/server.key",
+	cert: "lib/server.cert"
+]*/);
 let template = import "inc/template.sc";
 let loadPages = import "inc/loadPages.sc";
 

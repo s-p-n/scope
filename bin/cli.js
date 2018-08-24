@@ -206,8 +206,7 @@ if (cli.input.length === 0) {
 		}
 		debug(1, 'Got file. Attempting to parse..');
 		try {
-			let translation = parser.translate(data, inputFile, mapFile);
-			let map = translation.map;
+			let translation = parser.translate(data, inputFile, outputFile);
 			code = translation.code;
 			debug(1, "Finished parsing & writing code. Writing to file..");
 			fs.writeFile(outputFile, code, (err) => {
@@ -230,11 +229,6 @@ if (cli.input.length === 0) {
 					debug(1, "Successfully marked as executable.");
 					process.exit(0);
 				});
-			});
-			fs.writeFile(mapFile, map, (err) => {
-				if (err) {
-					debug(0, `WARN: Cannot write to map file '${mapFile}'`);
-				}
 			});
 		} catch (e) {
 			debug(0, e);

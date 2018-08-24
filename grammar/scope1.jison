@@ -98,6 +98,11 @@ arrayStart
         {$$ = new yy.scopeAst(yy, 'arrayStart', []);}
     ;
 
+assignmentValue
+    : expression
+        {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1]);}
+    ;
+
 associativeDeclaration
     : IDENTIFIER ':' expression
         {$$ = new yy.scopeAst(yy, 'associativeDeclaration', [$1, 'id', $3]);}
@@ -145,7 +150,7 @@ binaryExpression
 
 controlCode
     : 
-        {return;}
+        {$$ = new yy.scopeAst(yy, 'controlCode', []);}
     | controlCode expression ';'
         {$$ = new yy.scopeAst(yy, 'controlCode', [$1, $2]);}
     ;
@@ -162,7 +167,7 @@ declarationExpression
     ;
 
 expression
-    : id '=' expression
+    : id '=' assignmentValue
         {$$ = new yy.scopeAst(yy, 'assignmentExpression', [$1, $3]);}
     | import
         {$$ = $1}
@@ -220,6 +225,8 @@ invoke
     : id '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | scope '(' invokeArguments ')'
+        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
+    | import '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | invoke '.' id
         {$$ = new yy.scopeAst(yy, 'invokeId', [$1, 'dot', $3]);}

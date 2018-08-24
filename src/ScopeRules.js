@@ -5,7 +5,9 @@ let api = {
 	print: "ScopeApi.print",
 	debug: "ScopeApi.debug",
 	if: "ScopeApi['if']",
-	each: "ScopeApi['each']"
+	each: "ScopeApi['each']",
+	compile: "ScopeApi.compile",
+	promise: "ScopeApi.promise"
 };
 
 let allowedUndefinedIdExpressions = [
@@ -134,6 +136,11 @@ class ScopeRules {
 	assignmentExpression (name, expression) {
 		let self = this;
 		return self.sn(['scope.assignmentExpression([', name, '],', expression, ')']);
+	}
+
+	assignmentValue (expression) {
+		let self = this;
+		return expression;
 	}
 
 	associativeDeclaration (name, type, expression) {
