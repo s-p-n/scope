@@ -10,18 +10,18 @@
 		let ctx = document.getElementById("chart").getContext("2d");
 		let iterData = [];
 		let newData = [];
-		//let smartData = [];
+		let fakeData = [];
 		let myChart = new Chart(ctx, {
 		    type: 'line',
 		    data: {
 		    	labels: [],
 		        datasets: [
-		        	/*{
-		        		label: "smart",
+		        	{
+		        		label: "fake",
 		        		borderColor: "#0000FF",
 		        		backgroundColor: "rgba(0, 0, 255, 0.4)",
-		        		data: smartData
-		        	}, */
+		        		data: fakeData
+		        	}, 
 				{
 		        		label: "iter",
 		        		borderColor: "#00FF00",
@@ -65,12 +65,27 @@
 		let mapSize = 500000;
 		let b = new Benchmark();
 		let m = new Map();
-
+		let fm = [];
 		function initMap () {
 			let arr = new Array(mapSize);
 			for (let i = 0; i < mapSize; i += 1) {
 				arr[i] = [i, i + 1];
 			}
+			fm = arr;
+			fm.get = (id) => {
+				return fm[id][1];
+			};
+			fm.set = (id, val) => {
+				fm[id] = [id, val];
+				return val;
+			};
+			fm.delete = (id) => {
+				if (fm.indexOf(id) !== -1) {
+					fm.splice(id, 1);
+					return true;
+				}
+				return false;
+			};
 			m = new Map(arr);
 		}
 
@@ -117,7 +132,11 @@
 			}
 			return newDeletion(id);
 		}
-
+		
+		function fmDeletion (id) {
+			fm.delete(id);
+		}
+		
 		let stop = false;
 
 		function run () {
@@ -140,15 +159,15 @@
 						b.end('iter');
 						break;
 					case 2:
-						//b.start('smart');
-						//smartDeletion(id);
-						//b.end('smart');
+						b.start('fake');
+						fmDeletion(id);
+						b.end('fake');
 						break;
 					default:
 						let result = b.report();
 						newData.push({x: id, y: result.new.difference});
 						iterData.push({x: id, y: result.iter.difference});
-						//smartData.push({x: id, y: result.smart.difference});
+						fakeData.push({x: id, y: result.fake.difference});
 						myChart.data.labels.push(id);
 						myChart.update({duration: 0});
 						initMap();
