@@ -10,18 +10,19 @@
 		let ctx = document.getElementById("chart").getContext("2d");
 		let iterData = [];
 		let newData = [];
-		let smartData = [];
+		//let smartData = [];
 		let myChart = new Chart(ctx, {
 		    type: 'line',
 		    data: {
 		    	labels: [],
 		        datasets: [
-		        	{
+		        	/*{
 		        		label: "smart",
 		        		borderColor: "#0000FF",
 		        		backgroundColor: "rgba(0, 0, 255, 0.4)",
 		        		data: smartData
-		        	}, {
+		        	}, */
+				{
 		        		label: "iter",
 		        		borderColor: "#00FF00",
 		        		backgroundColor: "rgba(0, 255, 0, 0.4)",
@@ -133,21 +134,21 @@
 						newDeletion(id);
 						b.end('new');
 						break;
-					case 2:
+					case 1:
 						b.start('iter');
 						iterDeletion(id);
 						b.end('iter');
 						break;
-					case 1:
-						b.start('smart');
-						smartDeletion(id);
-						b.end('smart');
+					case 2:
+						//b.start('smart');
+						//smartDeletion(id);
+						//b.end('smart');
 						break;
 					default:
 						let result = b.report();
 						newData.push({x: id, y: result.new.difference});
 						iterData.push({x: id, y: result.iter.difference});
-						smartData.push({x: id, y: result.smart.difference});
+						//smartData.push({x: id, y: result.smart.difference});
 						myChart.data.labels.push(id);
 						myChart.update({duration: 0});
 						initMap();
