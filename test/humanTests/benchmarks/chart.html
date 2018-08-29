@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+	<title>Map Benchmark</title>
+</head>
+<body>
+	<canvas id="chart" width="1000" height="500"></canvas>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+	<script>
+		let ctx = document.getElementById("chart").getContext("2d");
+		let iterData = [];
+		let newData = [];
+		let smartData = [];
+		let myChart = new Chart(ctx, {
+		    type: 'line',
+		    data: {
+		    	labels: [],
+		        datasets: [
+		        	{
+		        		label: "smart",
+		        		borderColor: "#0000FF",
+		        		backgroundColor: "rgba(0, 0, 255, 0.4)",
+		        		data: smartData
+		        	}, {
+		        		label: "iter",
+		        		borderColor: "#00FF00",
+		        		backgroundColor: "rgba(0, 255, 0, 0.4)",
+		        		data: iterData
+		        	}, {
+		        		label: "new",
+		        		borderColor: "#FF0000",
+		        		backgroundColor: "rgba(255, 0, 0, 0.4)",
+		        		data: newData
+		        	}
+		        ]
+		    }
+		});
+		class Benchmark {
+			constructor () {
+				this.benchmarks = {};
+			}
+
+			start (name) {
+				this.benchmarks[name] = {
+					name: name,
+					start: Date.now(),
+					end: NaN,
+					difference: NaN
+				}
+			}
+
+			end (name) {
+				this.benchmarks[name].end = Date.now();
+				this.benchmarks[name].difference = this.benchmarks[name].end - this.benchmarks[name].start;
+			}
+
+			report (name) {
+				if (name) {
+					return this.benchmarks[name];
+				}
+				return this.benchmarks;
+			}
+		}
+		let mapSize = 1000000;
+		let b = new Benchmark();
+		let m = new Map();
+
+		function initMap () {
+			let arr = new Array(mapSize);
+			for (let i = 0; i < mapSize; i += 1) {
+				arr[i] = [i, i + 1];
+			}
+			m = new Map(arr);
+		}
+
+		function iterDeletion (id) {
+			let map = m;
+			if (map.delete(id)) {
+				if (id === map.size) {
+					//console.log("fast delete");
+					return true;
+				}
+				//console.log("renumber map");
+				let i = 0;
+				let stop = map.size + 0;
+				for (let i = id; i < stop; i += 1) {
+					//console.log(map);
+					let val = map.get(i + 1);
+					map.delete(i + 1);
+					map.set(i, val);
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		function newDeletion (id) {
+			let map = m;
+			let newArr = new Array(map.size - 1);
+			if (m.delete(id)) {
+				let i = 0;
+				for (let [key, val] of m) {
+					newArr[i] = [i, val];
+					i += 1;
+				}
+				m = new Map(newArr);
+			} else {
+				return false;
+			}
+		}
+
+		function smartDeletion (id) {
+			if (id > 200000) {
+				return iterDeletion(id);
+			}
+			return newDeletion(id);
+		}
+
+		let stop = false;
+
+		function run () {
+			let step = 10000;
+			let waitTime = 0;
+			let innerStep = 0;
+			function intervalFunc(id) {
+				if (id >= mapSize || stop) {
+					return;
+				}
+				switch (innerStep) {
+					case 0:
+						b.start('new');
+						newDeletion(id);
+						b.end('new');
+						break;
+					case 2:
+						b.start('iter');
+						iterDeletion(id);
+						b.end('iter');
+						break;
+					case 1:
+						b.start('smart');
+						smartDeletion(id);
+						b.end('smart');
+						break;
+					default:
+						let result = b.report();
+						newData.push({x: id, y: result.new.difference});
+						iterData.push({x: id, y: result.iter.difference});
+						smartData.push({x: id, y: result.smart.difference});
+						myChart.data.labels.push(id);
+						myChart.update({duration: 0});
+						initMap();
+						id += step;
+				}
+				innerStep += 1;
+				if (innerStep > 3) {
+					innerStep = 0;
+				}
+				
+				//console.log("updated:", newData, iterData);
+				window.requestAnimationFrame(() => {
+					intervalFunc(id);
+				}, waitTime);
+			};
+			initMap();
+			window.requestAnimationFrame(() => {
+				intervalFunc(0);
+			});
+		}
+		run();
+
+	</script>
+</body>
+</html>

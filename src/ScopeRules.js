@@ -7,7 +7,8 @@ let api = {
 	if: "ScopeApi['if']",
 	each: "ScopeApi['each']",
 	compile: "ScopeApi.compile",
-	promise: "ScopeApi.promise"
+	promise: "ScopeApi.promise",
+	dereference: "ScopeApi.dereference"
 };
 
 let allowedUndefinedIdExpressions = [
@@ -133,14 +134,14 @@ class ScopeRules {
 		this.state.context.inArrayDefinition = true;
 	}
 
-	assignmentExpression (name, expression) {
+	assignmentExpression (name, assignmentValue) {
 		let self = this;
-		return self.sn(['scope.assignmentExpression([', name, '],', expression, ')']);
+		return self.sn(['scope.assignmentExpression([', name, '],', assignmentValue, ')']);
 	}
 
-	assignmentValue (expression) {
+	assignmentValue (op, expression) {
 		let self = this;
-		return expression;
+		return self.sn(['["', op, '", ', expression, ']']);
 	}
 
 	associativeDeclaration (name, type, expression) {
@@ -177,7 +178,8 @@ class ScopeRules {
 
 	binaryExpression (a, op, b) {
 		let self = this;
-		return self.sn([a, op, b]);
+		return self.sn([`scope.binaryExpression('${op}', ${a}, ${b})`]);
+		//return self.sn([a, op, b]);
 	}
 
 	booleanLiteral (bool) {

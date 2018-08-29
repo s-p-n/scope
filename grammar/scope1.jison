@@ -4,6 +4,8 @@
 \s+                       /* skip whitespace */
 "//".*                    /* one line comment */
 "/*"(.|\n|\r)*?"*/"       /* block comment */
+"+="                      return '+=';
+"="                       return '=';
 "</"                      return '</';
 "/>"                      return '/>';
 "<="                      return '<=';
@@ -26,7 +28,6 @@
 "/"                       return '/';
 "%"                       return '%';
 "^"                       return '^';
-"="                       return '=';
 \'[^\']*\'                return 'ASTRING';
 \"[^\"]*\"                return 'QSTRING';
 \`[^\`]*\`                return 'BSTRING';
@@ -62,7 +63,7 @@
 %left IMPORT
 %left ONLY INTO AS
 %left RETURN
-%left '=' ':'
+%left '=' ':' '+='
 %left AND OR
 %left IS ISNT GT LT GTEQ LTEQ
 %left '!'
@@ -98,9 +99,16 @@ arrayStart
         {$$ = new yy.scopeAst(yy, 'arrayStart', []);}
     ;
 
+assignmentExpression
+    : id assignmentValue
+        {$$ = new yy.scopeAst(yy, 'assignmentExpression', [$id, $assignmentValue]);}
+    ;
+
 assignmentValue
-    : expression
-        {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1]);}
+    : '=' expression
+        {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
+    | '+=' expression
+        {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
     ;
 
 associativeDeclaration
@@ -167,8 +175,8 @@ declarationExpression
     ;
 
 expression
-    : id '=' assignmentValue
-        {$$ = new yy.scopeAst(yy, 'assignmentExpression', [$1, $3]);}
+    : assignmentExpression
+        {$$ = $1}
     | import
         {$$ = $1}
     | use

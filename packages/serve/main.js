@@ -49,7 +49,6 @@ function Serve (options = {}) {
 	let self = new Map();
 	let app = express();
 	let spdyOpts = mapToObj(options);
-	console.log(spdyOpts);
 	let server;
 	if (spdyOpts.key && spdyOpts.cert) {
 		if (spdyOpts.key[0] !== "/") {
