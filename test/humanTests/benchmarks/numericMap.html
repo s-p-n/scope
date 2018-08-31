@@ -1,0 +1,550 @@
+<!doctype html>
+<html>
+<head>
+	<title>Numeric-Map Implementation Benchmark</title>
+</head>
+<body>
+	<h1>Numeric-Map Implementation Benchmark</h1>
+	<div>
+		Size: <input type="number" id="size" value="500000" />
+		<br>
+		<button id="get">Get</button>
+		<button id="set">Set</button>
+		<button id="delete">Delete</button>
+		<button id="iterate">Iterate</button>
+		<button id="stop" disabled=true>Stop</button>
+	</div>
+	<div style="position:relative; height:500px">
+		<canvas id="chart" width="1000" height="500"></canvas>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+	<script>
+		let ctx = document.getElementById("chart").getContext("2d");
+		let chartDatasets = [];
+		let myChart = new Chart(ctx, {
+		    type: 'line',
+		    data: {
+		    	labels: [],
+		        datasets: chartDatasets
+		    },
+		    options: {
+		    	responsive: false
+		    }
+		});
+		class Benchmark {
+			constructor () {
+				this.benchmarks = {};
+			}
+
+			start (name) {
+				this.benchmarks[name] = {
+					name: name,
+					start: Date.now(),
+					end: NaN,
+					difference: NaN
+				}
+			}
+
+			end (name) {
+				this.benchmarks[name].end = Date.now();
+				this.benchmarks[name].difference = this.benchmarks[name].end - this.benchmarks[name].start;
+			}
+
+			report (name) {
+				if (name) {
+					return this.benchmarks[name];
+				}
+				return this.benchmarks;
+			}
+		}
+
+		class NumericMap {
+			constructor (...args) {
+				let self = this;
+				this.array = new Array(...args);
+				const iteratorObject = {
+					next: function () {},
+					[Symbol.iterator]: function () { return this; }
+				};
+				const iteratorData = {
+					index: 0,
+					result: {
+						value: undefined,
+						done: false
+					}
+				};
+
+				function nextEntry () {
+					if (iteratorData.index < self.size) {
+						iteratorData.result.value = [iteratorData.index, self.get(iteratorData.index ++)];
+					} else {
+						iteratorData.index = 0;
+						return {done: true};
+					}
+					return iteratorData.result;
+				}
+
+				this._createEntryIterator = function _createEntryIterator () {
+					return this._createIterator(nextEntry);
+				}
+
+				this._createIterator = function _createIterator (next) {
+					iteratorObject.next = next;
+					return iteratorObject;
+				};
+			}
+
+			get (index) {
+				return this.array[index];
+			}
+
+			set (index, value) {
+				return this.array[index] = value;
+			}
+
+			delete (index) {
+				if (this.array.indexOf(index) !== -1) {
+					this.array.splice(index, 1);
+					return true;
+				}
+				return false;
+			}
+
+			clear () {
+				this.size = 0;
+			}
+
+			entries () {
+				let self = this;
+				let index = 0;
+				let result = {
+					value: undefined,
+					done: false
+				};
+				return {
+					next: () => {
+						if (index < self.size) {
+							result.value = [index, self.array[index]];
+							result.done = false;
+							index += 1;
+						} else {
+							result.done = true;
+							result.value = undefined;
+						}
+						return result;
+					},
+					[Symbol.iterator]: function () { return this; }
+				}
+			}
+
+			keys () {
+				let self = this;
+				let index = 0;
+				let result = {
+					value: undefined,
+					done: false
+				};
+				return {
+					next: () => {
+						if (index < self.size) {
+							result.value = index++;
+							result.done = false;
+						} else {
+							result.value = undefined;
+							result.done = true;
+						}
+						return result;
+					},
+					[Symbol.iterator]: function () { return this; }
+				};
+			}
+
+			values () {
+				let self = this;
+				let index = 0;
+				let result = {
+					value: undefined,
+					done: false
+				};
+				return {
+					next: () => {
+						if (index < self.size) {
+							result.value = self.array[index++];
+							result.done = false;
+						} else {
+							result.value = undefined;
+							result.done = true;
+						}
+						return result;
+					},
+					[Symbol.iterator]: function () { return this; }
+				};
+			}
+
+			has (index) {
+				return index >= 0 && index < this.size;
+			}
+
+			forEach (callback, thisArg=this) {
+				for (let [key, val] of this) {
+					callback.call(thisArg, val, key, this);
+				}
+			}
+
+			get size () {
+				return this.array.length;
+			}
+
+			set size (value) {
+				return this.array.length = value;
+			}
+
+			[Symbol.iterator] () {
+				
+				return this._createEntryIterator();
+			}
+		}
+
+		let mapSize = 500000;
+		let b = new Benchmark();
+		let m = new Map();
+		let fm = new NumericMap();
+		function initMap () {
+			let arr = new Array(mapSize);
+			fm = new NumericMap(mapSize);
+			for (let i = 0; i < mapSize; i += 1) {
+				arr[i] = [i, i + 1];
+				fm.set(i, i + 1);
+			}
+			
+			m = new Map(arr);
+		}
+
+		function mapDeletion (id) {
+			let map = m;
+			if (map.delete(id)) {
+				if (id === map.size) {
+					//console.log("fast delete");
+					return true;
+				}
+				//console.log("renumber map");
+				let i = 0;
+				let stop = map.size + 0;
+				for (let i = id; i < stop; i += 1) {
+					//console.log(map);
+					let val = map.get(i + 1);
+					map.delete(i + 1);
+					map.set(i, val);
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		function fmDeletion (id) {
+			fm.delete(id);
+		}
+		
+		let stop = true;
+		function postStop () {
+			sizeInput.disabled = false;
+			getBtn.disabled = false;
+			setBtn.disabled = false;
+			deleteBtn.disabled = false;
+			iterateBtn.disabled = false;
+			stopBtn.disabled = true;
+		}
+		function postStart () {
+			chartDatasets.length = 0;
+			sizeInput.disabled = true;
+			getBtn.disabled = true;
+			setBtn.disabled = true;
+			deleteBtn.disabled = true;
+			iterateBtn.disabled = true;
+			stopBtn.disabled = false;
+			myChart.data.labels.length = 0;
+			stop = false;
+		}
+		function runDelete () {
+			let step = 10000;
+			let innerStep = 0;
+			function intervalFunc(id) {
+				if (id >= mapSize || stop) {
+					postStop();
+					return;
+				}
+				switch (innerStep) {
+					case 0:
+						b.start('map');
+						mapDeletion(id);
+						b.end('map');
+						break;
+					case 1:
+						b.start('array');
+						fmDeletion(id);
+						b.end('array');
+						break;
+					default:
+						let result = b.report();
+						chartDatasets[0].data.push({x: id, y: result.array.difference});
+						chartDatasets[1].data.push({x: id, y: result.map.difference});
+						myChart.data.labels.push(id);
+						myChart.update({duration: 0});
+						initMap();
+						id += step;
+				}
+				innerStep += 1;
+				if (innerStep > 2) {
+					innerStep = 0;
+				}
+				//console.log("updated:", newData, iterData);
+				window.requestAnimationFrame(() => {
+					intervalFunc(id);
+				});
+			};
+			postStart();
+			chartDatasets.push({
+				label: "Array Wrapper",
+				borderColor: "#0000FF",
+				backgroundColor: "rgba(0, 0, 255, 0.1)",
+				data: []
+			},
+			{
+				label: "Builtin Map",
+				borderColor: "#00FF00",
+				backgroundColor: "rgba(255, 0, 0, 0.1)",
+				data: []
+			});
+			initMap();
+			window.requestAnimationFrame(() => {
+				intervalFunc(0);
+			});
+		}
+
+		function runGet () {
+			let step = 10000;
+			let innerStep = 0;
+			function intervalFunc (id) {
+				if (id >= mapSize || stop) {
+					postStop();
+					return;
+				}
+				switch(innerStep) {
+					case 0:
+						b.start('map');
+						for (let i = id; i < id + step; i += 1) {
+							m.get(i);
+						}
+						b.end('map');
+						break;
+					case 1:
+						b.start('array');
+						for (let i = id; i < id + step; i += 1) {
+							fm.get(i);
+						}
+						b.end('array');
+						break;
+					default:
+						let result = b.report();
+						chartDatasets[0].data.push({x: id, y: result.array.difference});
+						chartDatasets[1].data.push({x: id, y: result.map.difference});
+						myChart.data.labels.push(id);
+						myChart.update({duration: 0});
+						initMap();
+						id += step;
+				}
+				innerStep += 1;
+				if (innerStep > 2) {
+					innerStep = 0;
+				}
+				//console.log("updated:", newData, iterData);
+				window.requestAnimationFrame(() => {
+					intervalFunc(id);
+				});
+			}
+			postStart();
+			chartDatasets.push({
+				label: "Array Wrapper",
+				borderColor: "#0000FF",
+				backgroundColor: "rgba(0, 0, 255, 0.1)",
+				data: []
+			},
+			{
+				label: "Builtin Map",
+				borderColor: "#00FF00",
+				backgroundColor: "rgba(255, 0, 0, 0.1)",
+				data: []
+			});
+			initMap();
+			window.requestAnimationFrame(() => {
+				intervalFunc(0);
+			});
+		}
+
+		function runSet () {
+			let step = 10000;
+			let innerStep = 0;
+			function intervalFunc (id) {
+				if (id >= mapSize || stop) {
+					postStop();
+					return;
+				}
+				switch(innerStep) {
+					case 0:
+						b.start('map');
+						for (let i = id; i < id + step; i += 1) {
+							m.set(i, "a");
+						}
+						b.end('map');
+						break;
+					case 1:
+						b.start('array');
+						for (let i = id; i < id + step; i += 1) {
+							fm.set(i, "a");
+						}
+						b.end('array');
+						break;
+					default:
+						let result = b.report();
+						chartDatasets[0].data.push({x: id, y: result.array.difference});
+						chartDatasets[1].data.push({x: id, y: result.map.difference});
+						myChart.data.labels.push(id);
+						myChart.update({duration: 0});
+						initMap();
+						id += step;
+				}
+				innerStep += 1;
+				if (innerStep > 2) {
+					innerStep = 0;
+				}
+				//console.log("updated:", newData, iterData);
+				window.requestAnimationFrame(() => {
+					intervalFunc(id);
+				});
+			}
+			postStart();
+			chartDatasets.push({
+				label: "Array Wrapper",
+				borderColor: "#0000FF",
+				backgroundColor: "rgba(0, 0, 255, 0.1)",
+				data: []
+			},
+			{
+				label: "Builtin Map",
+				borderColor: "#00FF00",
+				backgroundColor: "rgba(255, 0, 0, 0.1)",
+				data: []
+			});
+			initMap();
+			window.requestAnimationFrame(() => {
+				intervalFunc(0);
+			});
+		}
+
+		function runIterate () {
+			let originalSize = mapSize;
+			let step = 10000;
+			let innerStep = 0;
+
+			function intervalFunc () {
+				let id = mapSize;
+				if (mapSize >= originalSize || stop) {
+					mapSize = originalSize;
+					postStop();
+					return;
+				}
+
+				switch (innerStep) {
+					case 0:
+						b.start("map1");
+						for (let [key, val] = [0, m.get(0)]; key < m.size; key += 1, val = m.get(key));
+						b.end("map1");
+						break;
+					case 1:
+						b.start("map2");
+						for (let [key, val] of m);
+						b.end("map2");
+						break;
+					case 2:
+						b.start("array1");
+						for (let [key, val] = [0, fm.get(0)]; key < fm.size; key += 1, val = fm.get(key));
+						b.end("array1");
+						break;
+					case 3:
+						b.start("array2");
+						for (let [key, val] of fm);
+						b.end("array2");
+						break;
+					default:
+						let result = b.report();
+						chartDatasets[0].data.push({x: id, y: result.array1.difference});
+						chartDatasets[1].data.push({x: id, y: result.array2.difference});
+						chartDatasets[2].data.push({x: id, y: result.map1.difference});
+						chartDatasets[3].data.push({x: id, y: result.map2.difference});
+						myChart.data.labels.push(id);
+						myChart.update({duration: 0});
+						mapSize += step;
+						initMap();
+				}
+				innerStep += 1;
+				if (innerStep > 4) {
+					innerStep = 0;
+				}
+				//console.log("updated:", newData, iterData);
+				window.requestAnimationFrame(intervalFunc);
+			}
+
+			postStart();
+			chartDatasets.push({
+				label: "Array Wrapper for(;;)",
+				borderColor: "#0000FF",
+				backgroundColor: "rgba(0, 0, 255, 0.1)",
+				data: []
+			}, {
+				label: "Array Wrapper for(of)",
+				borderColor: "#00FFFF",
+				backgroundColor: "rgba(0, 255, 255, 0.1)",
+				data: []
+			},
+			{
+				label: "Builtin Map for(;;)",
+				borderColor: "#FF0000",
+				backgroundColor: "rgba(255, 0, 0, 0.1)",
+				data: []
+			}, {
+				label: "Builtin Map Wrapper for(of)",
+				borderColor: "#FFFF00",
+				backgroundColor: "rgba(255, 255, 0, 0.1)",
+				data: []
+			});
+			mapSize = 0;
+			initMap();
+
+			window.requestAnimationFrame(intervalFunc);
+
+		}
+
+		let sizeInput = document.getElementById('size');
+		let getBtn = document.getElementById('get');
+		let setBtn = document.getElementById('set');
+		let deleteBtn = document.getElementById('delete');
+		let iterateBtn = document.getElementById('iterate');
+		let stopBtn = document.getElementById('stop');
+
+		stopBtn.addEventListener('click', () => {
+			stop = true;
+		});
+
+		sizeInput.addEventListener('keyup', function (e) {
+			mapSize = parseInt(this.value);
+		});
+		getBtn.addEventListener('click', runGet);
+		setBtn.addEventListener('click', runSet);
+		deleteBtn.addEventListener('click', runDelete);
+		iterateBtn.addEventListener('click', runIterate);
+
+
+	</script>
+</body>
+</html>
