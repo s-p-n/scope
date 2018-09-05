@@ -22,9 +22,9 @@ let buildArgPartFromAssocPart = (assoc, addTo = false) => {
 		result = ",";
 	}
 	if (assoc.type === "id") {
-		result += `{key: "${assoc.name}", value: ${assoc.expression}}`;
+		result += `["${assoc.name}",${assoc.expression}]`;
 	} else if (assoc.type === "string") {
-		result += `{key: ${assoc.name}, value: ${assoc.expression}}`;
+		result += `[${assoc.name},${assoc.expression}]`;
 	}
 	return result;
 }
@@ -123,10 +123,10 @@ class ScopeRules {
 	    state.newChildContext();
 	}
 
-	arrayExpression (start, list="") {
+	arrayExpression (start, expressionList="") {
 		let self = this;
 		this.state.setParentContext();
-		return self.sn(['scope.arrayExpression(', list, ')']);
+		return self.sn(['scope.arrayExpression(', expressionList, ')']);
 	}
 
 	arrayStart () {
@@ -309,6 +309,10 @@ class ScopeRules {
 			return self.sn([invokeExpression, '.get(', identifier, ')'], `<map>[${identifier}]`);
 		}
 	}
+
+	mapExpression (arrayStart, associativeList) {
+		return this.sn(["scope.mapExpression(", associativeList, ")"]);
+	}
 	
 	numericLiteral (n) {
 		return this.sn(n.toString());
@@ -353,7 +357,7 @@ class ScopeRules {
 
 		state.setParentContext();
 
-		return self.sn(['scope.createScope((args=', scopeArguments, ')=>{',
+		return self.sn(['scope.createScope((args)=>{',
 			argDeclarations,
 			controlCode,
 			"})"

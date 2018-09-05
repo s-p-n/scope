@@ -92,11 +92,18 @@ module.exports = (scope) => {
     },
 
     "each": ([array, block = () => {}]) => {
-    let result = new Map();
-    for (let [key, val] of array) {
-      result.set(key, scope.invokeExpression(block, [val, key]));
-    }
-    return result;
+      if (array.type === "numeric") {
+        let result = [];
+        for (let i = 0; i < array.size; i += 1) {
+          result.push(scope.invokeExpression(block, [array.get(i), i]))
+        }
+        return result;
+      }
+      let result = scope.mapExpression();
+      for (let [key, val] of array) {
+        result.set(key, scope.invokeExpression(block, [val, key]));
+      }
+      return result;
     },
     "eval": (code) => {
       let parser = new ScopeParser();

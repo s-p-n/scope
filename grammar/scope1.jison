@@ -87,11 +87,11 @@
 
 array
     : arrayStart ']'
-        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$1]);}
+        {$$ = new yy.scopeAst(yy, 'emptyMapExpression', [$arrayStart]);}
     | arrayStart associativeList ']'
-        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$1, $2]);}
+        {$$ = new yy.scopeAst(yy, 'mapExpression', [$arrayStart, $associativeList]);}
     | arrayStart expressionList ']'
-        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$1, $2]);}
+        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$arrayStart, $expressionList]);}
     ;
 
 arrayStart

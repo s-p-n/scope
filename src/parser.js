@@ -84,9 +84,12 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
-this.$ = new yy.scopeAst(yy, 'arrayExpression', [$$[$0-1]]);
+this.$ = new yy.scopeAst(yy, 'emptyMapExpression', [$$[$0-1]]);
 break;
-case 2: case 3:
+case 2:
+this.$ = new yy.scopeAst(yy, 'mapExpression', [$$[$0-2], $$[$0-1]]);
+break;
+case 3:
 this.$ = new yy.scopeAst(yy, 'arrayExpression', [$$[$0-2], $$[$0-1]]);
 break;
 case 4:
