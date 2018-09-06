@@ -3,11 +3,19 @@ let m = new Map([
 	['b', 2],
 	['c', 3]
 ]);
-m.type = "associative";
 module.exports = (assert, test) => {
 	describe('array2.sc', () => {
-		it('should return {a=>1, b=>2, c=>3}', () => {
-			assert.deepEqual(test, m);
+		it('should have a size of 3', () => {
+			assert.equal(test.size, m.size);
+		});
+		it('should property a => 1', () => {
+			assert.equal(test.a, m.get('a'));
+		});
+		it('should have b => 2', () => {
+			assert.equal(test.b, m.get('b'));
+		});
+		it('should have c => 3', () => {
+			assert.equal(test.c, m.get('c'));
 		});
 	});
 };

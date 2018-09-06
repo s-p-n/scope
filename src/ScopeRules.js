@@ -274,11 +274,10 @@ class ScopeRules {
 			return self.sn(['scope.identifier("', name, '")'], name);
 			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
-
 		if (notation === 'dot') {
-			return self.sn([name, '.get("', children, '")'], `${name}.${children}`);
+			return self.sn([name, '["', children, '"]'], `${name}.${children}`);
 		} else {
-			return self.sn([name, '.get(', children, ')'], `${name}[${children}]`);
+			return self.sn([name, '[', children, ']'], `${name}[${children}]`);
 		}
 
 	}
@@ -309,9 +308,9 @@ class ScopeRules {
 	invokeId (invokeExpression, notation, identifier) {
 		let self = this;
 		if (notation === 'dot') {
-			return self.sn([invokeExpression, '.get("', identifier, '")'], `<map>.${identifier}`);
+			return self.sn([invokeExpression, '["', identifier, '"]'], `<map>.${identifier}`);
 		} else {
-			return self.sn([invokeExpression, '.get(', identifier, ')'], `<map>[${identifier}]`);
+			return self.sn([invokeExpression, '.', identifier], `<map>[${identifier}]`);
 		}
 	}
 
@@ -364,8 +363,11 @@ class ScopeRules {
 		state.setParentContext();
 
 		return self.sn(['scope.createScope((args)=>{',
+			'const __oldthis__ = scope.thisObj;',
+			'scope.setForeignThis(this);',
 			argDeclarations,
 			controlCode,
+			'scope.setForeignThis(__oldthis__);',
 			"})"
 		]);
 	}

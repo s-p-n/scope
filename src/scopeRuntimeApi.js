@@ -5,7 +5,15 @@ let ScopeParser = require ('./ScopeParser.js');
 module.exports = (scope) => {
   const ScopeApi = {
     "print": value => {
-    console.log(...value);
+      let result = [];
+      for (let i = 0; i < value.length; i += 1) {
+        if (value[i] instanceof Map || value[i] instanceof scope.arrayExpression().__proto__.constructor) {
+          result.push(value[i].toString());
+        } else {
+          result.push(value[i]);
+        }
+      }
+      console.log(...result);
     },
 
     "debug": value => {
@@ -58,27 +66,7 @@ module.exports = (scope) => {
         map = idOrMap;
       }
 
-      if (map instanceof Map) {
-        if (map.type === "numeric") {
-          if (map.delete(id)) {
-            if (id === map.size) {
-              console.log("fast delete");
-              return true;
-            }
-            console.log("renumber map");
-            let i = 0;
-            let stop = map.size + 0;
-            for (let i = id; i < stop; i += 1) {
-              console.log(map);
-              let val = map.get(i + 1);
-              map.delete(i + 1);
-              map.set(i, val);
-            }
-            return true;
-          } else {
-            return false;
-          }
-        }
+      if (map instanceof Map || map instanceof scope.arrayExpression().__proto__.constructor) {
         return map.delete(id);
       }
       return scope.dereferenceIdentifier(id);
@@ -134,7 +122,7 @@ module.exports = (scope) => {
       let p = new Promise(function (resolve, reject) {
         scope.invokeExpression(executor, [scope.createScope(resolve), scope.createScope(reject)]);
       });
-      let sP = new Map();
+      let sP = scope.mapExpression();
 
       sP.set("then", (sc) => {
         p.then((result) => {
@@ -177,11 +165,11 @@ module.exports = (scope) => {
     }
 
     let p = Promise.all(arrV);
-    let sP = new Map();
+    let sP = scope.mapExpression();
 
     sP.set("then", (sc) => {
       p.then((values) => {
-        let result = new Map();
+        let result = scope.mapExpression();
         for (let i = 0; i < values.length; i += 1) {
           result.set(arrK[i], values[i]);
         }

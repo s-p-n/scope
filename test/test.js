@@ -26,7 +26,6 @@ srcFiles.forEach((f) => {
 	if (!fs.existsSync(libDir)) {
 		fs.mkdirSync(libDir);
 	}
-	fs.writeFileSync(mapFilename, translation.map);
 	fs.writeFileSync(libFilename, translation.code);
 	tests.push({
 		program: require(libFilename),

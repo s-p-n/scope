@@ -61,7 +61,7 @@ promise.all(loader.promises).then((pages: []) {
 		each(pages, (sc: {}, name: "") {
 			if (name is client.request.params.page, {
 				use sc;
-				client.response.render(page(template.generate));
+				client.response.render(page(template.generate), false);
 				renderred = true;
 			});
 		});

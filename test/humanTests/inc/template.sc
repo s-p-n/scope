@@ -20,7 +20,7 @@ public generate = (data: [
 	let navBar = <ul class="navbar-nav mr-auto"></ul>;
 	each(nav, (link: "", title: "") {
 		if(link is data.url, {
-			navBar.appendChild(<li class="nav-item active">
+			navBar(<li class="nav-item active">
 				<a class="nav-link" href=link>
 					title;
 					<span class="sr-only">
@@ -29,11 +29,10 @@ public generate = (data: [
 				</a>;
 			</li>);
 		}, {
-			navBar.appendChild(<li class="nav-item">
+			navBar(<li class="nav-item">
 				<a class="nav-link" href=link>title;</a>;
 			</li>);
 		});
-			
 	});
 	return 
 	<html lang="en">
