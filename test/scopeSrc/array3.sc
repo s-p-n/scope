@@ -1,3 +1,4 @@
 let foo = [bar: "baz"];
 let qux = ["fin"];
-return foo.bar + qux[0];
+foo.bar += qux[0];
+return foo.bar;

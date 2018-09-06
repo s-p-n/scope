@@ -9,16 +9,19 @@ let srcDir = path.join(__dirname, "scopeSrc");
 let libDir = path.join(__dirname, "scopeLib"); 
 let expectDir = path.join(__dirname, "scopeExpect");
 let srcFiles = fs.readdirSync(srcDir);
-
+let scopeFileExtension = /\.sc$/;
 const tests = [];
 
 srcFiles.forEach((f) => {
+	if (!scopeFileExtension.test(f)) {
+		return;
+	}
+	
 	let srcFilename = path.join(srcDir, f);
 	let libFilename = path.join(libDir, f.replace(".sc", ".js"));
 	let expectFilename = path.join(expectDir, f.replace(".sc", ".js"));
-	let mapFilename = path.join(libDir, f.replace(".sc", ".map.js"));
 	let srcCode = fs.readFileSync(srcFilename, "utf8");
-	let translation = scope.translate(srcCode, srcFilename, mapFilename);
+	let translation = scope.translate(srcCode, srcFilename, libFilename);
 	
 	if (!fs.existsSync(libDir)) {
 		fs.mkdirSync(libDir);

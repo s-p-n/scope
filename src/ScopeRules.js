@@ -1,15 +1,18 @@
+import * as fs from "fs";
+import * as path from "path";
 
 let api = {
 	print: "ScopeApi.print",
 	debug: "ScopeApi.debug",
 	if: "ScopeApi['if']",
 	each: "ScopeApi['each']",
-	extend: "ScopeApi['extend']"
+	compile: "ScopeApi.compile",
+	promise: "ScopeApi.promise",
+	dereference: "ScopeApi.dereference"
 };
 
 let allowedUndefinedIdExpressions = [
 	"xmlExpression",
-	"xmlAttributes",
 	"invokeId"
 ];
 
@@ -19,9 +22,18 @@ let buildArgPartFromAssocPart = (assoc, addTo = false) => {
 		result = ",";
 	}
 	if (assoc.type === "id") {
-		result += `{key: "${assoc.name}", value: ${assoc.expression}}`;
+		result += `["${assoc.name}",${assoc.expression}]`;
 	} else if (assoc.type === "string") {
-		result += `{key: ${assoc.name}, value: ${assoc.expression}}`;
+		result += `[${assoc.name},${assoc.expression}]`;
+	}
+	return result;
+}
+
+let randStr = (len=16) => {
+	let result = "";
+	let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	for (let i = 0; i < len; i += 1) {
+		result += chars[Math.floor(Math.random() * chars.length)];
 	}
 	return result;
 }
@@ -39,9 +51,12 @@ class ScopeRules {
 			end: {
 				line: 0,
 				column: 0
-			}
+			},
+			name: "<scope:anonymouse>"
 		}
 		state.errorTail = () => `[${self.state.loc.start.line}:${self.state.loc.start.column}-${self.state.loc.end.line}:${self.state.loc.end.column}]`;
+		
+		state.importExpressions = new Map();
 		state.root = state.context;
 	    state.context = state.context;
 	    state.context.args = [];
@@ -66,6 +81,13 @@ class ScopeRules {
 	    state.setParentContext = () => {
 	    	state.context = state.context.scoping.parent;
 	    };
+
+	    state.newImportExpression = (str) => {
+	    	let self = this;
+	    	let result = self.parser.import(self.srcFilename, self.libFilename, str, self.state.loc.start.line);
+	    	return result;
+	    };
+
 	    state.context.definedLocally = (id = "", me = state.context) => {
 	    	if (me.scoping.let.has(id)) {
 	    		return me.scoping.let.get(id);
@@ -101,10 +123,10 @@ class ScopeRules {
 	    state.newChildContext();
 	}
 
-	arrayExpression (start, list="") {
+	arrayExpression (start, expressionList="") {
 		let self = this;
 		this.state.setParentContext();
-		return self.sn(['scope.arrayExpression(', list, ')']);
+		return self.sn(['scope.arrayExpression(', expressionList, ')']);
 	}
 
 	arrayStart () {
@@ -112,9 +134,14 @@ class ScopeRules {
 		this.state.context.inArrayDefinition = true;
 	}
 
-	assignmentExpression (name, expression) {
+	assignmentExpression (name, assignmentValue) {
 		let self = this;
-		return self.sn(['scope.assignmentExpression([', name, '],', expression, ')']);
+		return self.sn(['scope.assignmentExpression([', name, '],', assignmentValue, ')']);
+	}
+
+	assignmentValue (op, expression) {
+		let self = this;
+		return self.sn(['["', op, '", ', expression, ']']);
 	}
 
 	associativeDeclaration (name, type, expression) {
@@ -151,7 +178,8 @@ class ScopeRules {
 
 	binaryExpression (a, op, b) {
 		let self = this;
-		return self.sn([a, op, b]);
+		return self.sn([`scope.binaryExpression('${op}', ${a}, ${b})`]);
+		//return self.sn([a, op, b]);
 	}
 
 	booleanLiteral (bool) {
@@ -209,6 +237,11 @@ class ScopeRules {
 		}
 	}
 
+	emptyMapExpression () {
+		this.state.setParentContext();
+		return this.sn(["scope.mapExpression()"]);
+	}
+
 	expressionList (expression, expressionList) {
 		let self = this;
 		if (expressionList === undefined) {
@@ -221,41 +254,46 @@ class ScopeRules {
 		const state = this.state;
 		let self = this;
 		if (this.parentNode === "assignmentExpression") {
-			if (children === undefined && state.context.idAvailable(name)) {
-				return self.sn(['"', name, '"']);
-			}
-
 			if (notation === 'dot') {
-				return self.sn([name, ',"', children, '"']);
+				return self.sn([name, ',"', children, '"'], `${name}.${children}`);
 			}
 			if (notation === "bracket") {
-				return self.sn([name, ',', children]);
+				return self.sn([name, ',', children], `${name}[${children}]`);
 			}
-
-			throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
+			return self.sn(['"', name, '"'], `${name}`);
+			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
 		if (children === undefined) {
 			if (name in api) {
-				return self.sn(api[name]);
-			}
-			if (state.context.idAvailable(name)) {
-				return self.sn(['scope.identifier("', name, '")']);
+				return self.sn(api[name], name);
 			}
 			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
-				return self.sn(name);
+				return self.sn(name, name);
 			}
-			return self.sn(['scope.identifier("', name, '")']);
-			//console.log(JSON.stringify(state.context, null, "  "));
+			return self.sn(['scope.identifier("', name, '")'], name);
 			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
 
 		if (notation === 'dot') {
-			return self.sn([name, '.get("', children, '")']);
+			return self.sn([name, '.get("', children, '")'], `${name}.${children}`);
 		} else {
-			return self.sn([name, '.get(', children, ')']);
+			return self.sn([name, '.get(', children, ')'], `${name}[${children}]`);
 		}
 
+	}
+
+	idList (identifier, idList) {
+		let self = this;
+		if (idList === undefined) {
+			return self.sn([identifier]);
+		}
+		return self.sn([identifier, ",", idList]);
+	}
+
+	importExpression (string) {
+		let self = this;
+		return self.sn([self.state.newImportExpression(string)]);
 	}
 
 	invokeArguments (expression="") {
@@ -265,16 +303,21 @@ class ScopeRules {
 
 	invokeExpression (name, invokeArguments) {
 		let self = this;
-		return self.sn(['scope.invokeExpression(', name, ',[', invokeArguments, '])']);
+		return self.sn(['scope.invokeExpression(', name, ',[', invokeArguments, '])'], "<scope>");
 	}
 
 	invokeId (invokeExpression, notation, identifier) {
 		let self = this;
 		if (notation === 'dot') {
-			return self.sn([invokeExpression, '.get("', identifier, '")']);
+			return self.sn([invokeExpression, '.get("', identifier, '")'], `<map>.${identifier}`);
 		} else {
-			return self.sn([invokeExpression, '.get(', identifier, ')']);
+			return self.sn([invokeExpression, '.get(', identifier, ')'], `<map>[${identifier}]`);
 		}
+	}
+
+	mapExpression (arrayStart, associativeList) {
+		this.state.setParentContext();
+		return this.sn(["scope.mapExpression(", associativeList, ")"]);
 	}
 	
 	numericLiteral (n) {
@@ -287,7 +330,8 @@ class ScopeRules {
 	}
 
 	scopeStart () {
-		this.state.newChildContext();
+		let self = this;
+		self.state.newChildContext();
 		return true;
 	}
 
@@ -308,6 +352,7 @@ class ScopeRules {
 			scopeArguments = "[]";
 		}
 
+
 		state.context.args.forEach((arg, index) => {
 			argDeclarations += `scope.declarationExpression({
 				type: "let",
@@ -318,7 +363,7 @@ class ScopeRules {
 
 		state.setParentContext();
 
-		return self.sn(['scope.createScope((args=', scopeArguments, ')=>{',
+		return self.sn(['scope.createScope((args)=>{',
 			argDeclarations,
 			controlCode,
 			"})"
@@ -335,6 +380,32 @@ class ScopeRules {
 	stringLiteral (str) {
 		let self = this;
 		return self.sn(JSON.stringify(str));
+	}
+
+	unaryExpression (operator, expression) {
+		let self = this;
+		return self.sn([operator, expression]);
+	}
+
+	useExpression (usable, useOnly) {
+		let self = this;
+		if (useOnly === undefined) {
+			return self.sn([`scope.use([${usable}])`]);
+		}
+		return self.sn([`scope.use([${usable}], [${useOnly}])`]);
+	}
+
+	usable (usable1, usable2) {
+		let self = this;
+		if (usable2 === undefined) {
+			return usable1;
+		}
+		return self.sn([usable1, ",", usable2]);
+	}
+
+	useOnly (expressionList) {
+		let self = this;
+		return expressionList;
 	}
 
 	xmlControlCode (xmlControlCode="", expression) {
@@ -356,7 +427,7 @@ class ScopeRules {
 		if (xmlAttributes !== "") {
 			xmlAttributes.add(", ");
 		}
-		return self.sn([xmlAttributes, name, ":", value]);
+		return self.sn([xmlAttributes, '"', name, '"', ":", value]);
 	}
 
 	xmlExpression (name, xmlAttributes, xmlControlCode) {

@@ -21,14 +21,7 @@ module.exports = (assert, test) => {
 			assert.equal(test.get('someNumber'), 42);
 		});
 		it('should have a Map with values 0-5 for someArray', () => {
-			assert.deepEqual(test.get('someArray'), new Map([
-				[0, 0],
-				[1, 1],
-				[2, 2],
-				[3, 3],
-				[4, 4],
-				[5, 5]
-			]));
+			assert.deepEqual(test.get('someArray').array, [0,1,2,3,4,5]);
 		});
 		it('should have the value `"hello, world"` for someString', () => {
 			assert.equal(test.get('someString'), "hello, world");

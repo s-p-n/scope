@@ -4,6 +4,8 @@
 \s+                       /* skip whitespace */
 "//".*                    /* one line comment */
 "/*"(.|\n|\r)*?"*/"       /* block comment */
+"+="                      return '+=';
+"="                       return '=';
 "</"                      return '</';
 "/>"                      return '/>';
 "<="                      return '<=';
@@ -26,10 +28,14 @@
 "/"                       return '/';
 "%"                       return '%';
 "^"                       return '^';
-"="                       return '=';
 \'[^\']*\'                return 'ASTRING';
 \"[^\"]*\"                return 'QSTRING';
 \`[^\`]*\`                return 'BSTRING';
+"import"                  return 'IMPORT';
+"use"                     return 'USE';
+"only"                    return 'ONLY';
+"into"                    return 'INTO';
+"as"                      return 'AS';
 "let"                     return 'LET';
 "public"                  return 'PUBLIC';
 "protected"               return 'PROTECTED';
@@ -49,13 +55,15 @@
 "or"                      return 'OR';
 "!"                       return '!';
 [0-9]+(?:.[0-9]+)?        return 'NUMBER';
-[a-zA-Z_][a-zA-Z0-9_]*    return 'IDENTIFIER';
+[a-zA-Z_-][a-zA-Z0-9_-]*  return 'IDENTIFIER';
 <<EOF>>                   return 'EOF';
 
 /lex
-
+%left USE
+%left IMPORT
+%left ONLY INTO AS
 %left RETURN
-%left '=' ':'
+%left '=' ':' '+='
 %left AND OR
 %left IS ISNT GT LT GTEQ LTEQ
 %left '!'
@@ -63,6 +71,7 @@
 %left '*' '/'
 %left '^' '%'
 %left '.'
+%left ','
 %right '{' '}'
 %right '[' ']'
 %right '(' ')'
@@ -78,16 +87,28 @@
 
 array
     : arrayStart ']'
-        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$1]);}
+        {$$ = new yy.scopeAst(yy, 'emptyMapExpression', [$arrayStart]);}
     | arrayStart associativeList ']'
-        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$1, $2]);}
+        {$$ = new yy.scopeAst(yy, 'mapExpression', [$arrayStart, $associativeList]);}
     | arrayStart expressionList ']'
-        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$1, $2]);}
+        {$$ = new yy.scopeAst(yy, 'arrayExpression', [$arrayStart, $expressionList]);}
     ;
 
 arrayStart
     : '['
         {$$ = new yy.scopeAst(yy, 'arrayStart', []);}
+    ;
+
+assignmentExpression
+    : id assignmentValue
+        {$$ = new yy.scopeAst(yy, 'assignmentExpression', [$id, $assignmentValue]);}
+    ;
+
+assignmentValue
+    : '=' expression
+        {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
+    | '+=' expression
+        {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
     ;
 
 associativeDeclaration
@@ -137,7 +158,7 @@ binaryExpression
 
 controlCode
     : 
-        {return;}
+        {$$ = new yy.scopeAst(yy, 'controlCode', []);}
     | controlCode expression ';'
         {$$ = new yy.scopeAst(yy, 'controlCode', [$1, $2]);}
     ;
@@ -154,14 +175,18 @@ declarationExpression
     ;
 
 expression
-    : id '=' expression
-        {$$ = new yy.scopeAst(yy, 'assignmentExpression', [$1, $3]);}
+    : assignmentExpression
+        {$$ = $1}
+    | import
+        {$$ = $1}
+    | use
+        {$$ = $1}
     | declarationExpression
         {$$ = $1}
+    | '-' expression %prec UMINUS
+        {$$ = new yy.scopeAst(yy, 'unaryExpression',['-', $expression]);}
     | binaryExpression
         {$$ = $1}
-    | '-' expression %prec UMINUS
-        {$$ = '- $2';}
     | '(' expression ')'
         {$$ = $2}
     | literal
@@ -173,7 +198,7 @@ expression
     | RETURN expression
         {$$ = new yy.scopeAst(yy, 'returnExpression', [$2]);}
     | '!' expression
-        {$$ = '! $2';}
+        {$$ = new yy.scopeAst(yy, 'unaryExpression',['!', $expression]);}
     ;
 
 expressionList
@@ -192,10 +217,24 @@ id
         {$$ = new yy.scopeAst(yy, 'identifier', [$1, 'bracket', $3]);}
     ;
 
+idList
+    : IDENTIFIER
+        {$$ = new yy.scopeAst(yy, 'idList', [$1]);}
+    | IDENTIFIER ',' idList
+        {$$ = new yy.scopeAst(yy, 'idList', [$1, $3]);}
+    ;
+
+import
+    : IMPORT string
+        {$$ = new yy.scopeAst(yy, 'importExpression', [$2]);}
+    ;
+
 invoke
     : id '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | scope '(' invokeArguments ')'
+        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
+    | import '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | invoke '.' id
         {$$ = new yy.scopeAst(yy, 'invokeId', [$1, 'dot', $3]);}
@@ -260,6 +299,33 @@ string
         {$$ = $1}
     ;
 
+use
+    : USE usable
+        {$$ = new yy.scopeAst(yy, 'useExpression', [$2]);}
+    | USE usable useOnly
+        {$$ = new yy.scopeAst(yy, 'useExpression', [$2, $3]);}
+    ;
+
+usable
+    : scope
+        {$$ = new yy.scopeAst(yy, 'usable', [$1]);}
+    | id
+        {$$ = new yy.scopeAst(yy, 'usable', [$1]);}
+    | import
+        {$$ = new yy.scopeAst(yy, 'usable', [$1]);}
+    | usable ',' scope
+        {$$ = new yy.scopeAst(yy, 'usable', [$1, $3]);}
+    | usable ',' id
+        {$$ = new yy.scopeAst(yy, 'usable', [$1, $3]);}
+    | usable ',' import
+        {$$ = new yy.scopeAst(yy, 'usable', [$1, $3]);}
+    ;
+
+useOnly
+    : ONLY '(' expressionList ')'
+        {$$ = new yy.scopeAst(yy, 'useOnly', [$3]);}
+    ;
+
 xml
     : '<' id xmlAttributes '>' xmlControlCode '</' id '>'
         {$$ = new yy.scopeAst(yy, 'xmlExpression', [$2, $3, $5]);}
@@ -270,7 +336,7 @@ xml
 xmlAttributes
     : 
         {$$ = new yy.scopeAst(yy, 'xmlAttributes', []);}
-    | xmlAttributes id '=' expression
+    | xmlAttributes IDENTIFIER '=' expression
         {$$ = new yy.scopeAst(yy, 'xmlAttributes', [$1, $2, $4]);}
     ;
 
