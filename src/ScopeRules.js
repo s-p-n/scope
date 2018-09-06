@@ -237,6 +237,11 @@ class ScopeRules {
 		}
 	}
 
+	emptyMapExpression () {
+		this.state.setParentContext();
+		return this.sn(["scope.mapExpression()"]);
+	}
+
 	expressionList (expression, expressionList) {
 		let self = this;
 		if (expressionList === undefined) {
@@ -311,6 +316,7 @@ class ScopeRules {
 	}
 
 	mapExpression (arrayStart, associativeList) {
+		this.state.setParentContext();
 		return this.sn(["scope.mapExpression(", associativeList, ")"]);
 	}
 	

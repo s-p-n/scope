@@ -2,16 +2,17 @@ return {
 	public page = (template: {}) {
 		return template([
 			title: "Home",
+			url: "/home",
 			description: "Example site built using the Scope Programming Language.",
 			body: 
-			<div id="page">
-				<h2>
+			<article>
+				<h1>
 					"Da Homepage";
-				</h2>;
+				</h1>;
 				<div>
 					"This is an article.. kinda.";
 				</div>;
-			</div>
+			</article>
 		]);
 	};
 };

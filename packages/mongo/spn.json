@@ -1,0 +1,14 @@
+{
+	"name": "mongo",
+	"version": "1.0.0",
+	"author": "Spencer A. Lockhart",
+	"license": "MIT",
+	"description": "MongoDB library for Scope",
+	"main": "main.js",
+	"dependencies": {
+		"node": {
+			"mongojs": "^2.6.0"
+	    },
+	    "scope": {}
+	}
+}

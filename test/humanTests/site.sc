@@ -17,39 +17,39 @@ template.manifest = [
 	theme_color: "#0090D2"
 ];
 
-template.stylesheet["#page"] = [
-	margin: "10px",
-	font-family: "serif",
-	">div": [
-		color: "#804545"
-	]
-];
-
 template.styleLink = "/styles/main.css";
 
 template.nav = [
 	Home: "/home",
+	Documentation: "/docs",
 	About: "/about",
 	Contact: "/contact"
 ];
 
 let notFound = [
 	title: "404: Not Found",
+	url: "404",
 	body: 
-	<div id="page">
+	<article>
 		<h2>
-			"We have a problem";
+			"We have a problem..";
 		</h2>;
 		<div>
-			"The requested page was not found.";
+			<strong>"404 Not Found:";</strong>;
+			" The requested page was not found.";
 		</div>;
-	</div>
+	</article>
 ];
 
 server.manifest(template.manifest);
 
 server.get("/", (client: []) {
 	client.response.redirect(301, "/home");
+});
+
+server.get("/404", (client: []) {
+	client.response.status(404);
+	client.response.render(template.generate(notFound));
 });
 
 server.get(template.styleLink, (client: []) {
