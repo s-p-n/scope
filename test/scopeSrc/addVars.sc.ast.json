@@ -1,0 +1,208 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [
+            {
+              "type": "controlCode",
+              "body": [],
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 0
+                },
+                "end": {
+                  "line": 1,
+                  "column": 3
+                }
+              },
+              "raw": "let",
+              "line": 1
+            },
+            {
+              "type": "declarationExpression",
+              "body": [
+                "let",
+                "foo",
+                {
+                  "type": "numericLiteral",
+                  "body": 5,
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 12
+                    }
+                  },
+                  "raw": "let foo = 5;",
+                  "line": 1
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 11
+                },
+                "end": {
+                  "line": 1,
+                  "column": 12
+                }
+              },
+              "raw": "let foo = 5;",
+              "line": 1
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "line": 2,
+              "column": 3
+            }
+          },
+          "raw": "let foo = 5;\nlet",
+          "line": 2
+        },
+        {
+          "type": "declarationExpression",
+          "body": [
+            "let",
+            "bar",
+            {
+              "type": "numericLiteral",
+              "body": 7,
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 11
+                },
+                "end": {
+                  "line": 2,
+                  "column": 12
+                }
+              },
+              "raw": "let foo = 5;\nlet bar = 7;",
+              "line": 2
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 11
+            },
+            "end": {
+              "line": 2,
+              "column": 12
+            }
+          },
+          "raw": "let foo = 5;\nlet bar = 7;",
+          "line": 2
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 4,
+          "column": 6
+        }
+      },
+      "raw": "let foo = 5;\nlet bar = 7;\n\nreturn",
+      "line": 4
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "binaryExpression",
+          "body": [
+            {
+              "type": "identifier",
+              "body": [
+                "foo"
+              ],
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 11
+                },
+                "end": {
+                  "line": 4,
+                  "column": 12
+                }
+              },
+              "raw": "let foo = 5;\nlet bar = 7;\n\nreturn foo +",
+              "line": 4
+            },
+            "+",
+            {
+              "type": "identifier",
+              "body": [
+                "bar"
+              ],
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 16
+                },
+                "end": {
+                  "line": 4,
+                  "column": 17
+                }
+              },
+              "raw": "let foo = 5;\nlet bar = 7;\n\nreturn foo + bar;",
+              "line": 4
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 16
+            },
+            "end": {
+              "line": 4,
+              "column": 17
+            }
+          },
+          "raw": "let foo = 5;\nlet bar = 7;\n\nreturn foo + bar;",
+          "line": 4
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 16
+        },
+        "end": {
+          "line": 4,
+          "column": 17
+        }
+      },
+      "raw": "let foo = 5;\nlet bar = 7;\n\nreturn foo + bar;",
+      "line": 4
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 4,
+      "column": 17
+    },
+    "end": {
+      "line": 4,
+      "column": 17
+    }
+  },
+  "raw": "let foo = 5;\nlet bar = 7;\n\nreturn foo + bar;",
+  "line": 4
+}

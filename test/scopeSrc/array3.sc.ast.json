@@ -1,0 +1,451 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [
+            {
+              "type": "controlCode",
+              "body": [
+                {
+                  "type": "controlCode",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 3
+                    }
+                  },
+                  "raw": "let",
+                  "line": 1
+                },
+                {
+                  "type": "declarationExpression",
+                  "body": [
+                    "let",
+                    "foo",
+                    {
+                      "type": "mapExpression",
+                      "body": [
+                        {
+                          "type": "arrayStart",
+                          "body": [],
+                          "loc": {
+                            "start": {
+                              "line": 1,
+                              "column": 11
+                            },
+                            "end": {
+                              "line": 1,
+                              "column": 14
+                            }
+                          },
+                          "raw": "let foo = [bar",
+                          "line": 1
+                        },
+                        {
+                          "type": "associativeList",
+                          "body": [
+                            {
+                              "type": "associativeDeclaration",
+                              "body": [
+                                "bar",
+                                "id",
+                                {
+                                  "type": "stringLiteral",
+                                  "body": "baz",
+                                  "loc": {
+                                    "start": {
+                                      "line": 1,
+                                      "column": 21
+                                    },
+                                    "end": {
+                                      "line": 1,
+                                      "column": 22
+                                    }
+                                  },
+                                  "raw": "let foo = [bar: \"baz\"]",
+                                  "line": 1
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 1,
+                                  "column": 21
+                                },
+                                "end": {
+                                  "line": 1,
+                                  "column": 22
+                                }
+                              },
+                              "raw": "let foo = [bar: \"baz\"]",
+                              "line": 1
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 1,
+                              "column": 21
+                            },
+                            "end": {
+                              "line": 1,
+                              "column": 22
+                            }
+                          },
+                          "raw": "let foo = [bar: \"baz\"]",
+                          "line": 1
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 22
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 23
+                        }
+                      },
+                      "raw": "let foo = [bar: \"baz\"];",
+                      "line": 1
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 23
+                    }
+                  },
+                  "raw": "let foo = [bar: \"baz\"];",
+                  "line": 1
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 0
+                },
+                "end": {
+                  "line": 2,
+                  "column": 3
+                }
+              },
+              "raw": "let foo = [bar: \"baz\"];\nlet",
+              "line": 2
+            },
+            {
+              "type": "declarationExpression",
+              "body": [
+                "let",
+                "qux",
+                {
+                  "type": "arrayExpression",
+                  "body": [
+                    {
+                      "type": "arrayStart",
+                      "body": [],
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 11
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 16
+                        }
+                      },
+                      "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"",
+                      "line": 2
+                    },
+                    {
+                      "type": "expressionList",
+                      "body": [
+                        {
+                          "type": "stringLiteral",
+                          "body": "fin",
+                          "loc": {
+                            "start": {
+                              "line": 2,
+                              "column": 16
+                            },
+                            "end": {
+                              "line": 2,
+                              "column": 17
+                            }
+                          },
+                          "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"]",
+                          "line": 2
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 16
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 17
+                        }
+                      },
+                      "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"]",
+                      "line": 2
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 18
+                    }
+                  },
+                  "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];",
+                  "line": 2
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 17
+                },
+                "end": {
+                  "line": 2,
+                  "column": 18
+                }
+              },
+              "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];",
+              "line": 2
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 3,
+              "column": 3
+            }
+          },
+          "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo",
+          "line": 3
+        },
+        {
+          "type": "assignmentExpression",
+          "body": [
+            {
+              "type": "identifier",
+              "body": [
+                {
+                  "type": "identifier",
+                  "body": [
+                    "foo"
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 3,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 4
+                    }
+                  },
+                  "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.",
+                  "line": 3
+                },
+                "dot",
+                "bar"
+              ],
+              "loc": {
+                "start": {
+                  "line": 3,
+                  "column": 8
+                },
+                "end": {
+                  "line": 3,
+                  "column": 10
+                }
+              },
+              "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar +=",
+              "line": 3
+            },
+            {
+              "type": "assignmentValue",
+              "body": [
+                "+=",
+                {
+                  "type": "identifier",
+                  "body": [
+                    {
+                      "type": "identifier",
+                      "body": [
+                        "qux"
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 15
+                        }
+                      },
+                      "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[",
+                      "line": 3
+                    },
+                    "bracket",
+                    {
+                      "type": "numericLiteral",
+                      "body": 0,
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 16
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 17
+                        }
+                      },
+                      "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0]",
+                      "line": 3
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 3,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 18
+                    }
+                  },
+                  "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];",
+                  "line": 3
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 3,
+                  "column": 17
+                },
+                "end": {
+                  "line": 3,
+                  "column": 18
+                }
+              },
+              "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];",
+              "line": 3
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 17
+            },
+            "end": {
+              "line": 3,
+              "column": 18
+            }
+          },
+          "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];",
+          "line": 3
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 4,
+          "column": 6
+        }
+      },
+      "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];\nreturn",
+      "line": 4
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "identifier",
+          "body": [
+            {
+              "type": "identifier",
+              "body": [
+                "foo"
+              ],
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 10
+                },
+                "end": {
+                  "line": 4,
+                  "column": 11
+                }
+              },
+              "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];\nreturn foo.",
+              "line": 4
+            },
+            "dot",
+            "bar"
+          ],
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 14
+            },
+            "end": {
+              "line": 4,
+              "column": 15
+            }
+          },
+          "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];\nreturn foo.bar;",
+          "line": 4
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 14
+        },
+        "end": {
+          "line": 4,
+          "column": 15
+        }
+      },
+      "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];\nreturn foo.bar;",
+      "line": 4
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 4,
+      "column": 15
+    },
+    "end": {
+      "line": 4,
+      "column": 15
+    }
+  },
+  "raw": "let foo = [bar: \"baz\"];\nlet qux = [\"fin\"];\nfoo.bar += qux[0];\nreturn foo.bar;",
+  "line": 4
+}

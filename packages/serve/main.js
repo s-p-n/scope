@@ -93,7 +93,9 @@ function Serve (options = {}) {
 		});
 		for (let [channel, handle] of ioListeners) {
 			client.on(channel, function (data) {
-				scope.invokeExpression(handle, [scClient, data]);
+				scope.invokeExpression({
+					function: handle, 
+					arguments: [scClient, data]});
 			});
 		}
 		scClient.get("emit")._isScope = true;
@@ -139,7 +141,9 @@ function Serve (options = {}) {
 			client.request = request;
 			client.response = response;
 			client.next = next;
-			scope.invokeExpression(handle, [client]);
+			scope.invokeExpression({
+				function: handle, 
+				arguments: [client]});
 		});
 	};
 

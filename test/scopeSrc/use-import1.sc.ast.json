@@ -1,0 +1,137 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 1,
+              "column": 3
+            }
+          },
+          "raw": "use",
+          "line": 1
+        },
+        {
+          "type": "useExpression",
+          "body": [
+            {
+              "type": "usable",
+              "body": [
+                {
+                  "type": "importExpression",
+                  "body": [
+                    "\"inc/scope.sc\""
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 26
+                    }
+                  },
+                  "raw": "use import \"inc/scope.sc\";",
+                  "line": 1
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 25
+                },
+                "end": {
+                  "line": 1,
+                  "column": 26
+                }
+              },
+              "raw": "use import \"inc/scope.sc\";",
+              "line": 1
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 25
+            },
+            "end": {
+              "line": 1,
+              "column": 26
+            }
+          },
+          "raw": "use import \"inc/scope.sc\";",
+          "line": 1
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 0
+        },
+        "end": {
+          "line": 2,
+          "column": 6
+        }
+      },
+      "raw": "use import \"inc/scope.sc\";\nreturn",
+      "line": 2
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "identifier",
+          "body": [
+            "baz"
+          ],
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 10
+            },
+            "end": {
+              "line": 2,
+              "column": 11
+            }
+          },
+          "raw": "use import \"inc/scope.sc\";\nreturn baz;",
+          "line": 2
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 10
+        },
+        "end": {
+          "line": 2,
+          "column": 11
+        }
+      },
+      "raw": "use import \"inc/scope.sc\";\nreturn baz;",
+      "line": 2
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 2,
+      "column": 11
+    },
+    "end": {
+      "line": 2,
+      "column": 11
+    }
+  },
+  "raw": "use import \"inc/scope.sc\";\nreturn baz;",
+  "line": 2
+}

@@ -1,0 +1,66 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 1,
+          "column": 6
+        }
+      },
+      "raw": "return",
+      "line": 1
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "stringLiteral",
+          "body": "a string",
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 17
+            },
+            "end": {
+              "line": 1,
+              "column": 18
+            }
+          },
+          "raw": "return \"a string\";",
+          "line": 1
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 17
+        },
+        "end": {
+          "line": 1,
+          "column": 18
+        }
+      },
+      "raw": "return \"a string\";",
+      "line": 1
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 18
+    },
+    "end": {
+      "line": 1,
+      "column": 18
+    }
+  },
+  "raw": "return \"a string\";",
+  "line": 1
+}

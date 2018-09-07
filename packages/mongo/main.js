@@ -1,4 +1,5 @@
-let mongojs = require("mongojs");
+module.exports = require("mongojs");
+/*
 let priv = new WeakMap();
 
 mongojs.get = function (id) {
@@ -76,3 +77,5 @@ class Mongo {
 let db = new Mongo("scopeUser:abc123@scope");
 //let users = db.get('users');
 console.log(db.get('users').get('insert')());
+
+*/

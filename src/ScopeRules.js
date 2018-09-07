@@ -55,7 +55,7 @@ class ScopeRules {
 			name: "<scope:anonymouse>"
 		}
 		state.errorTail = () => `[${self.state.loc.start.line}:${self.state.loc.start.column}-${self.state.loc.end.line}:${self.state.loc.end.column}]`;
-		
+		state.idBubble = ["this"];
 		state.importExpressions = new Map();
 		state.root = state.context;
 	    state.context = state.context;
@@ -253,6 +253,7 @@ class ScopeRules {
 	identifier (name, notation, children) {
 		const state = this.state;
 		let self = this;
+
 		if (this.parentNode === "assignmentExpression") {
 			if (notation === 'dot') {
 				return self.sn([name, ',"', children, '"'], `${name}.${children}`);
@@ -266,17 +267,26 @@ class ScopeRules {
 
 		if (children === undefined) {
 			if (name in api) {
+				//self.state.lastID = api[name];
 				return self.sn(api[name], name);
 			}
 			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
+				//self.state.lastID = name;
 				return self.sn(name, name);
 			}
+			//self.state.lastID = `scope.identifier("${name}")`;
 			return self.sn(['scope.identifier("', name, '")'], name);
 			//throw `Identifier '${name}' is not defined ${this.state.errorTail()}`;
 		}
+		if (this.parentNode === "invokeTracker") {
+			self.state.idBubble.push(name);
+		}
+		
 		if (notation === 'dot') {
+			//self.state.lastID = `${name}["${children}"]`;
 			return self.sn([name, '["', children, '"]'], `${name}.${children}`);
 		} else {
+			//self.state.lastID = `${name}[${children}]`;
 			return self.sn([name, '[', children, ']'], `${name}[${children}]`);
 		}
 
@@ -302,16 +312,29 @@ class ScopeRules {
 
 	invokeExpression (name, invokeArguments) {
 		let self = this;
-		return self.sn(['scope.invokeExpression(', name, ',[', invokeArguments, '])'], "<scope>");
+		let thisContext = "this";
+		if (name instanceof Array) {
+			[name, thisContext] = name;
+		}
+		return self.sn(['scope.invokeExpression({function:', name, ',arguments:[', invokeArguments, '],context:', thisContext, '})'], "<scope>");
 	}
 
 	invokeId (invokeExpression, notation, identifier) {
 		let self = this;
 		if (notation === 'dot') {
+			self.state.lastID = `${invokeExpression}["${identifier}"]`;
 			return self.sn([invokeExpression, '["', identifier, '"]'], `<map>.${identifier}`);
 		} else {
-			return self.sn([invokeExpression, '.', identifier], `<map>[${identifier}]`);
+			self.state.lastID = `${invokeExpression}[${identifier}]`;
+			return self.sn([invokeExpression, '[', identifier, ']'], `<map>[${identifier}]`);
 		}
+	}
+
+	invokeTracker (id) {
+		if (this.state.idBubble.length > 1) {
+			return [id, this.state.idBubble.pop()];
+		}
+		return id;
 	}
 
 	mapExpression (arrayStart, associativeList) {
@@ -363,11 +386,8 @@ class ScopeRules {
 		state.setParentContext();
 
 		return self.sn(['scope.createScope((args)=>{',
-			'const __oldthis__ = scope.thisObj;',
-			'scope.setForeignThis(this);',
 			argDeclarations,
 			controlCode,
-			'scope.setForeignThis(__oldthis__);',
 			"})"
 		]);
 	}

@@ -2,6 +2,31 @@ let server = import "serve"(/*[
 	key: "lib/server.key",
 	cert: "lib/server.cert"
 ]*/);
+/*
+let db = import "inc/db.sc";
+let users = db.collection("users");
+let newUser = [
+	username: "foo",
+	password: "bar",
+	email: "foo@example.com"
+];
+
+users.insert(newUser, (err: "", value: "") {
+	if(err, {
+		print("insert error:", err);
+	}, {
+		print("insert successful:", value);
+	});
+});
+
+db.on("error", (err: "") {
+	print("DB Error:", err);
+});
+
+db.on("connect", {
+	print("DB Connected!");
+});
+*/
 let template = import "inc/template.sc";
 let loadPages = import "inc/loadPages.sc";
 

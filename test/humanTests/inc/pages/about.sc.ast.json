@@ -1,0 +1,932 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 1,
+          "column": 6
+        }
+      },
+      "raw": "return",
+      "line": 1
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "scopeExpression",
+          "body": [
+            {
+              "type": "scopeStart",
+              "body": [],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 1
+                },
+                "end": {
+                  "line": 2,
+                  "column": 7
+                }
+              },
+              "raw": "return {\n\tpublic",
+              "line": 2
+            },
+            {
+              "type": "controlCode",
+              "body": [
+                {
+                  "type": "controlCode",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 7
+                    }
+                  },
+                  "raw": "return {\n\tpublic",
+                  "line": 2
+                },
+                {
+                  "type": "declarationExpression",
+                  "body": [
+                    "public",
+                    "page",
+                    {
+                      "type": "scopeExpression",
+                      "body": [
+                        {
+                          "type": "scopeStart",
+                          "body": [],
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 2
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 8
+                            }
+                          },
+                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn",
+                          "line": 3
+                        },
+                        {
+                          "type": "scopeArguments",
+                          "body": [
+                            {
+                              "type": "associativeList",
+                              "body": [
+                                {
+                                  "type": "associativeDeclaration",
+                                  "body": [
+                                    "template",
+                                    "id",
+                                    {
+                                      "type": "scopeExpression",
+                                      "body": [
+                                        {
+                                          "type": "scopeStart",
+                                          "body": [],
+                                          "loc": {
+                                            "start": {
+                                              "line": 2,
+                                              "column": 27
+                                            },
+                                            "end": {
+                                              "line": 2,
+                                              "column": 28
+                                            }
+                                          },
+                                          "raw": "return {\n\tpublic page = (template: {}",
+                                          "line": 2
+                                        },
+                                        {
+                                          "type": "controlCode",
+                                          "body": [],
+                                          "loc": {
+                                            "start": {
+                                              "line": 2,
+                                              "column": 27
+                                            },
+                                            "end": {
+                                              "line": 2,
+                                              "column": 28
+                                            }
+                                          },
+                                          "raw": "return {\n\tpublic page = (template: {}",
+                                          "line": 2
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 2,
+                                          "column": 28
+                                        },
+                                        "end": {
+                                          "line": 2,
+                                          "column": 29
+                                        }
+                                      },
+                                      "raw": "return {\n\tpublic page = (template: {})",
+                                      "line": 2
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 2,
+                                      "column": 28
+                                    },
+                                    "end": {
+                                      "line": 2,
+                                      "column": 29
+                                    }
+                                  },
+                                  "raw": "return {\n\tpublic page = (template: {})",
+                                  "line": 2
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 2,
+                                  "column": 28
+                                },
+                                "end": {
+                                  "line": 2,
+                                  "column": 29
+                                }
+                              },
+                              "raw": "return {\n\tpublic page = (template: {})",
+                              "line": 2
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 2,
+                              "column": 28
+                            },
+                            "end": {
+                              "line": 2,
+                              "column": 29
+                            }
+                          },
+                          "raw": "return {\n\tpublic page = (template: {})",
+                          "line": 2
+                        },
+                        {
+                          "type": "controlCode",
+                          "body": [
+                            {
+                              "type": "controlCode",
+                              "body": [],
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 2
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 8
+                                }
+                              },
+                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn",
+                              "line": 3
+                            },
+                            {
+                              "type": "returnExpression",
+                              "body": [
+                                {
+                                  "type": "invokeExpression",
+                                  "body": [
+                                    {
+                                      "type": "invokeTracker",
+                                      "body": [
+                                        {
+                                          "type": "identifier",
+                                          "body": [
+                                            "template"
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 3,
+                                              "column": 17
+                                            },
+                                            "end": {
+                                              "line": 3,
+                                              "column": 18
+                                            }
+                                          },
+                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template(",
+                                          "line": 3
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 3,
+                                          "column": 18
+                                        },
+                                        "end": {
+                                          "line": 3,
+                                          "column": 19
+                                        }
+                                      },
+                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([",
+                                      "line": 3
+                                    },
+                                    {
+                                      "type": "invokeArguments",
+                                      "body": [
+                                        {
+                                          "type": "expressionList",
+                                          "body": [
+                                            {
+                                              "type": "mapExpression",
+                                              "body": [
+                                                {
+                                                  "type": "arrayStart",
+                                                  "body": [],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 4,
+                                                      "column": 3
+                                                    },
+                                                    "end": {
+                                                      "line": 4,
+                                                      "column": 8
+                                                    }
+                                                  },
+                                                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle",
+                                                  "line": 4
+                                                },
+                                                {
+                                                  "type": "associativeList",
+                                                  "body": [
+                                                    {
+                                                      "type": "associativeList",
+                                                      "body": [
+                                                        {
+                                                          "type": "associativeList",
+                                                          "body": [
+                                                            {
+                                                              "type": "associativeList",
+                                                              "body": [
+                                                                {
+                                                                  "type": "associativeDeclaration",
+                                                                  "body": [
+                                                                    "title",
+                                                                    "id",
+                                                                    {
+                                                                      "type": "stringLiteral",
+                                                                      "body": "About",
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 4,
+                                                                          "column": 17
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 4,
+                                                                          "column": 18
+                                                                        }
+                                                                      },
+                                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",",
+                                                                      "line": 4
+                                                                    }
+                                                                  ],
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 4,
+                                                                      "column": 17
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 4,
+                                                                      "column": 18
+                                                                    }
+                                                                  },
+                                                                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",",
+                                                                  "line": 4
+                                                                }
+                                                              ],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 4,
+                                                                  "column": 17
+                                                                },
+                                                                "end": {
+                                                                  "line": 4,
+                                                                  "column": 18
+                                                                }
+                                                              },
+                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",",
+                                                              "line": 4
+                                                            },
+                                                            {
+                                                              "type": "associativeDeclaration",
+                                                              "body": [
+                                                                "url",
+                                                                "id",
+                                                                {
+                                                                  "type": "stringLiteral",
+                                                                  "body": "/about",
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 5,
+                                                                      "column": 16
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 5,
+                                                                      "column": 17
+                                                                    }
+                                                                  },
+                                                                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",",
+                                                                  "line": 5
+                                                                }
+                                                              ],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 5,
+                                                                  "column": 16
+                                                                },
+                                                                "end": {
+                                                                  "line": 5,
+                                                                  "column": 17
+                                                                }
+                                                              },
+                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",",
+                                                              "line": 5
+                                                            }
+                                                          ],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 5,
+                                                              "column": 16
+                                                            },
+                                                            "end": {
+                                                              "line": 5,
+                                                              "column": 17
+                                                            }
+                                                          },
+                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",",
+                                                          "line": 5
+                                                        },
+                                                        {
+                                                          "type": "associativeDeclaration",
+                                                          "body": [
+                                                            "description",
+                                                            "id",
+                                                            {
+                                                              "type": "stringLiteral",
+                                                              "body": "Information about who we are. (Hint: we make the Scope Programming Language!)",
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 6,
+                                                                  "column": 95
+                                                                },
+                                                                "end": {
+                                                                  "line": 6,
+                                                                  "column": 96
+                                                                }
+                                                              },
+                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",",
+                                                              "line": 6
+                                                            }
+                                                          ],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 6,
+                                                              "column": 95
+                                                            },
+                                                            "end": {
+                                                              "line": 6,
+                                                              "column": 96
+                                                            }
+                                                          },
+                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",",
+                                                          "line": 6
+                                                        }
+                                                      ],
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 6,
+                                                          "column": 95
+                                                        },
+                                                        "end": {
+                                                          "line": 6,
+                                                          "column": 96
+                                                        }
+                                                      },
+                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",",
+                                                      "line": 6
+                                                    },
+                                                    {
+                                                      "type": "associativeDeclaration",
+                                                      "body": [
+                                                        "body",
+                                                        "id",
+                                                        {
+                                                          "type": "xmlExpression",
+                                                          "body": [
+                                                            {
+                                                              "type": "identifier",
+                                                              "body": [
+                                                                "article"
+                                                              ],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 8,
+                                                                  "column": 11
+                                                                },
+                                                                "end": {
+                                                                  "line": 8,
+                                                                  "column": 12
+                                                                }
+                                                              },
+                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>",
+                                                              "line": 8
+                                                            },
+                                                            {
+                                                              "type": "xmlAttributes",
+                                                              "body": [],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 8,
+                                                                  "column": 11
+                                                                },
+                                                                "end": {
+                                                                  "line": 8,
+                                                                  "column": 12
+                                                                }
+                                                              },
+                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>",
+                                                              "line": 8
+                                                            },
+                                                            {
+                                                              "type": "xmlControlCode",
+                                                              "body": [
+                                                                {
+                                                                  "type": "xmlControlCode",
+                                                                  "body": [
+                                                                    {
+                                                                      "type": "xmlControlCode",
+                                                                      "body": [],
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 9,
+                                                                          "column": 4
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 9,
+                                                                          "column": 5
+                                                                        }
+                                                                      },
+                                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<",
+                                                                      "line": 9
+                                                                    },
+                                                                    {
+                                                                      "type": "xmlExpression",
+                                                                      "body": [
+                                                                        {
+                                                                          "type": "identifier",
+                                                                          "body": [
+                                                                            "h1"
+                                                                          ],
+                                                                          "loc": {
+                                                                            "start": {
+                                                                              "line": 9,
+                                                                              "column": 7
+                                                                            },
+                                                                            "end": {
+                                                                              "line": 9,
+                                                                              "column": 8
+                                                                            }
+                                                                          },
+                                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>",
+                                                                          "line": 9
+                                                                        },
+                                                                        {
+                                                                          "type": "xmlAttributes",
+                                                                          "body": [],
+                                                                          "loc": {
+                                                                            "start": {
+                                                                              "line": 9,
+                                                                              "column": 7
+                                                                            },
+                                                                            "end": {
+                                                                              "line": 9,
+                                                                              "column": 8
+                                                                            }
+                                                                          },
+                                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>",
+                                                                          "line": 9
+                                                                        },
+                                                                        {
+                                                                          "type": "xmlControlCode",
+                                                                          "body": [
+                                                                            {
+                                                                              "type": "xmlControlCode",
+                                                                              "body": [],
+                                                                              "loc": {
+                                                                                "start": {
+                                                                                  "line": 10,
+                                                                                  "column": 5
+                                                                                },
+                                                                                "end": {
+                                                                                  "line": 10,
+                                                                                  "column": 15
+                                                                                }
+                                                                              },
+                                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\"",
+                                                                              "line": 10
+                                                                            },
+                                                                            {
+                                                                              "type": "stringLiteral",
+                                                                              "body": "About Us",
+                                                                              "loc": {
+                                                                                "start": {
+                                                                                  "line": 10,
+                                                                                  "column": 15
+                                                                                },
+                                                                                "end": {
+                                                                                  "line": 10,
+                                                                                  "column": 16
+                                                                                }
+                                                                              },
+                                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";",
+                                                                              "line": 10
+                                                                            }
+                                                                          ],
+                                                                          "loc": {
+                                                                            "start": {
+                                                                              "line": 11,
+                                                                              "column": 4
+                                                                            },
+                                                                            "end": {
+                                                                              "line": 11,
+                                                                              "column": 6
+                                                                            }
+                                                                          },
+                                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</",
+                                                                          "line": 11
+                                                                        }
+                                                                      ],
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 11,
+                                                                          "column": 9
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 11,
+                                                                          "column": 10
+                                                                        }
+                                                                      },
+                                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;",
+                                                                      "line": 11
+                                                                    }
+                                                                  ],
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 12,
+                                                                      "column": 4
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 12,
+                                                                      "column": 5
+                                                                    }
+                                                                  },
+                                                                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<",
+                                                                  "line": 12
+                                                                },
+                                                                {
+                                                                  "type": "xmlExpression",
+                                                                  "body": [
+                                                                    {
+                                                                      "type": "identifier",
+                                                                      "body": [
+                                                                        "div"
+                                                                      ],
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 12,
+                                                                          "column": 8
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 12,
+                                                                          "column": 9
+                                                                        }
+                                                                      },
+                                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>",
+                                                                      "line": 12
+                                                                    },
+                                                                    {
+                                                                      "type": "xmlAttributes",
+                                                                      "body": [],
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 12,
+                                                                          "column": 8
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 12,
+                                                                          "column": 9
+                                                                        }
+                                                                      },
+                                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>",
+                                                                      "line": 12
+                                                                    },
+                                                                    {
+                                                                      "type": "xmlControlCode",
+                                                                      "body": [
+                                                                        {
+                                                                          "type": "xmlControlCode",
+                                                                          "body": [],
+                                                                          "loc": {
+                                                                            "start": {
+                                                                              "line": 13,
+                                                                              "column": 5
+                                                                            },
+                                                                            "end": {
+                                                                              "line": 13,
+                                                                              "column": 43
+                                                                            }
+                                                                          },
+                                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\"",
+                                                                          "line": 13
+                                                                        },
+                                                                        {
+                                                                          "type": "stringLiteral",
+                                                                          "body": "This is an article about us.. kinda.",
+                                                                          "loc": {
+                                                                            "start": {
+                                                                              "line": 13,
+                                                                              "column": 43
+                                                                            },
+                                                                            "end": {
+                                                                              "line": 13,
+                                                                              "column": 44
+                                                                            }
+                                                                          },
+                                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";",
+                                                                          "line": 13
+                                                                        }
+                                                                      ],
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 14,
+                                                                          "column": 4
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 14,
+                                                                          "column": 6
+                                                                        }
+                                                                      },
+                                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</",
+                                                                      "line": 14
+                                                                    }
+                                                                  ],
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 14,
+                                                                      "column": 10
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 14,
+                                                                      "column": 11
+                                                                    }
+                                                                  },
+                                                                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;",
+                                                                  "line": 14
+                                                                }
+                                                              ],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 15,
+                                                                  "column": 3
+                                                                },
+                                                                "end": {
+                                                                  "line": 15,
+                                                                  "column": 5
+                                                                }
+                                                              },
+                                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</",
+                                                              "line": 15
+                                                            }
+                                                          ],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 16,
+                                                              "column": 2
+                                                            },
+                                                            "end": {
+                                                              "line": 16,
+                                                              "column": 3
+                                                            }
+                                                          },
+                                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]",
+                                                          "line": 16
+                                                        }
+                                                      ],
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 16,
+                                                          "column": 2
+                                                        },
+                                                        "end": {
+                                                          "line": 16,
+                                                          "column": 3
+                                                        }
+                                                      },
+                                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]",
+                                                      "line": 16
+                                                    }
+                                                  ],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 16,
+                                                      "column": 2
+                                                    },
+                                                    "end": {
+                                                      "line": 16,
+                                                      "column": 3
+                                                    }
+                                                  },
+                                                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]",
+                                                  "line": 16
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 16,
+                                                  "column": 3
+                                                },
+                                                "end": {
+                                                  "line": 16,
+                                                  "column": 4
+                                                }
+                                              },
+                                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t])",
+                                              "line": 16
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 16,
+                                              "column": 3
+                                            },
+                                            "end": {
+                                              "line": 16,
+                                              "column": 4
+                                            }
+                                          },
+                                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t])",
+                                          "line": 16
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 16,
+                                          "column": 3
+                                        },
+                                        "end": {
+                                          "line": 16,
+                                          "column": 4
+                                        }
+                                      },
+                                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t])",
+                                      "line": 16
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 4
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 5
+                                    }
+                                  },
+                                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);",
+                                  "line": 16
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 16,
+                                  "column": 4
+                                },
+                                "end": {
+                                  "line": 16,
+                                  "column": 5
+                                }
+                              },
+                              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);",
+                              "line": 16
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 17,
+                              "column": 1
+                            },
+                            "end": {
+                              "line": 17,
+                              "column": 2
+                            }
+                          },
+                          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);\n\t}",
+                          "line": 17
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 17,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 17,
+                          "column": 3
+                        }
+                      },
+                      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);\n\t};",
+                      "line": 17
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 3
+                    }
+                  },
+                  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);\n\t};",
+                  "line": 17
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 18,
+                  "column": 0
+                },
+                "end": {
+                  "line": 18,
+                  "column": 1
+                }
+              },
+              "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);\n\t};\n}",
+              "line": 18
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 18,
+              "column": 1
+            },
+            "end": {
+              "line": 18,
+              "column": 2
+            }
+          },
+          "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);\n\t};\n};",
+          "line": 18
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 18,
+          "column": 1
+        },
+        "end": {
+          "line": 18,
+          "column": 2
+        }
+      },
+      "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);\n\t};\n};",
+      "line": 18
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 18,
+      "column": 2
+    },
+    "end": {
+      "line": 18,
+      "column": 2
+    }
+  },
+  "raw": "return {\n\tpublic page = (template: {}) {\n\t\treturn template([\n\t\t\ttitle: \"About\",\n\t\t\turl: \"/about\",\n\t\t\tdescription: \"Information about who we are. (Hint: we make the Scope Programming Language!)\",\n\t\t\tbody: \n\t\t\t<article>\n\t\t\t\t<h1>\n\t\t\t\t\t\"About Us\";\n\t\t\t\t</h1>;\n\t\t\t\t<div>\n\t\t\t\t\t\"This is an article about us.. kinda.\";\n\t\t\t\t</div>;\n\t\t\t</article>\n\t\t]);\n\t};\n};",
+  "line": 18
+}

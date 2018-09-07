@@ -207,7 +207,6 @@ const NumericMap = (function () {
 class Scope {
   constructor(context) {
     const self = this;
-    self.thisObj = null;
     this._scoping = {
       let: this.mapExpression(),
       private: this.mapExpression(),
@@ -217,16 +216,17 @@ class Scope {
     };
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
-      let node, preNode;
+      let node;
       function processStyle (m) {
         let style = "";
         for (let [selector, body] of m) {
+          //console.log(selector);
           style += `${selector}{`;
           let index = 0;
           let terminated = false;
           for (let [name, value] of body) {
             if (value instanceof Map) {
-              style += `}${processStyle(self.mapExpression([selector + name, value]))}`;
+              style += `}${processStyle(new Map([[selector + name, value]]))}`;
               if ((index + 1) < body.size) {
                 style += `${selector}{`;
               } else {
@@ -244,96 +244,19 @@ class Scope {
         return style;
       }
       if (tag === "style" && children[0] instanceof Map) {
-        preNode = h(tag, [processStyle(children[0])]);
-        preNode.__defineGetter__('textContent', function () {
-          return preNode.childNodes[0].value;
+        node = h(tag, [processStyle(children[0])]);
+        node.__defineGetter__('textContent', function () {
+          return this.childNodes[0].value;
         });
-        preNode.__defineGetter__('innerHTML', function () {
-          return preNode.textContent;
+        node.__defineGetter__('innerHTML', function () {
+          return this.textContent;
         });
-        preNode.__defineGetter__('outerHTML', function () {
-          return `<style>${preNode.innerHTML}</style>`;
+        node.__defineGetter__('outerHTML', function () {
+          return `<style>${this.innerHTML}</style>`;
         });
       } else {
-        preNode = h(tag, ...children);
-        preNode.__defineGetter__('textContent', function () {
-          if (this.nodeName === "#text") {
-            return this.value;
-          }
-          let result = "";
-          for (let i = 0; i < this.childNodes.length; i += 1) {
-            result += this.childNodes[i].textContent;
-          }
-          return result;
-        });
-        preNode.__defineGetter__('innerHTML', function () {
-          let result = "";
-          for (let i = 0; i < this.childNodes.length; i += 1) {
-            if (this.childNodes[i].nodeName === "#text") {
-              result += this.childNodes[i].value;
-            } else {
-              result += this.childNodes[i].outerHTML;
-            }
-          }
-          return result;
-        });
-        preNode.__defineGetter__('outerHTML', function () {
-          const self = this;
-          if (this.nodeName === "#text") {
-            return this.value;
-          }
-          let attributes = (function () {
-            let result = "";
-            for (let i = 0; i < self.attributes.length; i += 1) {
-              let name = self.attributes[i].name;
-              let value = self.attributes[i].value;
-              result += ` ${name}="${value}"`
-            }
-            return result;
-          }());
-
-          let result = `<${this.tagName.toLowerCase()}${attributes}`;
-
-          if (this.childNodes.length === 0 && this.tagName.toLowerCase() !== "script") {
-            return result + "/>";
-          } else {
-            result += ">";
-          }
-          
-          return `${result}${this.innerHTML}</${this.tagName.toLowerCase()}>`;
-        });
+        node = h(tag, ...children);
       }
-      preNode.childNodes = new Proxy(preNode.childNodes, {
-        get: function (target, key) {
-          if (typeof target[key] === "function" && target[key].bind) {
-            return target[key].bind(target);
-          }
-          return target[key];
-        },
-        set: function (target, prop, val) {
-          target[prop] = val;
-        }
-      });
-      node = new Proxy(function Node () {}, {
-        get: function (target, key) {
-          if (typeof preNode[key] === "function") {
-            return preNode[key].bind(preNode);
-          }
-          if (key === "call" || key === "apply") {
-            return Function.prototype[key];
-          }
-          return preNode[key];
-        },
-        set: function (target, prop, val) {
-          return preNode[prop] = val;
-        },
-        apply: function (target, thisArg, args) {
-          for (let i = 0; i < args.length; i += 1) {
-            preNode.appendChild(args[i]);
-          }
-          return node;
-        }
-      });
       for (let a in attr) {
         let val = "";
         if (a === "style" && attr[a] instanceof Map) {
@@ -352,15 +275,23 @@ class Scope {
         if (node.tagName === "style") {
           return node.outerHTML.replace(/gt\;/, ">");
         }
+        
         return node.outerHTML;
       };
-      
+      node.get = function (key) {
+        if (typeof node[key] === "function") {
+          return node[key].bind(node);
+        }
+        return node[key];
+      };
+      node.childNodes.get = function (key) {
+        if (typeof node.childNodes[key] === "function") {
+          return node.childNodes[key].bind(node);
+        }
+        return node.childNodes[key];
+      }
       return node;
     };
-  }
-
-  setForeignThis(obj) {
-    this.thisObj = obj;
   }
 
   arrayExpression(...items) {
@@ -536,36 +467,31 @@ class Scope {
     return f;
   }
 
-  invokeExpression(f, args, extension = false) {
-    if (!f._isScope) {
-      return f.apply(this.thisObj, args);
+  invokeExpression(config = {
+    function: function () {},
+    arguments: [],
+    context: this,
+    isExtension: false
+  }) {
+    if (!config.function._isScope) {
+      //console.log(args);
+      //f(...args);
+      return config.function.apply(config.context, config.arguments);
     }
     let scoping = this._scoping;
-    if (f === undefined) {
+    if (config.function === undefined) {
       throw new Error(`Call to undefined scope`);
     }
     this._scoping = {
-      parent: f._parent,
+      parent: config.function._parent,
       let: this.mapExpression(),
       private: this.mapExpression(),
       protected: this.mapExpression(),
       public: this.mapExpression()
     };
-    if (extension instanceof Map) {
-      if (extension.has("protected")) {
-        for (let [key, val] of extension.get("protected")) {
-          this._scoping.protected.set(key, val);
-        }
-      }
-      if (extension.has("public")) {
-        for (let [key, val] of extension.get("public")) {
-          this._scoping.public.set(key, val);
-        }
-      }
-    }
-    let result = f(args);
+    let result = config.function(config.arguments);
     if (result === undefined) {
-      if (extension === true) {
+      if (config.isExtension === true) {
         result = this.mapExpression(
           ["public", this._scoping.public],
           ["protected", this._scoping.protected]
@@ -590,7 +516,11 @@ class Scope {
       if (typeof sc !== "function") {
         throw new Error("Attempt to use non-scope");
       }
-      let temp = self.invokeExpression(sc, [], true);
+      let temp = self.invokeExpression({
+        function: sc,
+        arguments: [],
+        isExtension: true
+      });
       if (!(temp instanceof Map)) {
         throw new Error("Attempt to use scope returning non-map");
       }

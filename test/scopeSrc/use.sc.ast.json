@@ -1,0 +1,906 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [
+            {
+              "type": "controlCode",
+              "body": [
+                {
+                  "type": "controlCode",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 3
+                    }
+                  },
+                  "raw": "let",
+                  "line": 1
+                },
+                {
+                  "type": "declarationExpression",
+                  "body": [
+                    "let",
+                    "usee",
+                    {
+                      "type": "scopeExpression",
+                      "body": [
+                        {
+                          "type": "scopeStart",
+                          "body": [],
+                          "loc": {
+                            "start": {
+                              "line": 2,
+                              "column": 1
+                            },
+                            "end": {
+                              "line": 2,
+                              "column": 10
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected",
+                          "line": 2
+                        },
+                        {
+                          "type": "controlCode",
+                          "body": [
+                            {
+                              "type": "controlCode",
+                              "body": [
+                                {
+                                  "type": "controlCode",
+                                  "body": [],
+                                  "loc": {
+                                    "start": {
+                                      "line": 2,
+                                      "column": 1
+                                    },
+                                    "end": {
+                                      "line": 2,
+                                      "column": 10
+                                    }
+                                  },
+                                  "raw": "let usee = {\n\tprotected",
+                                  "line": 2
+                                },
+                                {
+                                  "type": "declarationExpression",
+                                  "body": [
+                                    "protected",
+                                    "foo",
+                                    {
+                                      "type": "stringLiteral",
+                                      "body": "Hello from usee",
+                                      "loc": {
+                                        "start": {
+                                          "line": 2,
+                                          "column": 34
+                                        },
+                                        "end": {
+                                          "line": 2,
+                                          "column": 35
+                                        }
+                                      },
+                                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";",
+                                      "line": 2
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 2,
+                                      "column": 34
+                                    },
+                                    "end": {
+                                      "line": 2,
+                                      "column": 35
+                                    }
+                                  },
+                                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";",
+                                  "line": 2
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 1
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 7
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic",
+                              "line": 3
+                            },
+                            {
+                              "type": "declarationExpression",
+                              "body": [
+                                "public",
+                                "baz",
+                                {
+                                  "type": "stringLiteral",
+                                  "body": "I'm baz",
+                                  "loc": {
+                                    "start": {
+                                      "line": 3,
+                                      "column": 23
+                                    },
+                                    "end": {
+                                      "line": 3,
+                                      "column": 24
+                                    }
+                                  },
+                                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";",
+                                  "line": 3
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 23
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 24
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";",
+                              "line": 3
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 4,
+                              "column": 0
+                            },
+                            "end": {
+                              "line": 4,
+                              "column": 1
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n}",
+                          "line": 4
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 4,
+                          "column": 1
+                        },
+                        "end": {
+                          "line": 4,
+                          "column": 2
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};",
+                      "line": 4
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 4,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 2
+                    }
+                  },
+                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};",
+                  "line": 4
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 6,
+                  "column": 0
+                },
+                "end": {
+                  "line": 6,
+                  "column": 3
+                }
+              },
+              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet",
+              "line": 6
+            },
+            {
+              "type": "declarationExpression",
+              "body": [
+                "let",
+                "user1",
+                {
+                  "type": "scopeExpression",
+                  "body": [
+                    {
+                      "type": "scopeStart",
+                      "body": [],
+                      "loc": {
+                        "start": {
+                          "line": 7,
+                          "column": 1
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 4
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse",
+                      "line": 7
+                    },
+                    {
+                      "type": "controlCode",
+                      "body": [
+                        {
+                          "type": "controlCode",
+                          "body": [
+                            {
+                              "type": "controlCode",
+                              "body": [],
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 1
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 4
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse",
+                              "line": 7
+                            },
+                            {
+                              "type": "useExpression",
+                              "body": [
+                                {
+                                  "type": "usable",
+                                  "body": [
+                                    {
+                                      "type": "identifier",
+                                      "body": [
+                                        "usee"
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 7,
+                                          "column": 9
+                                        },
+                                        "end": {
+                                          "line": 7,
+                                          "column": 10
+                                        }
+                                      },
+                                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;",
+                                      "line": 7
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 9
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 10
+                                    }
+                                  },
+                                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;",
+                                  "line": 7
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 9
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 10
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;",
+                              "line": 7
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 8,
+                              "column": 1
+                            },
+                            "end": {
+                              "line": 8,
+                              "column": 7
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn",
+                          "line": 8
+                        },
+                        {
+                          "type": "returnExpression",
+                          "body": [
+                            {
+                              "type": "identifier",
+                              "body": [
+                                "foo"
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 8,
+                                  "column": 11
+                                },
+                                "end": {
+                                  "line": 8,
+                                  "column": 12
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;",
+                              "line": 8
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 8,
+                              "column": 11
+                            },
+                            "end": {
+                              "line": 8,
+                              "column": 12
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;",
+                          "line": 8
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 9,
+                          "column": 0
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 1
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n}",
+                      "line": 9
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 9,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 2
+                    }
+                  },
+                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};",
+                  "line": 9
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 9,
+                  "column": 1
+                },
+                "end": {
+                  "line": 9,
+                  "column": 2
+                }
+              },
+              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};",
+              "line": 9
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 11,
+              "column": 0
+            },
+            "end": {
+              "line": 11,
+              "column": 3
+            }
+          },
+          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet",
+          "line": 11
+        },
+        {
+          "type": "declarationExpression",
+          "body": [
+            "let",
+            "user2",
+            {
+              "type": "scopeExpression",
+              "body": [
+                {
+                  "type": "scopeStart",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 12,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 4
+                    }
+                  },
+                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse",
+                  "line": 12
+                },
+                {
+                  "type": "controlCode",
+                  "body": [
+                    {
+                      "type": "controlCode",
+                      "body": [
+                        {
+                          "type": "controlCode",
+                          "body": [],
+                          "loc": {
+                            "start": {
+                              "line": 12,
+                              "column": 1
+                            },
+                            "end": {
+                              "line": 12,
+                              "column": 4
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse",
+                          "line": 12
+                        },
+                        {
+                          "type": "useExpression",
+                          "body": [
+                            {
+                              "type": "usable",
+                              "body": [
+                                {
+                                  "type": "identifier",
+                                  "body": [
+                                    "usee"
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 12,
+                                      "column": 10
+                                    },
+                                    "end": {
+                                      "line": 12,
+                                      "column": 14
+                                    }
+                                  },
+                                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only",
+                                  "line": 12
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 12,
+                                  "column": 10
+                                },
+                                "end": {
+                                  "line": 12,
+                                  "column": 14
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only",
+                              "line": 12
+                            },
+                            {
+                              "type": "useOnly",
+                              "body": [
+                                {
+                                  "type": "expressionList",
+                                  "body": [
+                                    {
+                                      "type": "stringLiteral",
+                                      "body": "foo",
+                                      "loc": {
+                                        "start": {
+                                          "line": 12,
+                                          "column": 21
+                                        },
+                                        "end": {
+                                          "line": 12,
+                                          "column": 22
+                                        }
+                                      },
+                                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\")",
+                                      "line": 12
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 12,
+                                      "column": 21
+                                    },
+                                    "end": {
+                                      "line": 12,
+                                      "column": 22
+                                    }
+                                  },
+                                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\")",
+                                  "line": 12
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 12,
+                                  "column": 22
+                                },
+                                "end": {
+                                  "line": 12,
+                                  "column": 23
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");",
+                              "line": 12
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 12,
+                              "column": 22
+                            },
+                            "end": {
+                              "line": 12,
+                              "column": 23
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");",
+                          "line": 12
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 13,
+                          "column": 1
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 7
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic",
+                      "line": 13
+                    },
+                    {
+                      "type": "declarationExpression",
+                      "body": [
+                        "public",
+                        "bar",
+                        {
+                          "type": "identifier",
+                          "body": [
+                            "foo"
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 13,
+                              "column": 17
+                            },
+                            "end": {
+                              "line": 13,
+                              "column": 18
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;",
+                          "line": 13
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 13,
+                          "column": 17
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 18
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;",
+                      "line": 13
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 14,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 1
+                    }
+                  },
+                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n}",
+                  "line": 14
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 14,
+                  "column": 1
+                },
+                "end": {
+                  "line": 14,
+                  "column": 2
+                }
+              },
+              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};",
+              "line": 14
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 14,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          },
+          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};",
+          "line": 14
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 16,
+          "column": 0
+        },
+        "end": {
+          "line": 16,
+          "column": 6
+        }
+      },
+      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn",
+      "line": 16
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "arrayExpression",
+          "body": [
+            {
+              "type": "arrayStart",
+              "body": [],
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 8
+                },
+                "end": {
+                  "line": 16,
+                  "column": 13
+                }
+              },
+              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1",
+              "line": 16
+            },
+            {
+              "type": "expressionList",
+              "body": [
+                {
+                  "type": "invokeExpression",
+                  "body": [
+                    {
+                      "type": "invokeTracker",
+                      "body": [
+                        {
+                          "type": "identifier",
+                          "body": [
+                            "user1"
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 16,
+                              "column": 13
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 14
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(",
+                          "line": 16
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 15
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1()",
+                      "line": 16
+                    },
+                    {
+                      "type": "invokeArguments",
+                      "body": [],
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 15
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1()",
+                      "line": 16
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 16
+                    }
+                  },
+                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(),",
+                  "line": 16
+                },
+                {
+                  "type": "expressionList",
+                  "body": [
+                    {
+                      "type": "invokeExpression",
+                      "body": [
+                        {
+                          "type": "invokeTracker",
+                          "body": [
+                            {
+                              "type": "identifier",
+                              "body": [
+                                "user2"
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 16,
+                                  "column": 22
+                                },
+                                "end": {
+                                  "line": 16,
+                                  "column": 23
+                                }
+                              },
+                              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2(",
+                              "line": 16
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 16,
+                              "column": 23
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 24
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()",
+                          "line": 16
+                        },
+                        {
+                          "type": "invokeArguments",
+                          "body": [],
+                          "loc": {
+                            "start": {
+                              "line": 16,
+                              "column": 23
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 24
+                            }
+                          },
+                          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()",
+                          "line": 16
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 24
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 25
+                        }
+                      },
+                      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()]",
+                      "line": 16
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 25
+                    }
+                  },
+                  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()]",
+                  "line": 16
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 24
+                },
+                "end": {
+                  "line": 16,
+                  "column": 25
+                }
+              },
+              "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()]",
+              "line": 16
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 16,
+              "column": 25
+            },
+            "end": {
+              "line": 16,
+              "column": 26
+            }
+          },
+          "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()];",
+          "line": 16
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 16,
+          "column": 25
+        },
+        "end": {
+          "line": 16,
+          "column": 26
+        }
+      },
+      "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()];",
+      "line": 16
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 16,
+      "column": 26
+    },
+    "end": {
+      "line": 16,
+      "column": 26
+    }
+  },
+  "raw": "let usee = {\n\tprotected foo = \"Hello from usee\";\n\tpublic baz = \"I'm baz\";\n};\n\nlet user1 = {\n\tuse usee;\n\treturn foo;\n};\n\nlet user2 = {\n\tuse usee only (\"foo\");\n\tpublic bar = foo;\n};\n\nreturn [user1(), user2()];",
+  "line": 16
+}

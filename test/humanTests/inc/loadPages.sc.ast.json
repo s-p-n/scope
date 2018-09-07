@@ -1,0 +1,805 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 1,
+          "column": 6
+        }
+      },
+      "raw": "return",
+      "line": 1
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "scopeExpression",
+          "body": [
+            {
+              "type": "scopeStart",
+              "body": [],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 1
+                },
+                "end": {
+                  "line": 2,
+                  "column": 6
+                }
+              },
+              "raw": "return (directory: \"\") {\n\tprint",
+              "line": 2
+            },
+            {
+              "type": "scopeArguments",
+              "body": [
+                {
+                  "type": "associativeList",
+                  "body": [
+                    {
+                      "type": "associativeDeclaration",
+                      "body": [
+                        "directory",
+                        "id",
+                        {
+                          "type": "stringLiteral",
+                          "body": "",
+                          "loc": {
+                            "start": {
+                              "line": 1,
+                              "column": 21
+                            },
+                            "end": {
+                              "line": 1,
+                              "column": 22
+                            }
+                          },
+                          "raw": "return (directory: \"\")",
+                          "line": 1
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 21
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 22
+                        }
+                      },
+                      "raw": "return (directory: \"\")",
+                      "line": 1
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "raw": "return (directory: \"\")",
+                  "line": 1
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 21
+                },
+                "end": {
+                  "line": 1,
+                  "column": 22
+                }
+              },
+              "raw": "return (directory: \"\")",
+              "line": 1
+            },
+            {
+              "type": "controlCode",
+              "body": [
+                {
+                  "type": "controlCode",
+                  "body": [
+                    {
+                      "type": "controlCode",
+                      "body": [],
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 1
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 6
+                        }
+                      },
+                      "raw": "return (directory: \"\") {\n\tprint",
+                      "line": 2
+                    },
+                    {
+                      "type": "invokeExpression",
+                      "body": [
+                        {
+                          "type": "invokeTracker",
+                          "body": [
+                            {
+                              "type": "identifier",
+                              "body": [
+                                "print"
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 2,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 2,
+                                  "column": 7
+                                }
+                              },
+                              "raw": "return (directory: \"\") {\n\tprint(",
+                              "line": 2
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 2,
+                              "column": 7
+                            },
+                            "end": {
+                              "line": 2,
+                              "column": 20
+                            }
+                          },
+                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \"",
+                          "line": 2
+                        },
+                        {
+                          "type": "invokeArguments",
+                          "body": [
+                            {
+                              "type": "expressionList",
+                              "body": [
+                                {
+                                  "type": "stringLiteral",
+                                  "body": "Will load: ",
+                                  "loc": {
+                                    "start": {
+                                      "line": 2,
+                                      "column": 20
+                                    },
+                                    "end": {
+                                      "line": 2,
+                                      "column": 21
+                                    }
+                                  },
+                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \",",
+                                  "line": 2
+                                },
+                                {
+                                  "type": "expressionList",
+                                  "body": [
+                                    {
+                                      "type": "identifier",
+                                      "body": [
+                                        "directory"
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 2,
+                                          "column": 31
+                                        },
+                                        "end": {
+                                          "line": 2,
+                                          "column": 32
+                                        }
+                                      },
+                                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory)",
+                                      "line": 2
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 2,
+                                      "column": 31
+                                    },
+                                    "end": {
+                                      "line": 2,
+                                      "column": 32
+                                    }
+                                  },
+                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory)",
+                                  "line": 2
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 2,
+                                  "column": 31
+                                },
+                                "end": {
+                                  "line": 2,
+                                  "column": 32
+                                }
+                              },
+                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory)",
+                              "line": 2
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 2,
+                              "column": 31
+                            },
+                            "end": {
+                              "line": 2,
+                              "column": 32
+                            }
+                          },
+                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory)",
+                          "line": 2
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 2,
+                          "column": 32
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 33
+                        }
+                      },
+                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);",
+                      "line": 2
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 3,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 7
+                    }
+                  },
+                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic",
+                  "line": 3
+                },
+                {
+                  "type": "declarationExpression",
+                  "body": [
+                    "public",
+                    "promises",
+                    {
+                      "type": "mapExpression",
+                      "body": [
+                        {
+                          "type": "arrayStart",
+                          "body": [],
+                          "loc": {
+                            "start": {
+                              "line": 4,
+                              "column": 2
+                            },
+                            "end": {
+                              "line": 4,
+                              "column": 6
+                            }
+                          },
+                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome",
+                          "line": 4
+                        },
+                        {
+                          "type": "associativeList",
+                          "body": [
+                            {
+                              "type": "associativeList",
+                              "body": [
+                                {
+                                  "type": "associativeList",
+                                  "body": [
+                                    {
+                                      "type": "associativeDeclaration",
+                                      "body": [
+                                        "home",
+                                        "id",
+                                        {
+                                          "type": "invokeExpression",
+                                          "body": [
+                                            {
+                                              "type": "invokeTracker",
+                                              "body": [
+                                                {
+                                                  "type": "identifier",
+                                                  "body": [
+                                                    "compile"
+                                                  ],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 4,
+                                                      "column": 15
+                                                    },
+                                                    "end": {
+                                                      "line": 4,
+                                                      "column": 16
+                                                    }
+                                                  },
+                                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(",
+                                                  "line": 4
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 4,
+                                                  "column": 16
+                                                },
+                                                "end": {
+                                                  "line": 4,
+                                                  "column": 33
+                                                }
+                                              },
+                                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"",
+                                              "line": 4
+                                            },
+                                            {
+                                              "type": "invokeArguments",
+                                              "body": [
+                                                {
+                                                  "type": "expressionList",
+                                                  "body": [
+                                                    {
+                                                      "type": "stringLiteral",
+                                                      "body": "./pages/home.sc",
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 4,
+                                                          "column": 33
+                                                        },
+                                                        "end": {
+                                                          "line": 4,
+                                                          "column": 34
+                                                        }
+                                                      },
+                                                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\")",
+                                                      "line": 4
+                                                    }
+                                                  ],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 4,
+                                                      "column": 33
+                                                    },
+                                                    "end": {
+                                                      "line": 4,
+                                                      "column": 34
+                                                    }
+                                                  },
+                                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\")",
+                                                  "line": 4
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 4,
+                                                  "column": 33
+                                                },
+                                                "end": {
+                                                  "line": 4,
+                                                  "column": 34
+                                                }
+                                              },
+                                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\")",
+                                              "line": 4
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 4,
+                                              "column": 34
+                                            },
+                                            "end": {
+                                              "line": 4,
+                                              "column": 35
+                                            }
+                                          },
+                                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),",
+                                          "line": 4
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 4,
+                                          "column": 34
+                                        },
+                                        "end": {
+                                          "line": 4,
+                                          "column": 35
+                                        }
+                                      },
+                                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),",
+                                      "line": 4
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 4,
+                                      "column": 34
+                                    },
+                                    "end": {
+                                      "line": 4,
+                                      "column": 35
+                                    }
+                                  },
+                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),",
+                                  "line": 4
+                                },
+                                {
+                                  "type": "associativeDeclaration",
+                                  "body": [
+                                    "docs",
+                                    "id",
+                                    {
+                                      "type": "invokeExpression",
+                                      "body": [
+                                        {
+                                          "type": "invokeTracker",
+                                          "body": [
+                                            {
+                                              "type": "identifier",
+                                              "body": [
+                                                "compile"
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 5,
+                                                  "column": 15
+                                                },
+                                                "end": {
+                                                  "line": 5,
+                                                  "column": 16
+                                                }
+                                              },
+                                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(",
+                                              "line": 5
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 5,
+                                              "column": 16
+                                            },
+                                            "end": {
+                                              "line": 5,
+                                              "column": 33
+                                            }
+                                          },
+                                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"",
+                                          "line": 5
+                                        },
+                                        {
+                                          "type": "invokeArguments",
+                                          "body": [
+                                            {
+                                              "type": "expressionList",
+                                              "body": [
+                                                {
+                                                  "type": "stringLiteral",
+                                                  "body": "./pages/docs.sc",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 5,
+                                                      "column": 33
+                                                    },
+                                                    "end": {
+                                                      "line": 5,
+                                                      "column": 34
+                                                    }
+                                                  },
+                                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\")",
+                                                  "line": 5
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 5,
+                                                  "column": 33
+                                                },
+                                                "end": {
+                                                  "line": 5,
+                                                  "column": 34
+                                                }
+                                              },
+                                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\")",
+                                              "line": 5
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 5,
+                                              "column": 33
+                                            },
+                                            "end": {
+                                              "line": 5,
+                                              "column": 34
+                                            }
+                                          },
+                                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\")",
+                                          "line": 5
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 5,
+                                          "column": 34
+                                        },
+                                        "end": {
+                                          "line": 5,
+                                          "column": 35
+                                        }
+                                      },
+                                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),",
+                                      "line": 5
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 5,
+                                      "column": 34
+                                    },
+                                    "end": {
+                                      "line": 5,
+                                      "column": 35
+                                    }
+                                  },
+                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),",
+                                  "line": 5
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 5,
+                                  "column": 34
+                                },
+                                "end": {
+                                  "line": 5,
+                                  "column": 35
+                                }
+                              },
+                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),",
+                              "line": 5
+                            },
+                            {
+                              "type": "associativeDeclaration",
+                              "body": [
+                                "about",
+                                "id",
+                                {
+                                  "type": "invokeExpression",
+                                  "body": [
+                                    {
+                                      "type": "invokeTracker",
+                                      "body": [
+                                        {
+                                          "type": "identifier",
+                                          "body": [
+                                            "compile"
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 6,
+                                              "column": 16
+                                            },
+                                            "end": {
+                                              "line": 6,
+                                              "column": 17
+                                            }
+                                          },
+                                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(",
+                                          "line": 6
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 6,
+                                          "column": 17
+                                        },
+                                        "end": {
+                                          "line": 6,
+                                          "column": 35
+                                        }
+                                      },
+                                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\"",
+                                      "line": 6
+                                    },
+                                    {
+                                      "type": "invokeArguments",
+                                      "body": [
+                                        {
+                                          "type": "expressionList",
+                                          "body": [
+                                            {
+                                              "type": "stringLiteral",
+                                              "body": "./pages/about.sc",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 6,
+                                                  "column": 35
+                                                },
+                                                "end": {
+                                                  "line": 6,
+                                                  "column": 36
+                                                }
+                                              },
+                                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")",
+                                              "line": 6
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 6,
+                                              "column": 35
+                                            },
+                                            "end": {
+                                              "line": 6,
+                                              "column": 36
+                                            }
+                                          },
+                                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")",
+                                          "line": 6
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 6,
+                                          "column": 35
+                                        },
+                                        "end": {
+                                          "line": 6,
+                                          "column": 36
+                                        }
+                                      },
+                                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")",
+                                      "line": 6
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 1
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 2
+                                    }
+                                  },
+                                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t]",
+                                  "line": 7
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 1
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 2
+                                }
+                              },
+                              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t]",
+                              "line": 7
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 7,
+                              "column": 1
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 2
+                            }
+                          },
+                          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t]",
+                          "line": 7
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 3
+                        }
+                      },
+                      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t];",
+                      "line": 7
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 7,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 3
+                    }
+                  },
+                  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t];",
+                  "line": 7
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 8,
+                  "column": 0
+                },
+                "end": {
+                  "line": 8,
+                  "column": 1
+                }
+              },
+              "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t];\n}",
+              "line": 8
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 2
+            }
+          },
+          "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t];\n};",
+          "line": 8
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 8,
+          "column": 1
+        },
+        "end": {
+          "line": 8,
+          "column": 2
+        }
+      },
+      "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t];\n};",
+      "line": 8
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 8,
+      "column": 2
+    },
+    "end": {
+      "line": 8,
+      "column": 2
+    }
+  },
+  "raw": "return (directory: \"\") {\n\tprint(\"Will load: \", directory);\n\tpublic promises = [\n\t\thome: compile(\"./pages/home.sc\"),\n\t\tdocs: compile(\"./pages/docs.sc\"),\n\t\tabout: compile(\"./pages/about.sc\")\n\t];\n};",
+  "line": 8
+}

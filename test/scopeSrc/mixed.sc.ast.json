@@ -1,0 +1,1555 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [
+            {
+              "type": "controlCode",
+              "body": [
+                {
+                  "type": "controlCode",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 3
+                    }
+                  },
+                  "raw": "let",
+                  "line": 1
+                },
+                {
+                  "type": "declarationExpression",
+                  "body": [
+                    "let",
+                    "Foo",
+                    {
+                      "type": "scopeExpression",
+                      "body": [
+                        {
+                          "type": "scopeStart",
+                          "body": [],
+                          "loc": {
+                            "start": {
+                              "line": 2,
+                              "column": 1
+                            },
+                            "end": {
+                              "line": 2,
+                              "column": 7
+                            }
+                          },
+                          "raw": "let Foo = {\n\tpublic",
+                          "line": 2
+                        },
+                        {
+                          "type": "controlCode",
+                          "body": [
+                            {
+                              "type": "controlCode",
+                              "body": [
+                                {
+                                  "type": "controlCode",
+                                  "body": [
+                                    {
+                                      "type": "controlCode",
+                                      "body": [
+                                        {
+                                          "type": "controlCode",
+                                          "body": [
+                                            {
+                                              "type": "controlCode",
+                                              "body": [
+                                                {
+                                                  "type": "controlCode",
+                                                  "body": [],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 2,
+                                                      "column": 1
+                                                    },
+                                                    "end": {
+                                                      "line": 2,
+                                                      "column": 7
+                                                    }
+                                                  },
+                                                  "raw": "let Foo = {\n\tpublic",
+                                                  "line": 2
+                                                },
+                                                {
+                                                  "type": "declarationExpression",
+                                                  "body": [
+                                                    "public",
+                                                    "someXml",
+                                                    {
+                                                      "type": "xmlExpression",
+                                                      "body": [
+                                                        {
+                                                          "type": "identifier",
+                                                          "body": [
+                                                            "someXml"
+                                                          ],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 2,
+                                                              "column": 26
+                                                            },
+                                                            "end": {
+                                                              "line": 2,
+                                                              "column": 27
+                                                            }
+                                                          },
+                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml>",
+                                                          "line": 2
+                                                        },
+                                                        {
+                                                          "type": "xmlAttributes",
+                                                          "body": [],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 2,
+                                                              "column": 26
+                                                            },
+                                                            "end": {
+                                                              "line": 2,
+                                                              "column": 27
+                                                            }
+                                                          },
+                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml>",
+                                                          "line": 2
+                                                        },
+                                                        {
+                                                          "type": "xmlControlCode",
+                                                          "body": [],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 2,
+                                                              "column": 27
+                                                            },
+                                                            "end": {
+                                                              "line": 2,
+                                                              "column": 29
+                                                            }
+                                                          },
+                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></",
+                                                          "line": 2
+                                                        }
+                                                      ],
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 2,
+                                                          "column": 37
+                                                        },
+                                                        "end": {
+                                                          "line": 2,
+                                                          "column": 38
+                                                        }
+                                                      },
+                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;",
+                                                      "line": 2
+                                                    }
+                                                  ],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 2,
+                                                      "column": 37
+                                                    },
+                                                    "end": {
+                                                      "line": 2,
+                                                      "column": 38
+                                                    }
+                                                  },
+                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;",
+                                                  "line": 2
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 3,
+                                                  "column": 1
+                                                },
+                                                "end": {
+                                                  "line": 3,
+                                                  "column": 7
+                                                }
+                                              },
+                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic",
+                                              "line": 3
+                                            },
+                                            {
+                                              "type": "declarationExpression",
+                                              "body": [
+                                                "public",
+                                                "someNumber",
+                                                {
+                                                  "type": "numericLiteral",
+                                                  "body": 42,
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 3,
+                                                      "column": 23
+                                                    },
+                                                    "end": {
+                                                      "line": 3,
+                                                      "column": 24
+                                                    }
+                                                  },
+                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;",
+                                                  "line": 3
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 3,
+                                                  "column": 23
+                                                },
+                                                "end": {
+                                                  "line": 3,
+                                                  "column": 24
+                                                }
+                                              },
+                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;",
+                                              "line": 3
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 4,
+                                              "column": 1
+                                            },
+                                            "end": {
+                                              "line": 4,
+                                              "column": 7
+                                            }
+                                          },
+                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic",
+                                          "line": 4
+                                        },
+                                        {
+                                          "type": "declarationExpression",
+                                          "body": [
+                                            "public",
+                                            "someSwitch",
+                                            {
+                                              "type": "booleanLiteral",
+                                              "body": false,
+                                              "loc": {
+                                                "start": {
+                                                  "line": 4,
+                                                  "column": 26
+                                                },
+                                                "end": {
+                                                  "line": 4,
+                                                  "column": 27
+                                                }
+                                              },
+                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;",
+                                              "line": 4
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 4,
+                                              "column": 26
+                                            },
+                                            "end": {
+                                              "line": 4,
+                                              "column": 27
+                                            }
+                                          },
+                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;",
+                                          "line": 4
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 5,
+                                          "column": 1
+                                        },
+                                        "end": {
+                                          "line": 5,
+                                          "column": 7
+                                        }
+                                      },
+                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic",
+                                      "line": 5
+                                    },
+                                    {
+                                      "type": "declarationExpression",
+                                      "body": [
+                                        "public",
+                                        "someArray",
+                                        {
+                                          "type": "arrayExpression",
+                                          "body": [
+                                            {
+                                              "type": "arrayStart",
+                                              "body": [],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 5,
+                                                  "column": 21
+                                                },
+                                                "end": {
+                                                  "line": 5,
+                                                  "column": 22
+                                                }
+                                              },
+                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0",
+                                              "line": 5
+                                            },
+                                            {
+                                              "type": "expressionList",
+                                              "body": [
+                                                {
+                                                  "type": "numericLiteral",
+                                                  "body": 0,
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 5,
+                                                      "column": 22
+                                                    },
+                                                    "end": {
+                                                      "line": 5,
+                                                      "column": 23
+                                                    }
+                                                  },
+                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0,",
+                                                  "line": 5
+                                                },
+                                                {
+                                                  "type": "expressionList",
+                                                  "body": [
+                                                    {
+                                                      "type": "numericLiteral",
+                                                      "body": 1,
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 5,
+                                                          "column": 25
+                                                        },
+                                                        "end": {
+                                                          "line": 5,
+                                                          "column": 26
+                                                        }
+                                                      },
+                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1,",
+                                                      "line": 5
+                                                    },
+                                                    {
+                                                      "type": "expressionList",
+                                                      "body": [
+                                                        {
+                                                          "type": "numericLiteral",
+                                                          "body": 2,
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 5,
+                                                              "column": 28
+                                                            },
+                                                            "end": {
+                                                              "line": 5,
+                                                              "column": 29
+                                                            }
+                                                          },
+                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2,",
+                                                          "line": 5
+                                                        },
+                                                        {
+                                                          "type": "expressionList",
+                                                          "body": [
+                                                            {
+                                                              "type": "numericLiteral",
+                                                              "body": 3,
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 5,
+                                                                  "column": 31
+                                                                },
+                                                                "end": {
+                                                                  "line": 5,
+                                                                  "column": 32
+                                                                }
+                                                              },
+                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3,",
+                                                              "line": 5
+                                                            },
+                                                            {
+                                                              "type": "expressionList",
+                                                              "body": [
+                                                                {
+                                                                  "type": "numericLiteral",
+                                                                  "body": 4,
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 5,
+                                                                      "column": 34
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 5,
+                                                                      "column": 35
+                                                                    }
+                                                                  },
+                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4,",
+                                                                  "line": 5
+                                                                },
+                                                                {
+                                                                  "type": "expressionList",
+                                                                  "body": [
+                                                                    {
+                                                                      "type": "numericLiteral",
+                                                                      "body": 5,
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 5,
+                                                                          "column": 37
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 5,
+                                                                          "column": 38
+                                                                        }
+                                                                      },
+                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5]",
+                                                                      "line": 5
+                                                                    }
+                                                                  ],
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 5,
+                                                                      "column": 37
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 5,
+                                                                      "column": 38
+                                                                    }
+                                                                  },
+                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5]",
+                                                                  "line": 5
+                                                                }
+                                                              ],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 5,
+                                                                  "column": 37
+                                                                },
+                                                                "end": {
+                                                                  "line": 5,
+                                                                  "column": 38
+                                                                }
+                                                              },
+                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5]",
+                                                              "line": 5
+                                                            }
+                                                          ],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 5,
+                                                              "column": 37
+                                                            },
+                                                            "end": {
+                                                              "line": 5,
+                                                              "column": 38
+                                                            }
+                                                          },
+                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5]",
+                                                          "line": 5
+                                                        }
+                                                      ],
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 5,
+                                                          "column": 37
+                                                        },
+                                                        "end": {
+                                                          "line": 5,
+                                                          "column": 38
+                                                        }
+                                                      },
+                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5]",
+                                                      "line": 5
+                                                    }
+                                                  ],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 5,
+                                                      "column": 37
+                                                    },
+                                                    "end": {
+                                                      "line": 5,
+                                                      "column": 38
+                                                    }
+                                                  },
+                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5]",
+                                                  "line": 5
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 5,
+                                                  "column": 37
+                                                },
+                                                "end": {
+                                                  "line": 5,
+                                                  "column": 38
+                                                }
+                                              },
+                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5]",
+                                              "line": 5
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 5,
+                                              "column": 38
+                                            },
+                                            "end": {
+                                              "line": 5,
+                                              "column": 39
+                                            }
+                                          },
+                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];",
+                                          "line": 5
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 5,
+                                          "column": 38
+                                        },
+                                        "end": {
+                                          "line": 5,
+                                          "column": 39
+                                        }
+                                      },
+                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];",
+                                      "line": 5
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 1
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 7
+                                    }
+                                  },
+                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic",
+                                  "line": 6
+                                },
+                                {
+                                  "type": "declarationExpression",
+                                  "body": [
+                                    "public",
+                                    "someString",
+                                    {
+                                      "type": "stringLiteral",
+                                      "body": "hello, world",
+                                      "loc": {
+                                        "start": {
+                                          "line": 6,
+                                          "column": 35
+                                        },
+                                        "end": {
+                                          "line": 6,
+                                          "column": 36
+                                        }
+                                      },
+                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";",
+                                      "line": 6
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 35
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 36
+                                    }
+                                  },
+                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";",
+                                  "line": 6
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 1
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 7
+                                }
+                              },
+                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic",
+                              "line": 7
+                            },
+                            {
+                              "type": "declarationExpression",
+                              "body": [
+                                "public",
+                                "someMethod",
+                                {
+                                  "type": "scopeExpression",
+                                  "body": [
+                                    {
+                                      "type": "scopeStart",
+                                      "body": [],
+                                      "loc": {
+                                        "start": {
+                                          "line": 8,
+                                          "column": 2
+                                        },
+                                        "end": {
+                                          "line": 8,
+                                          "column": 4
+                                        }
+                                      },
+                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif",
+                                      "line": 8
+                                    },
+                                    {
+                                      "type": "controlCode",
+                                      "body": [
+                                        {
+                                          "type": "controlCode",
+                                          "body": [],
+                                          "loc": {
+                                            "start": {
+                                              "line": 8,
+                                              "column": 2
+                                            },
+                                            "end": {
+                                              "line": 8,
+                                              "column": 4
+                                            }
+                                          },
+                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif",
+                                          "line": 8
+                                        },
+                                        {
+                                          "type": "invokeExpression",
+                                          "body": [
+                                            {
+                                              "type": "invokeTracker",
+                                              "body": [
+                                                {
+                                                  "type": "identifier",
+                                                  "body": [
+                                                    "if"
+                                                  ],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 8,
+                                                      "column": 4
+                                                    },
+                                                    "end": {
+                                                      "line": 8,
+                                                      "column": 5
+                                                    }
+                                                  },
+                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(",
+                                                  "line": 8
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 8,
+                                                  "column": 5
+                                                },
+                                                "end": {
+                                                  "line": 8,
+                                                  "column": 15
+                                                }
+                                              },
+                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch",
+                                              "line": 8
+                                            },
+                                            {
+                                              "type": "invokeArguments",
+                                              "body": [
+                                                {
+                                                  "type": "expressionList",
+                                                  "body": [
+                                                    {
+                                                      "type": "identifier",
+                                                      "body": [
+                                                        "someSwitch"
+                                                      ],
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 8,
+                                                          "column": 15
+                                                        },
+                                                        "end": {
+                                                          "line": 8,
+                                                          "column": 16
+                                                        }
+                                                      },
+                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch,",
+                                                      "line": 8
+                                                    },
+                                                    {
+                                                      "type": "expressionList",
+                                                      "body": [
+                                                        {
+                                                          "type": "scopeExpression",
+                                                          "body": [
+                                                            {
+                                                              "type": "scopeStart",
+                                                              "body": [],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 9,
+                                                                  "column": 3
+                                                                },
+                                                                "end": {
+                                                                  "line": 9,
+                                                                  "column": 7
+                                                                }
+                                                              },
+                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach",
+                                                              "line": 9
+                                                            },
+                                                            {
+                                                              "type": "controlCode",
+                                                              "body": [
+                                                                {
+                                                                  "type": "controlCode",
+                                                                  "body": [],
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 9,
+                                                                      "column": 3
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 9,
+                                                                      "column": 7
+                                                                    }
+                                                                  },
+                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach",
+                                                                  "line": 9
+                                                                },
+                                                                {
+                                                                  "type": "invokeExpression",
+                                                                  "body": [
+                                                                    {
+                                                                      "type": "invokeTracker",
+                                                                      "body": [
+                                                                        {
+                                                                          "type": "identifier",
+                                                                          "body": [
+                                                                            "each"
+                                                                          ],
+                                                                          "loc": {
+                                                                            "start": {
+                                                                              "line": 9,
+                                                                              "column": 7
+                                                                            },
+                                                                            "end": {
+                                                                              "line": 9,
+                                                                              "column": 8
+                                                                            }
+                                                                          },
+                                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(",
+                                                                          "line": 9
+                                                                        }
+                                                                      ],
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 9,
+                                                                          "column": 8
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 9,
+                                                                          "column": 17
+                                                                        }
+                                                                      },
+                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray",
+                                                                      "line": 9
+                                                                    },
+                                                                    {
+                                                                      "type": "invokeArguments",
+                                                                      "body": [
+                                                                        {
+                                                                          "type": "expressionList",
+                                                                          "body": [
+                                                                            {
+                                                                              "type": "identifier",
+                                                                              "body": [
+                                                                                "someArray"
+                                                                              ],
+                                                                              "loc": {
+                                                                                "start": {
+                                                                                  "line": 9,
+                                                                                  "column": 17
+                                                                                },
+                                                                                "end": {
+                                                                                  "line": 9,
+                                                                                  "column": 18
+                                                                                }
+                                                                              },
+                                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray,",
+                                                                              "line": 9
+                                                                            },
+                                                                            {
+                                                                              "type": "expressionList",
+                                                                              "body": [
+                                                                                {
+                                                                                  "type": "scopeExpression",
+                                                                                  "body": [
+                                                                                    {
+                                                                                      "type": "scopeStart",
+                                                                                      "body": [],
+                                                                                      "loc": {
+                                                                                        "start": {
+                                                                                          "line": 10,
+                                                                                          "column": 4
+                                                                                        },
+                                                                                        "end": {
+                                                                                          "line": 10,
+                                                                                          "column": 9
+                                                                                        }
+                                                                                      },
+                                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint",
+                                                                                      "line": 10
+                                                                                    },
+                                                                                    {
+                                                                                      "type": "scopeArguments",
+                                                                                      "body": [
+                                                                                        {
+                                                                                          "type": "associativeList",
+                                                                                          "body": [
+                                                                                            {
+                                                                                              "type": "associativeDeclaration",
+                                                                                              "body": [
+                                                                                                "val",
+                                                                                                "id",
+                                                                                                {
+                                                                                                  "type": "unaryExpression",
+                                                                                                  "body": [
+                                                                                                    "-",
+                                                                                                    {
+                                                                                                      "type": "numericLiteral",
+                                                                                                      "body": 1,
+                                                                                                      "loc": {
+                                                                                                        "start": {
+                                                                                                          "line": 9,
+                                                                                                          "column": 26
+                                                                                                        },
+                                                                                                        "end": {
+                                                                                                          "line": 9,
+                                                                                                          "column": 27
+                                                                                                        }
+                                                                                                      },
+                                                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1)",
+                                                                                                      "line": 9
+                                                                                                    }
+                                                                                                  ],
+                                                                                                  "loc": {
+                                                                                                    "start": {
+                                                                                                      "line": 9,
+                                                                                                      "column": 26
+                                                                                                    },
+                                                                                                    "end": {
+                                                                                                      "line": 9,
+                                                                                                      "column": 27
+                                                                                                    }
+                                                                                                  },
+                                                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1)",
+                                                                                                  "line": 9
+                                                                                                }
+                                                                                              ],
+                                                                                              "loc": {
+                                                                                                "start": {
+                                                                                                  "line": 9,
+                                                                                                  "column": 26
+                                                                                                },
+                                                                                                "end": {
+                                                                                                  "line": 9,
+                                                                                                  "column": 27
+                                                                                                }
+                                                                                              },
+                                                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1)",
+                                                                                              "line": 9
+                                                                                            }
+                                                                                          ],
+                                                                                          "loc": {
+                                                                                            "start": {
+                                                                                              "line": 9,
+                                                                                              "column": 26
+                                                                                            },
+                                                                                            "end": {
+                                                                                              "line": 9,
+                                                                                              "column": 27
+                                                                                            }
+                                                                                          },
+                                                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1)",
+                                                                                          "line": 9
+                                                                                        }
+                                                                                      ],
+                                                                                      "loc": {
+                                                                                        "start": {
+                                                                                          "line": 9,
+                                                                                          "column": 26
+                                                                                        },
+                                                                                        "end": {
+                                                                                          "line": 9,
+                                                                                          "column": 27
+                                                                                        }
+                                                                                      },
+                                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1)",
+                                                                                      "line": 9
+                                                                                    },
+                                                                                    {
+                                                                                      "type": "controlCode",
+                                                                                      "body": [
+                                                                                        {
+                                                                                          "type": "controlCode",
+                                                                                          "body": [],
+                                                                                          "loc": {
+                                                                                            "start": {
+                                                                                              "line": 10,
+                                                                                              "column": 4
+                                                                                            },
+                                                                                            "end": {
+                                                                                              "line": 10,
+                                                                                              "column": 9
+                                                                                            }
+                                                                                          },
+                                                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint",
+                                                                                          "line": 10
+                                                                                        },
+                                                                                        {
+                                                                                          "type": "invokeExpression",
+                                                                                          "body": [
+                                                                                            {
+                                                                                              "type": "invokeTracker",
+                                                                                              "body": [
+                                                                                                {
+                                                                                                  "type": "identifier",
+                                                                                                  "body": [
+                                                                                                    "print"
+                                                                                                  ],
+                                                                                                  "loc": {
+                                                                                                    "start": {
+                                                                                                      "line": 10,
+                                                                                                      "column": 9
+                                                                                                    },
+                                                                                                    "end": {
+                                                                                                      "line": 10,
+                                                                                                      "column": 10
+                                                                                                    }
+                                                                                                  },
+                                                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(",
+                                                                                                  "line": 10
+                                                                                                }
+                                                                                              ],
+                                                                                              "loc": {
+                                                                                                "start": {
+                                                                                                  "line": 10,
+                                                                                                  "column": 10
+                                                                                                },
+                                                                                                "end": {
+                                                                                                  "line": 10,
+                                                                                                  "column": 13
+                                                                                                }
+                                                                                              },
+                                                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val",
+                                                                                              "line": 10
+                                                                                            },
+                                                                                            {
+                                                                                              "type": "invokeArguments",
+                                                                                              "body": [
+                                                                                                {
+                                                                                                  "type": "expressionList",
+                                                                                                  "body": [
+                                                                                                    {
+                                                                                                      "type": "identifier",
+                                                                                                      "body": [
+                                                                                                        "val"
+                                                                                                      ],
+                                                                                                      "loc": {
+                                                                                                        "start": {
+                                                                                                          "line": 10,
+                                                                                                          "column": 13
+                                                                                                        },
+                                                                                                        "end": {
+                                                                                                          "line": 10,
+                                                                                                          "column": 14
+                                                                                                        }
+                                                                                                      },
+                                                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val)",
+                                                                                                      "line": 10
+                                                                                                    }
+                                                                                                  ],
+                                                                                                  "loc": {
+                                                                                                    "start": {
+                                                                                                      "line": 10,
+                                                                                                      "column": 13
+                                                                                                    },
+                                                                                                    "end": {
+                                                                                                      "line": 10,
+                                                                                                      "column": 14
+                                                                                                    }
+                                                                                                  },
+                                                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val)",
+                                                                                                  "line": 10
+                                                                                                }
+                                                                                              ],
+                                                                                              "loc": {
+                                                                                                "start": {
+                                                                                                  "line": 10,
+                                                                                                  "column": 13
+                                                                                                },
+                                                                                                "end": {
+                                                                                                  "line": 10,
+                                                                                                  "column": 14
+                                                                                                }
+                                                                                              },
+                                                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val)",
+                                                                                              "line": 10
+                                                                                            }
+                                                                                          ],
+                                                                                          "loc": {
+                                                                                            "start": {
+                                                                                              "line": 10,
+                                                                                              "column": 14
+                                                                                            },
+                                                                                            "end": {
+                                                                                              "line": 10,
+                                                                                              "column": 15
+                                                                                            }
+                                                                                          },
+                                                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);",
+                                                                                          "line": 10
+                                                                                        }
+                                                                                      ],
+                                                                                      "loc": {
+                                                                                        "start": {
+                                                                                          "line": 11,
+                                                                                          "column": 3
+                                                                                        },
+                                                                                        "end": {
+                                                                                          "line": 11,
+                                                                                          "column": 4
+                                                                                        }
+                                                                                      },
+                                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t}",
+                                                                                      "line": 11
+                                                                                    }
+                                                                                  ],
+                                                                                  "loc": {
+                                                                                    "start": {
+                                                                                      "line": 11,
+                                                                                      "column": 4
+                                                                                    },
+                                                                                    "end": {
+                                                                                      "line": 11,
+                                                                                      "column": 5
+                                                                                    }
+                                                                                  },
+                                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t})",
+                                                                                  "line": 11
+                                                                                }
+                                                                              ],
+                                                                              "loc": {
+                                                                                "start": {
+                                                                                  "line": 11,
+                                                                                  "column": 4
+                                                                                },
+                                                                                "end": {
+                                                                                  "line": 11,
+                                                                                  "column": 5
+                                                                                }
+                                                                              },
+                                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t})",
+                                                                              "line": 11
+                                                                            }
+                                                                          ],
+                                                                          "loc": {
+                                                                            "start": {
+                                                                              "line": 11,
+                                                                              "column": 4
+                                                                            },
+                                                                            "end": {
+                                                                              "line": 11,
+                                                                              "column": 5
+                                                                            }
+                                                                          },
+                                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t})",
+                                                                          "line": 11
+                                                                        }
+                                                                      ],
+                                                                      "loc": {
+                                                                        "start": {
+                                                                          "line": 11,
+                                                                          "column": 4
+                                                                        },
+                                                                        "end": {
+                                                                          "line": 11,
+                                                                          "column": 5
+                                                                        }
+                                                                      },
+                                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t})",
+                                                                      "line": 11
+                                                                    }
+                                                                  ],
+                                                                  "loc": {
+                                                                    "start": {
+                                                                      "line": 11,
+                                                                      "column": 5
+                                                                    },
+                                                                    "end": {
+                                                                      "line": 11,
+                                                                      "column": 6
+                                                                    }
+                                                                  },
+                                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});",
+                                                                  "line": 11
+                                                                }
+                                                              ],
+                                                              "loc": {
+                                                                "start": {
+                                                                  "line": 12,
+                                                                  "column": 2
+                                                                },
+                                                                "end": {
+                                                                  "line": 12,
+                                                                  "column": 3
+                                                                }
+                                                              },
+                                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t}",
+                                                              "line": 12
+                                                            }
+                                                          ],
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 12,
+                                                              "column": 3
+                                                            },
+                                                            "end": {
+                                                              "line": 12,
+                                                              "column": 4
+                                                            }
+                                                          },
+                                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t})",
+                                                          "line": 12
+                                                        }
+                                                      ],
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 12,
+                                                          "column": 3
+                                                        },
+                                                        "end": {
+                                                          "line": 12,
+                                                          "column": 4
+                                                        }
+                                                      },
+                                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t})",
+                                                      "line": 12
+                                                    }
+                                                  ],
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 12,
+                                                      "column": 3
+                                                    },
+                                                    "end": {
+                                                      "line": 12,
+                                                      "column": 4
+                                                    }
+                                                  },
+                                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t})",
+                                                  "line": 12
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": {
+                                                  "line": 12,
+                                                  "column": 3
+                                                },
+                                                "end": {
+                                                  "line": 12,
+                                                  "column": 4
+                                                }
+                                              },
+                                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t})",
+                                              "line": 12
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 12,
+                                              "column": 4
+                                            },
+                                            "end": {
+                                              "line": 12,
+                                              "column": 5
+                                            }
+                                          },
+                                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});",
+                                          "line": 12
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 13,
+                                          "column": 1
+                                        },
+                                        "end": {
+                                          "line": 13,
+                                          "column": 2
+                                        }
+                                      },
+                                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t}",
+                                      "line": 13
+                                    }
+                                  ],
+                                  "loc": {
+                                    "start": {
+                                      "line": 13,
+                                      "column": 2
+                                    },
+                                    "end": {
+                                      "line": 13,
+                                      "column": 3
+                                    }
+                                  },
+                                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};",
+                                  "line": 13
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 13,
+                                  "column": 2
+                                },
+                                "end": {
+                                  "line": 13,
+                                  "column": 3
+                                }
+                              },
+                              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};",
+                              "line": 13
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 14,
+                              "column": 0
+                            },
+                            "end": {
+                              "line": 14,
+                              "column": 1
+                            }
+                          },
+                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n}",
+                          "line": 14
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 14,
+                          "column": 1
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 2
+                        }
+                      },
+                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};",
+                      "line": 14
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 14,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 2
+                    }
+                  },
+                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};",
+                  "line": 14
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 0
+                },
+                "end": {
+                  "line": 16,
+                  "column": 3
+                }
+              },
+              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet",
+              "line": 16
+            },
+            {
+              "type": "declarationExpression",
+              "body": [
+                "let",
+                "foo",
+                {
+                  "type": "invokeExpression",
+                  "body": [
+                    {
+                      "type": "invokeTracker",
+                      "body": [
+                        {
+                          "type": "identifier",
+                          "body": [
+                            "Foo"
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 16,
+                              "column": 13
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 14
+                            }
+                          },
+                          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo(",
+                          "line": 16
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 15
+                        }
+                      },
+                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo()",
+                      "line": 16
+                    },
+                    {
+                      "type": "invokeArguments",
+                      "body": [],
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 15
+                        }
+                      },
+                      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo()",
+                      "line": 16
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 16
+                    }
+                  },
+                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();",
+                  "line": 16
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 15
+                },
+                "end": {
+                  "line": 16,
+                  "column": 16
+                }
+              },
+              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();",
+              "line": 16
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 17,
+              "column": 0
+            },
+            "end": {
+              "line": 17,
+              "column": 3
+            }
+          },
+          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo",
+          "line": 17
+        },
+        {
+          "type": "assignmentExpression",
+          "body": [
+            {
+              "type": "identifier",
+              "body": [
+                {
+                  "type": "identifier",
+                  "body": [
+                    "foo"
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 4
+                    }
+                  },
+                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.",
+                  "line": 17
+                },
+                "dot",
+                "someSwitch"
+              ],
+              "loc": {
+                "start": {
+                  "line": 17,
+                  "column": 15
+                },
+                "end": {
+                  "line": 17,
+                  "column": 16
+                }
+              },
+              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch =",
+              "line": 17
+            },
+            {
+              "type": "assignmentValue",
+              "body": [
+                "=",
+                {
+                  "type": "booleanLiteral",
+                  "body": true,
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 22
+                    }
+                  },
+                  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch = true;",
+                  "line": 17
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 17,
+                  "column": 21
+                },
+                "end": {
+                  "line": 17,
+                  "column": 22
+                }
+              },
+              "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch = true;",
+              "line": 17
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 17,
+              "column": 21
+            },
+            "end": {
+              "line": 17,
+              "column": 22
+            }
+          },
+          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch = true;",
+          "line": 17
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 0
+        },
+        "end": {
+          "line": 19,
+          "column": 6
+        }
+      },
+      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch = true;\n\nreturn",
+      "line": 19
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "identifier",
+          "body": [
+            "foo"
+          ],
+          "loc": {
+            "start": {
+              "line": 19,
+              "column": 10
+            },
+            "end": {
+              "line": 19,
+              "column": 11
+            }
+          },
+          "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch = true;\n\nreturn foo;",
+          "line": 19
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 10
+        },
+        "end": {
+          "line": 19,
+          "column": 11
+        }
+      },
+      "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch = true;\n\nreturn foo;",
+      "line": 19
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 20,
+      "column": 0
+    },
+    "end": {
+      "line": 20,
+      "column": 0
+    }
+  },
+  "raw": "let Foo = {\n\tpublic someXml = <someXml></someXml>;\n\tpublic someNumber = 42;\n\tpublic someSwitch = false;\n\tpublic someArray = [0, 1, 2, 3, 4, 5];\n\tpublic someString = \"hello, world\";\n\tpublic someMethod = {\n\t\tif(someSwitch, {\n\t\t\teach(someArray, (val:-1) {\n\t\t\t\tprint(val);\n\t\t\t});\n\t\t});\n\t};\n};\n\nlet foo = Foo();\nfoo.someSwitch = true;\n\nreturn foo;\n",
+  "line": 20
+}

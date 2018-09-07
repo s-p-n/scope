@@ -108,6 +108,8 @@ class ScopeParser {
 		let self = this;
 		let ast = this.parse(code);
 		let astJSON = JSON.stringify(ast, null, '  ');
+		fs.writeFileSync(srcFilename + ".ast.json", astJSON);
+		debugger;
 		let scopeRuntime = "";
 		if (typeof window === "undefined") {
 			scopeRuntime += `#!/usr/bin/env node

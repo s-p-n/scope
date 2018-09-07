@@ -229,9 +229,14 @@ import
         {$$ = new yy.scopeAst(yy, 'importExpression', [$2]);}
     ;
 
+invokeTracker
+    : id '('
+        {$$ = new yy.scopeAst(yy, 'invokeTracker', [$id]);}
+    ;
+
 invoke
-    : id '(' invokeArguments ')'
-        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
+    : invokeTracker invokeArguments ')'
+        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$invokeTracker, $invokeArguments]);}
     | scope '(' invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
     | import '(' invokeArguments ')'

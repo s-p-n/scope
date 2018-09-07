@@ -1,0 +1,224 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [
+            {
+              "type": "controlCode",
+              "body": [
+                {
+                  "type": "controlCode",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 6
+                    }
+                  },
+                  "raw": "public",
+                  "line": 1
+                },
+                {
+                  "type": "declarationExpression",
+                  "body": [
+                    "public",
+                    "foo",
+                    {
+                      "type": "stringLiteral",
+                      "body": "im foo mod",
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 25
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 26
+                        }
+                      },
+                      "raw": "public foo = \"im foo mod\";",
+                      "line": 1
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 26
+                    }
+                  },
+                  "raw": "public foo = \"im foo mod\";",
+                  "line": 1
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 0
+                },
+                "end": {
+                  "line": 2,
+                  "column": 6
+                }
+              },
+              "raw": "public foo = \"im foo mod\";\npublic",
+              "line": 2
+            },
+            {
+              "type": "declarationExpression",
+              "body": [
+                "public",
+                "bar",
+                {
+                  "type": "stringLiteral",
+                  "body": "im bar mod",
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 26
+                    }
+                  },
+                  "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";",
+                  "line": 2
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 25
+                },
+                "end": {
+                  "line": 2,
+                  "column": 26
+                }
+              },
+              "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";",
+              "line": 2
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 3,
+              "column": 9
+            }
+          },
+          "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";\nprotected",
+          "line": 3
+        },
+        {
+          "type": "declarationExpression",
+          "body": [
+            "protected",
+            "baz",
+            {
+              "type": "stringLiteral",
+              "body": "im baz mod",
+              "loc": {
+                "start": {
+                  "line": 3,
+                  "column": 28
+                },
+                "end": {
+                  "line": 3,
+                  "column": 29
+                }
+              },
+              "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";\nprotected baz = \"im baz mod\";",
+              "line": 3
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 28
+            },
+            "end": {
+              "line": 3,
+              "column": 29
+            }
+          },
+          "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";\nprotected baz = \"im baz mod\";",
+          "line": 3
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 4,
+          "column": 7
+        }
+      },
+      "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";\nprotected baz = \"im baz mod\";\nprivate",
+      "line": 4
+    },
+    {
+      "type": "declarationExpression",
+      "body": [
+        "private",
+        "qux",
+        {
+          "type": "stringLiteral",
+          "body": "im qux mod",
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 26
+            },
+            "end": {
+              "line": 4,
+              "column": 27
+            }
+          },
+          "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";\nprotected baz = \"im baz mod\";\nprivate qux = \"im qux mod\";",
+          "line": 4
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 26
+        },
+        "end": {
+          "line": 4,
+          "column": 27
+        }
+      },
+      "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";\nprotected baz = \"im baz mod\";\nprivate qux = \"im qux mod\";",
+      "line": 4
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 4,
+      "column": 27
+    },
+    "end": {
+      "line": 4,
+      "column": 27
+    }
+  },
+  "raw": "public foo = \"im foo mod\";\npublic bar = \"im bar mod\";\nprotected baz = \"im baz mod\";\nprivate qux = \"im qux mod\";",
+  "line": 4
+}

@@ -1,0 +1,293 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [],
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 1,
+              "column": 3
+            }
+          },
+          "raw": "let",
+          "line": 1
+        },
+        {
+          "type": "declarationExpression",
+          "body": [
+            "let",
+            "arr",
+            {
+              "type": "mapExpression",
+              "body": [
+                {
+                  "type": "arrayStart",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 1
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 2
+                    }
+                  },
+                  "raw": "let arr = [\n\ta",
+                  "line": 2
+                },
+                {
+                  "type": "associativeList",
+                  "body": [
+                    {
+                      "type": "associativeList",
+                      "body": [
+                        {
+                          "type": "associativeList",
+                          "body": [
+                            {
+                              "type": "associativeDeclaration",
+                              "body": [
+                                "a",
+                                "id",
+                                {
+                                  "type": "numericLiteral",
+                                  "body": 1,
+                                  "loc": {
+                                    "start": {
+                                      "line": 2,
+                                      "column": 5
+                                    },
+                                    "end": {
+                                      "line": 2,
+                                      "column": 6
+                                    }
+                                  },
+                                  "raw": "let arr = [\n\ta: 1,",
+                                  "line": 2
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 2,
+                                  "column": 5
+                                },
+                                "end": {
+                                  "line": 2,
+                                  "column": 6
+                                }
+                              },
+                              "raw": "let arr = [\n\ta: 1,",
+                              "line": 2
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 2,
+                              "column": 5
+                            },
+                            "end": {
+                              "line": 2,
+                              "column": 6
+                            }
+                          },
+                          "raw": "let arr = [\n\ta: 1,",
+                          "line": 2
+                        },
+                        {
+                          "type": "associativeDeclaration",
+                          "body": [
+                            "b",
+                            "id",
+                            {
+                              "type": "numericLiteral",
+                              "body": 2,
+                              "loc": {
+                                "start": {
+                                  "line": 3,
+                                  "column": 5
+                                },
+                                "end": {
+                                  "line": 3,
+                                  "column": 6
+                                }
+                              },
+                              "raw": "let arr = [\n\ta: 1,\n\tb: 2,",
+                              "line": 3
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 3,
+                              "column": 5
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 6
+                            }
+                          },
+                          "raw": "let arr = [\n\ta: 1,\n\tb: 2,",
+                          "line": 3
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 5
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 6
+                        }
+                      },
+                      "raw": "let arr = [\n\ta: 1,\n\tb: 2,",
+                      "line": 3
+                    },
+                    {
+                      "type": "associativeDeclaration",
+                      "body": [
+                        "c",
+                        "id",
+                        {
+                          "type": "numericLiteral",
+                          "body": 3,
+                          "loc": {
+                            "start": {
+                              "line": 5,
+                              "column": 0
+                            },
+                            "end": {
+                              "line": 5,
+                              "column": 1
+                            }
+                          },
+                          "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n]",
+                          "line": 5
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 5,
+                          "column": 0
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 1
+                        }
+                      },
+                      "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n]",
+                      "line": 5
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 1
+                    }
+                  },
+                  "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n]",
+                  "line": 5
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 1
+                },
+                "end": {
+                  "line": 5,
+                  "column": 2
+                }
+              },
+              "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n];",
+              "line": 5
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 2
+            }
+          },
+          "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n];",
+          "line": 5
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 7,
+          "column": 0
+        },
+        "end": {
+          "line": 7,
+          "column": 6
+        }
+      },
+      "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n];\n\nreturn",
+      "line": 7
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "identifier",
+          "body": [
+            "arr"
+          ],
+          "loc": {
+            "start": {
+              "line": 7,
+              "column": 10
+            },
+            "end": {
+              "line": 7,
+              "column": 11
+            }
+          },
+          "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n];\n\nreturn arr;",
+          "line": 7
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 7,
+          "column": 10
+        },
+        "end": {
+          "line": 7,
+          "column": 11
+        }
+      },
+      "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n];\n\nreturn arr;",
+      "line": 7
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 7,
+      "column": 11
+    },
+    "end": {
+      "line": 7,
+      "column": 11
+    }
+  },
+  "raw": "let arr = [\n\ta: 1,\n\tb: 2,\n\tc: 3\n];\n\nreturn arr;",
+  "line": 7
+}

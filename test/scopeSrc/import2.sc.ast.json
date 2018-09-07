@@ -1,0 +1,365 @@
+{
+  "type": "controlCode",
+  "body": [
+    {
+      "type": "controlCode",
+      "body": [
+        {
+          "type": "controlCode",
+          "body": [
+            {
+              "type": "controlCode",
+              "body": [
+                {
+                  "type": "controlCode",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 3
+                    }
+                  },
+                  "raw": "let",
+                  "line": 1
+                },
+                {
+                  "type": "declarationExpression",
+                  "body": [
+                    "let",
+                    "Scope",
+                    {
+                      "type": "importExpression",
+                      "body": [
+                        "\"inc/scope.sc\""
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 33
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 34
+                        }
+                      },
+                      "raw": "let Scope = import \"inc/scope.sc\";",
+                      "line": 1
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 34
+                    }
+                  },
+                  "raw": "let Scope = import \"inc/scope.sc\";",
+                  "line": 1
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 0
+                },
+                "end": {
+                  "line": 2,
+                  "column": 3
+                }
+              },
+              "raw": "let Scope = import \"inc/scope.sc\";\nlet",
+              "line": 2
+            },
+            {
+              "type": "declarationExpression",
+              "body": [
+                "let",
+                "s2",
+                {
+                  "type": "importExpression",
+                  "body": [
+                    "\"inc/module.sc\""
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 2,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 32
+                    }
+                  },
+                  "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";",
+                  "line": 2
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 31
+                },
+                "end": {
+                  "line": 2,
+                  "column": 32
+                }
+              },
+              "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";",
+              "line": 2
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 3,
+              "column": 3
+            }
+          },
+          "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet",
+          "line": 3
+        },
+        {
+          "type": "declarationExpression",
+          "body": [
+            "let",
+            "s",
+            {
+              "type": "invokeExpression",
+              "body": [
+                {
+                  "type": "invokeTracker",
+                  "body": [
+                    {
+                      "type": "identifier",
+                      "body": [
+                        "Scope"
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 14
+                        }
+                      },
+                      "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope(",
+                      "line": 3
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 3,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 15
+                    }
+                  },
+                  "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope()",
+                  "line": 3
+                },
+                {
+                  "type": "invokeArguments",
+                  "body": [],
+                  "loc": {
+                    "start": {
+                      "line": 3,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 15
+                    }
+                  },
+                  "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope()",
+                  "line": 3
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 3,
+                  "column": 15
+                },
+                "end": {
+                  "line": 3,
+                  "column": 16
+                }
+              },
+              "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();",
+              "line": 3
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 15
+            },
+            "end": {
+              "line": 3,
+              "column": 16
+            }
+          },
+          "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();",
+          "line": 3
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 0
+        },
+        "end": {
+          "line": 5,
+          "column": 6
+        }
+      },
+      "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn",
+      "line": 5
+    },
+    {
+      "type": "returnExpression",
+      "body": [
+        {
+          "type": "arrayExpression",
+          "body": [
+            {
+              "type": "arrayStart",
+              "body": [],
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 8
+                },
+                "end": {
+                  "line": 5,
+                  "column": 9
+                }
+              },
+              "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s",
+              "line": 5
+            },
+            {
+              "type": "expressionList",
+              "body": [
+                {
+                  "type": "identifier",
+                  "body": [
+                    "s"
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 10
+                    }
+                  },
+                  "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s,",
+                  "line": 5
+                },
+                {
+                  "type": "expressionList",
+                  "body": [
+                    {
+                      "type": "identifier",
+                      "body": [
+                        "s2"
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 5,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 14
+                        }
+                      },
+                      "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s, s2]",
+                      "line": 5
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 5,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 14
+                    }
+                  },
+                  "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s, s2]",
+                  "line": 5
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 13
+                },
+                "end": {
+                  "line": 5,
+                  "column": 14
+                }
+              },
+              "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s, s2]",
+              "line": 5
+            }
+          ],
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 14
+            },
+            "end": {
+              "line": 5,
+              "column": 15
+            }
+          },
+          "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s, s2];",
+          "line": 5
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 14
+        },
+        "end": {
+          "line": 5,
+          "column": 15
+        }
+      },
+      "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s, s2];",
+      "line": 5
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 5,
+      "column": 15
+    },
+    "end": {
+      "line": 5,
+      "column": 15
+    }
+  },
+  "raw": "let Scope = import \"inc/scope.sc\";\nlet s2 = import \"inc/module.sc\";\nlet s = Scope();\n\nreturn [s, s2];",
+  "line": 5
+}
