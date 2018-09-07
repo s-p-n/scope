@@ -1,7 +1,11 @@
 const createProxy = (function () {
   const priv = new WeakMap();
+  const intRegexp = /^\d+$/
   const mapProxyHandler = {
     get: function (target, prop, receiver) {
+      if (typeof prop === "string" && intRegexp.test(prop)) {
+        prop = parseInt(prop);
+      }
       if (prop === "toString") {
         return () => {
           let result = `map:${priv.get(this).type} {`;
@@ -180,7 +184,10 @@ const NumericMap = (function () {
     }
 
     has (index) {
-      return index >= 0 && index < this.size;
+      if (typeof index === "number") {
+        return index >= 0 && index < this.size;
+      }
+      return false;
     }
 
     forEach (callback, thisArg=this) {
@@ -220,7 +227,6 @@ class Scope {
       function processStyle (m) {
         let style = "";
         for (let [selector, body] of m) {
-          //console.log(selector);
           style += `${selector}{`;
           let index = 0;
           let terminated = false;
@@ -267,7 +273,7 @@ class Scope {
           val = attr[a];
         }
         if (typeof val === "function") {
-          val = `scope.invokeExpression(scope.createScope(${val.toString()}), [this])`;
+          val = `${val.toString()}()`;
         }
         node.setAttribute(a, val);
       }
@@ -462,9 +468,20 @@ class Scope {
   }
 
   createScope(f) {
+    let self = this;
     f._isScope = true;
     f._parent = this._scoping;
-    return f;
+    f._beingUsed = false;
+    return new Proxy(f, {
+      apply: function (target, thisArg, args) {
+          return self.invokeExpression({
+            function: target,
+            arguments: args,
+            context: thisArg,
+            isExtension: target._beingUsed
+          });
+      }
+    });
   }
 
   invokeExpression(config = {
@@ -474,8 +491,6 @@ class Scope {
     isExtension: false
   }) {
     if (!config.function._isScope) {
-      //console.log(args);
-      //f(...args);
       return config.function.apply(config.context, config.arguments);
     }
     let scoping = this._scoping;
@@ -516,11 +531,9 @@ class Scope {
       if (typeof sc !== "function") {
         throw new Error("Attempt to use non-scope");
       }
-      let temp = self.invokeExpression({
-        function: sc,
-        arguments: [],
-        isExtension: true
-      });
+      sc._beingUsed = true;
+      let temp = sc();
+      sc._beingUsed = false;
       if (!(temp instanceof Map)) {
         throw new Error("Attempt to use scope returning non-map");
       }

@@ -2,22 +2,38 @@ let server = import "serve"(/*[
 	key: "lib/server.key",
 	cert: "lib/server.cert"
 ]*/);
-/*
+
 let db = import "inc/db.sc";
 let users = db.collection("users");
-let newUser = [
-	username: "foo",
-	password: "bar",
-	email: "foo@example.com"
-];
 
-users.insert(newUser, (err: "", value: "") {
-	if(err, {
-		print("insert error:", err);
-	}, {
-		print("insert successful:", value);
+// for some reason.. this actually works ??? Cool! =D
+let makeUser = {
+	let newUser = [
+		username: "bar",
+		password: "123",
+		email: "bar@example.com"
+	];
+
+	users.insert(newUser, (err: "", value: "") {
+		if(err, {
+			print("insert error:", err);
+		}, {
+			print("insert successful:", value);
+		});
 	});
-});
+};
+
+let findUsers = {
+	users.find().toArray((err: false, docs: []) {
+		if (err, {
+			print("Find Error:", err);
+		}, {
+			print(BSONtoMap(docs));
+		});
+	});
+};
+//makeUser(); // <-- works
+//findUsers(); // <-- works
 
 db.on("error", (err: "") {
 	print("DB Error:", err);
@@ -26,7 +42,7 @@ db.on("error", (err: "") {
 db.on("connect", {
 	print("DB Connected!");
 });
-*/
+
 let template = import "inc/template.sc";
 let loadPages = import "inc/loadPages.sc";
 

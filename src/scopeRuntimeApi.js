@@ -45,7 +45,6 @@ module.exports = (scope) => {
       } else {
       args = [];
       }
-      //console.log('args:', args);
       result += "Scope([";
       args.forEach((arg) => {
       result += `\n${spacef()}(${typeof arg.value}) ${arg.key}: ${ScopeApi.__debugReturn(arg.value, spaces + 2)}`;
@@ -74,42 +73,54 @@ module.exports = (scope) => {
 
     "if": ([condition, ifTrueScope = () => {}, ifFalseScope = () => {}]) => {
     if (condition) {
-      return scope.invokeExpression({
-        function: ifTrueScope, 
-        arguments: []});
+      return ifTrueScope();
     }
-    return scope.invokeExpression({
-      function: ifFalseScope, 
-      arguments: []});
+    return ifFalseScope();
     },
 
     "each": ([array, block = () => {}]) => {
       if (array.type === "numeric") {
         let result = [];
         for (let i = 0; i < array.size; i += 1) {
-          result.push(scope.invokeExpression({
-            function: block, 
-            arguments: [array.get(i), i]}))
+          result.push(block(array.get(i), i))
         }
         return result;
       }
       let result = scope.mapExpression();
       for (let [key, val] of array) {
-        result.set(key, scope.invokeExpression({
-          function: block, 
-          arguments: [val, key]}));
+        result.set(key, block(val, key));
+      }
+      return result;
+    },
+    "BSONtoMap": (input) => {
+      let result;
+      if (typeof input !== "object" || Buffer.isBuffer(input) || ("_bsontype" in input)) {
+        return input;
+      }
+      if (input === null) {
+        return false;
+      }
+      if (input instanceof Array) {
+        result = scope.arrayExpression();
+        for (let i = 0; i < input.length; i += 1) {
+          result[i] = ScopeApi.BSONtoMap(input[i]);
+        }
+        return result;
+      }
+      result = scope.mapExpression();
+      for (let i in input) {
+        if (Object.hasOwnProperty.call(input, i)) {
+          result[i] = ScopeApi.BSONtoMap(input[i]);
+        }
       }
       return result;
     },
     "eval": (code) => {
       let parser = new ScopeParser();
       let translation = parser.translate(code);
-      console.log(translation.code);
       return eval(translation.code);
     },
     "compile": (filename) => {
-      console.log(this);
-      console.log(filename);
       let parser = new ScopeParser();
       let srcFilename = path.join(__scopedir, filename);
       let libFilename = srcFilename.replace(/\.sc$/, ".js");
@@ -123,40 +134,33 @@ module.exports = (scope) => {
             if (err) {
               reject(`Could not write to file ${libFilename}.\n${err}`);
             }
-            resolve(scope.import(libFilename));
+            let imp = scope.import(libFilename);
+            resolve(imp);
           });
         });
       });
     },
     "promise": function (executor) {
       let p = new Promise(function (resolve, reject) {
-        scope.invokeExpression({
-          function: executor, 
-          arguments: [scope.createScope(resolve), scope.createScope(reject)]});
+        executor(resolve, reject);
       });
       let sP = scope.mapExpression();
 
       sP.set("then", (sc) => {
         p.then((result) => {
-          scope.invokeExpression({
-            function: sc, 
-            arguments: [result]});
+          sc(result);
         });
       });
 
       sP.set("catch", (sc) => {
         p.catch((err) => {
-          scope.invokeExpression({
-            function: sc, 
-            arguments: [err]});
+          sc(err);
         });
       });
 
       sP.set("finally", (sc) => {
         p.finally(() => {
-          scope.invokeExpression({
-            function: sc, 
-            arguments: []});
+          sc();
         });
       });
 
@@ -191,33 +195,27 @@ module.exports = (scope) => {
         for (let i = 0; i < values.length; i += 1) {
           result.set(arrK[i], values[i]);
         }
-        scope.invokeExpression({
-          function: sc, 
-          arguments: [result]});
+        sc(result);
       });
     });
 
     sP.set("catch", (sc) => {
       p.catch((err) => {
-        scope.invokeExpression({
-          function: sc, 
-          arguments: [err]});
+        sc(err);
       });
     });
 
     sP.set("finally", (sc) => {
       p.finally(() => {
-        scope.invokeExpression({
-          function: sc, 
-          arguments: []});
+        sc();
       });
     });
 
     return sP;
   };
-  ScopeApi.print._isScope = true;
-  ScopeApi.debug._isScope = true;
-  ScopeApi.if._isScope = true;
-  ScopeApi.each._isScope = true;
+  ScopeApi.print = scope.createScope(ScopeApi.print);
+  ScopeApi.debug = scope.createScope(ScopeApi.debug);
+  ScopeApi.if = scope.createScope(ScopeApi.if);
+  ScopeApi.each = scope.createScope(ScopeApi.each);
   return ScopeApi;
 };
