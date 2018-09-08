@@ -56,7 +56,7 @@ class ScopeRules {
 			name: "<scope:anonymouse>"
 		}
 		state.errorTail = () => `[${self.state.loc.start.line}:${self.state.loc.start.column}-${self.state.loc.end.line}:${self.state.loc.end.column}]`;
-		state.idBubble = ["this"];
+		//state.idBubble = ["this"];
 		state.importExpressions = new Map();
 		state.root = state.context;
 	    state.context = state.context;
@@ -259,9 +259,9 @@ class ScopeRules {
 			}
 			return self.sn(['scope.identifier("', name, '")'], name);
 		}
-		if (this.parentNode === "invokeTracker") {
+		/*if (this.parentNode === "invokeTracker") {
 			self.state.idBubble.push(name);
-		}
+		}*/
 		
 		if (notation === 'dot') {
 			return self.sn([name, '["', children, '"]'], `${name}.${children}`);
@@ -291,10 +291,10 @@ class ScopeRules {
 
 	invokeExpression (name, invokeArguments) {
 		let self = this;
-		let thisContext = "this";
+		/*let thisContext = "this";
 		if (name instanceof Array) {
 			[name, thisContext] = name;
-		}
+		}*/
 		return self.sn([name, '(', invokeArguments, ')'], 'invokeExpression');
 		//return self.sn(['scope.invokeExpression({arguments:[', invokeArguments, '],context:', thisContext, 'function:', name, '})'], "<scope>");
 	}
@@ -309,9 +309,9 @@ class ScopeRules {
 	}
 
 	invokeTracker (id) {
-		if (this.state.idBubble.length > 1) {
+		/*if (this.state.idBubble.length > 1) {
 			return [id, this.state.idBubble.pop()];
-		}
+		}*/
 		return id;
 	}
 
