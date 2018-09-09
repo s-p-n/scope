@@ -1,16 +1,17 @@
-let Serve = import "./lib/Serve.js";
+let Serve = import "serve";
 
 let server = Serve();
 
 server.get("/", (client: []) {
-	client.response.send(site);
+	client.response.render(site);
 });
 
 server.on("buttonClick", (client: []) {
+	print("got click");
 	client.emit("response", "Message from Outer-space");
 });
 
-server.listen([port: 8080], {
+server.listen([port: 8080, clientScope: true], {
 	print("Server running on port 8080");
 });
 

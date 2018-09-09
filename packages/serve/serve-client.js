@@ -8,14 +8,14 @@ if (!window.ServedOnce) {
 		scope.declarationExpression({
 			type: "let", 
 			name: "socket", 
-			value: new Map([
-				["on", (args) => {
-					return socket.on(args[0], args[1])
-				}],
-				["emit", (args) => {
-					return socket.emit(args[0], args[1])
-				}]
-			])
+			value: {
+				emit (channel, data) {
+					return socket.emit(channel, ScopeApi.toJSON(data));
+				},
+				on (channel, handle) {
+					return socket.on(channel, handle);
+				}
+			}
 		});
 
 		$('[bind-in]').each(function () {
@@ -23,7 +23,7 @@ if (!window.ServedOnce) {
 			var event = binder[0];
 			var id = binder[1];
 			$(this).on(event, function (e) {
-				socket.emit(id, $(this).val());
+				scope.identifier("socket").emit(id, $(this).val());
 			});
 		});
 

@@ -1,9 +1,9 @@
-let Serve = import "lib/Serve.js";
+let Serve = import "serve";
 
 let server = Serve();
 
 server.get("/", (client: []) {
-	client.response.send(site);
+	client.response.render(site);
 });
 
 server.on("say", (client: [], data: "") {
@@ -15,7 +15,7 @@ server.on("clicked", (client: [], data: "") {
 	print("clicked");
 });
 
-server.listen([port: 8080], {
+server.listen([port: 8080, clientScope: true], {
 	print("Server running on port 8080");
 });
 
@@ -42,7 +42,10 @@ let stylesheet = [
 ];
 
 let siteIo = <div id="io">
-	<input type="text" bind-in="keyup:say" />;
+	//<input type="text" bind-in="keyup:say" />;
+	<input type="text" onKeyUp=(e: []) {
+		socket.emit("say", e.target.value);
+	} />;
 	<div bind-out="echo" />;
 	<button onclick=(e: []) {
 		socket.emit("clicked");

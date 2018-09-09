@@ -1,8 +1,8 @@
 if (!window.ServedOnce) {
 	(function () {
 		window.ServedOnce = true;
-		window.scope = require('../../../lib/scopeRuntime.js');
-		window.ScopeApi = require('../../../lib/scopeRuntimeApi.js')(scope);
+		window.scope = require('../../lib/scopeRuntime.js');
+		window.ScopeApi = require('../../lib/scopeRuntimeApi.js')(scope);
 		window.socket = io.connect();
 
 		scope.declarationExpression({

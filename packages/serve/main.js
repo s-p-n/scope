@@ -52,7 +52,8 @@ function Serve (options = {}) {
 	let clients = scope.mapExpression();
 	let clientScope = true;
 	let ioListeners = scope.mapExpression();
-	
+	let Node = scope.xmlExpression("div").__proto__.constructor;
+
 	self.listen = (props, callback) => {
 		if (!props.has('port')) {
 			// TODO: set to random available port
@@ -75,29 +76,35 @@ function Serve (options = {}) {
 		}
 	};
 	
-	self.on = (channel, data) => {
-		ioListeners.set(channel, data);
+	self.on = (channel, handle) => {
+		ioListeners.set(channel, handle);
 	};
 	
 	io.on("connection", function (client) {
-		let scClient = scope.mapExpression();
-		scClient.set("emit", (args) => {
-			let channel = args[0];
-			let data = args[1];
+		let scClient = {};
+		scClient.emit = (channel, data) => {
+			if (data instanceof Node) {
+				data = data.toString();
+			}
 			client.emit(channel, data);
-		});
-		scClient.set("broadcast", (args) => {
-			let channel = args[0];
-			let data = args[1];
+		};
+		scClient.broadcast = (channel, data) => {
+			if (data instanceof Node) {
+				data = data.toString();
+			}
 			client.broadcast(channel, data);
-		});
+		};
 		for (let [channel, handle] of ioListeners) {
 			client.on(channel, function (data) {
-				handle(scClient, data);
+				let result;
+				try {
+					result = ScopeApi.BSONtoMap(JSON.parse(data));
+				} catch (e) {
+					result = scope.mapExpression(["error", e], ["input", data]);
+				}
+				handle(scClient, result);
 			});
 		}
-		scClient.get("emit")._isScope = true;
-		scClient.get("broadcast")._isScope = true;
 	});
 
 	self.get = (url, handle) => {
@@ -117,6 +124,29 @@ function Serve (options = {}) {
 				if (!useCache || !(request.url in cache)) {
 					if (clientScope && xmlType.tagName === "html") {
 						xmlType.childNodes.forEach((node) => {
+							if (node.tagName === 'head') {
+								node.appendChild(scope.xmlExpression('script', {}, `
+									window.whenReady = (function () {
+										let queue = [];
+										let interval = setInterval(function () {
+											if (document.readyState === "complete") {
+												clearInterval(interval);
+												for (let i = 0; i < queue.length; i += 1) {
+													queue[i]();
+												}
+												queue.length = 0;
+											}
+										},15);
+										return function (f) {
+											if (document.readyState === "complete") {
+												f();
+											} else {
+												queue.push(f);
+											}
+										}
+									}());
+								`));
+							}
 							if (node.tagName === 'body') {
 								node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}, ["JavaScript needed for full functionality"]));
 								node.appendChild(h('script', {src: '/socket.io/socket.io.js'}, ["JavaScript needed for full functionality"]));

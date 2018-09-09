@@ -92,6 +92,30 @@ module.exports = (scope) => {
       }
       return result;
     },
+    toJS: (input) => {
+      let result;
+      if (typeof input !== "object" || input === null) {
+        return input;
+      }
+      if (input instanceof Map) {
+        result = {};
+        for (let [key, val] of input) {
+          result[key] = ScopeApi.toJS(val);
+        }
+        return result;
+      }
+      if (input instanceof scope.arrayExpression().__proto__.constructor) {
+        let result = [];
+        for (let i = 0; i < input.size; i += 1) {
+          result.push(ScopeApi.toJS(input[i]));
+        }
+        return result;
+      }
+      return null;
+    },
+    toJSON: (input) => {
+      return JSON.stringify(ScopeApi.toJS(input));
+    },
     "BSONtoMap": (input) => {
       let result;
       if (typeof input !== "object" || Buffer.isBuffer(input) || ("_bsontype" in input)) {

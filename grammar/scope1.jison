@@ -22,6 +22,7 @@
 "."                       return '.';
 ","                       return ',';
 ";"                       return ';';
+\/(\\\/|[^\/])*\/(i(gm|mg|m|g)?|m(ig|gi|i|g)?|g(im|mi|i|m)?)?     return 'REGEXP';
 "+"                       return '+';
 "-"                       return '-';
 "*"                       return '*';
@@ -265,6 +266,8 @@ literal
         {$$ = new yy.scopeAst(yy, 'numericLiteral', Number($1));}
     | string
         {$$ = new yy.scopeAst(yy, 'stringLiteral', $1.substr(1,$1.length-2));}
+    | REGEXP
+        {$$ = new yy.scopeAst(yy, 'regexLiteral', [$1])}
     | xml
         {$$ = $1}
     | scope

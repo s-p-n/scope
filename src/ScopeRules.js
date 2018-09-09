@@ -9,7 +9,9 @@ let api = {
 	compile: "ScopeApi.compile",
 	promise: "ScopeApi.promise",
 	dereference: "ScopeApi.dereference",
-	BSONtoMap: "ScopeApi.BSONtoMap"
+	BSONtoMap: "ScopeApi.BSONtoMap",
+	toJS: "ScopeApi.toJS",
+	toJSON: "ScopeApi.toJSON"
 };
 
 let allowedUndefinedIdExpressions = [
@@ -324,6 +326,10 @@ class ScopeRules {
 		return this.sn(n.toString());
 	}
 
+	regexLiteral (r) {
+		return this.sn(r);
+	}
+
 	returnExpression (expression) {
 		let self = this;
 		return self.sn(["return ", expression]);
@@ -363,7 +369,7 @@ class ScopeRules {
 
 		state.setParentContext();
 
-		return self.sn(['scope.createScope((args)=>{',
+		return self.sn(['scope.createScope(function(args){',
 			argDeclarations,
 			controlCode,
 			"})"
