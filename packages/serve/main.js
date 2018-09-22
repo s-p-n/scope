@@ -112,13 +112,36 @@ function Serve (options = {}) {
 			let client = {};
 			let request = req;
 			let response = res;
-			
+			let userTags = null;
+
+			client.setUserTags = function (tags) {
+				if (tags && typeof tags === "object" && tags instanceof Map) {
+					console.log("set user tags");
+					userTags = tags;
+					return true;
+				}
+				console.log("did not set user tags.");
+				return false;
+			}
 
 			response.sendStyle = (stylesheet) => {
 				let css = scope.xmlExpression('style', {}, stylesheet).childNodes[0].value;
 				res.type('css').end(css);
 			};
 			response.render = (xmlType, useCache = true) => {
+				let userTagDefinitions = "";
+				if (
+					userTags && 
+					typeof userTags === "object" && 
+					userTags instanceof Map
+				) {
+					for (let [tagName, sc] of userTags) {
+						userTagDefinitions += `
+						ScopeApi.createTag("${tagName}", scope.createScope(${sc._originalFunction}));`
+					}
+					//console.log(userTagDefinitions);
+					//userTagDefinitions += `scope.identifier("renderEngine").triggerPaint();`
+				}
 				console.time("render: "+request.url);
 				let result = "";
 				if (!useCache || !(request.url in cache)) {
@@ -151,6 +174,10 @@ function Serve (options = {}) {
 								node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}, ["JavaScript needed for full functionality"]));
 								node.appendChild(h('script', {src: '/socket.io/socket.io.js'}, ["JavaScript needed for full functionality"]));
 								node.appendChild(h('script', {'src': "Serve/client.js"}, ["JavaScript needed for full functionality"]));
+								
+								if (userTagDefinitions.length > 0) {
+									node.appendChild(scope.xmlExpression('script', {}, userTagDefinitions));
+								}
 							}
 						});
 					}
@@ -168,6 +195,7 @@ function Serve (options = {}) {
 			};
 			client.request = request;
 			client.response = response;
+			//client.response.userTags = scope.mapExpression();
 			client.next = next;
 			handle(client);
 		});

@@ -39,11 +39,7 @@ let Toggle = (attr: [], children: []) {
 
 	public render = {
 		return <button onClick=handleClick>
-			if (state.isToggleOn, {
-				return "ON";
-			}, {
-				return "OFF";
-			});
+			if (state.isToggleOn, {return "ON";}, {return "OFF";});
 		</button>;
 	};
 };
@@ -58,7 +54,6 @@ let doc =
 </html>;
 
 server.get("/", (client: []) {
-	print("got /");
 	client.response.render(doc);
 });
 

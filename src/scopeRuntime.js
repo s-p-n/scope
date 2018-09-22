@@ -9,11 +9,12 @@ let randStr = (len=16) => {
 
 const createProxy = (function () {
   const priv = new WeakMap();
-  const intRegexp = /^\d+$/
+  const intRegexp = /^\-?\d+$/
   const mapProxyHandler = {
     get: function (target, prop, receiver) {
       if (typeof prop === "string" && intRegexp.test(prop)) {
         prop = parseInt(prop);
+        return target.get(prop);
       }
       if (prop === "toString") {
         return () => {
@@ -161,6 +162,15 @@ const NumericMap = (function () {
     }
 
     get (index) {
+      //console.log(index);
+      if (this.size === 0) {
+        return undefined;
+      }
+      // Allow reverse indexing like Python. foo[-1] === foo[foo.size - 1];
+      while (index < 0) { // TODO optimize using modulus operator
+        index = this.size + index;
+      }
+      //console.log(index);
       return this.array[index];
     }
 
@@ -230,10 +240,25 @@ class Scope {
       public: this.mapExpression(),
       parent: null
     };
+    this.userTags = this.mapExpression();
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
       let node;
-      if (this.identifier(tag)) {
+      if (this.userTags.has(tag.toLowerCase())) {
+        if (typeof window !== "undefined") {
+          let attrMap = this.mapExpression();
+          //console.log("found user tag:", tag);
+          //console.log(attr);
+          for (let name in attr) {
+            attrMap[name] = attr[name];
+          }
+          let html = h(tag, attr, ...children);
+          $(html).data("rawAttributes", attrMap);
+          return html;
+        }
+      }
+      /*
+      if (this.identifier(tag) && this.identifier(tag)._isScope) {
         let t = this.identifier(tag)(attr, children);
         let clientCode = {};
         function toClientCode (val) {
@@ -302,6 +327,7 @@ class Scope {
           return h("script", {id: id}, result);
         }
       }
+      */
       let voidElements = [
         "area",
         "base",
@@ -375,6 +401,7 @@ class Scope {
         }
         if (typeof val === "function") {
           let code = `scope.createScope(${val._originalFunction.toString()})`;
+          /*
           if (voidElements.indexOf(tag) === -1) {
             let event = a.toLowerCase().replace(/^on/, "");
             let thisNodeId= randStr(10);
@@ -389,9 +416,9 @@ class Scope {
             let script = this.xmlExpression("script", {"type": "text/JavaScript"}, val);
             node.appendChild(script);
             continue;
-          } else {
+          } else {*/
             val = `${code}(event)`;
-          }
+          //}
         }
         node.setAttribute(a, val);
       }
@@ -462,6 +489,9 @@ class Scope {
         case "+=":
           id.set(name, self.binaryExpression("+", id.get(name), value));
           return id.get(name);
+        case "*=":
+          id.set(name, self.binaryExpression("*", id.get(name), value));
+          return id.get(name);
         default:
           throw new Error(`Assignment Operator '${op}' is not implemented`);
       }
@@ -496,7 +526,7 @@ class Scope {
             (typeof b === "string" || typeof b === "number")) {
           return a + b;
         } else if (a instanceof NumericMap) {
-          let newA = new NumericMap(a.array);
+          let newA = this.arrayExpression(...a.array);
           newA.set(newA.size, b);
           return newA;
         }
@@ -504,7 +534,27 @@ class Scope {
       case "-":
         return a - b;
       case "*":
-        return a * b;
+        if (typeof b !== "number") {
+          b = 1;
+        }
+        if (typeof a === "number") {
+          return a * b;
+        } else if (typeof a === "string") {
+          let result = "";
+          for (let i = 0; i < b; i += 1) {
+            result += a;
+          }
+          return result;
+        } else if (a instanceof NumericMap) {
+          let newA = scope.arrayExpression();
+          for (let i = 0; i < b; i += 1) {
+            for (let j = 0; j < a.size; j += 1) {
+              newA.set(newA.size, a[j]);
+            }
+          }
+          return newA;
+        }
+        throw new Error(`Attempt to multiply incompatible types: '${a}' + '${b}'`);
       case "/":
         return a / b;
       case "^":

@@ -3,6 +3,7 @@ let path = require('path');
 let ScopeParser = require ('./ScopeParser.js');
 
 module.exports = (scope) => {
+  let userTags = scope.userTags;
   const ScopeApi = {
     "print": value => {
       let result = [];
@@ -15,7 +16,15 @@ module.exports = (scope) => {
       }
       console.log(...result);
     },
-
+    createTag: (name, T) => {
+      userTags[name.toLowerCase()] = T;
+    },
+    getTag: name => {
+      return userTags[name.toLowerCase()];
+    },
+    getAllTags: () => {
+      return userTags;
+    },
     "debug": value => {
     value.forEach((val) => {
       ScopeApi.print([ScopeApi.__debugReturn(val)]);
@@ -81,14 +90,24 @@ module.exports = (scope) => {
     "each": ([array, block = () => {}]) => {
       if (array.type === "numeric") {
         let result = [];
+        let cancelLoop = false;
+        let cancel = () => {
+          cancelLoop = true;
+        };
         for (let i = 0; i < array.size; i += 1) {
-          result.push(block(array.get(i), i))
+          result.push(block(array.get(i), i, cancel));
+          if (cancelLoop) {
+            break;
+          }
         }
-        return result;
+        return scope.arrayExpression(...result);
       }
       let result = scope.mapExpression();
       for (let [key, val] of array) {
-        result.set(key, block(val, key));
+        result.set(key, block(val, key, cancel));
+        if (cancelLoop) {
+          break;
+        }
       }
       return result;
     },

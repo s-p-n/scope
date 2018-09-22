@@ -2824,7 +2824,10 @@ let api = {
 	dereference: "ScopeApi.dereference",
 	BSONtoMap: "ScopeApi.BSONtoMap",
 	toJS: "ScopeApi.toJS",
-	toJSON: "ScopeApi.toJSON"
+	toJSON: "ScopeApi.toJSON",
+	createTag: "ScopeApi.createTag",
+	getTag: "ScopeApi.getTag",
+	getAllTags: "ScopeApi.getAllTags"
 };
 
 let allowedUndefinedIdExpressions = ["xmlExpression", "invokeId"];
@@ -4289,11 +4292,12 @@ let randStr = (len = 16) => {
 
 const createProxy = function () {
   const priv = new WeakMap();
-  const intRegexp = /^\d+$/;
+  const intRegexp = /^\-?\d+$/;
   const mapProxyHandler = {
     get: function (target, prop, receiver) {
       if (typeof prop === "string" && intRegexp.test(prop)) {
         prop = parseInt(prop);
+        return target.get(prop);
       }
       if (prop === "toString") {
         return () => {
@@ -4444,6 +4448,16 @@ const NumericMap = function () {
     }
 
     get(index) {
+      //console.log(index);
+      if (this.size === 0) {
+        return undefined;
+      }
+      // Allow reverse indexing like Python. foo[-1] === foo[foo.size - 1];
+      while (index < 0) {
+        // TODO optimize using modulus operator
+        index = this.size + index;
+      }
+      //console.log(index);
       return this.array[index];
     }
 
@@ -4513,16 +4527,31 @@ class Scope {
       public: this.mapExpression(),
       parent: null
     };
+    this.userTags = this.mapExpression();
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
       let node;
-      if (this.identifier(tag)) {
+      if (this.userTags.has(tag.toLowerCase())) {
+        if (typeof window !== "undefined") {
+          let attrMap = this.mapExpression();
+          //console.log("found user tag:", tag);
+          //console.log(attr);
+          for (let name in attr) {
+            attrMap[name] = attr[name];
+          }
+          let html = h(tag, attr, ...children);
+          $(html).data("rawAttributes", attrMap);
+          return html;
+        }
+      }
+      /*
+      if (this.identifier(tag) && this.identifier(tag)._isScope) {
         let t = this.identifier(tag)(attr, children);
         let clientCode = {};
-        function toClientCode(val) {
+        function toClientCode (val) {
           if (typeof val === "function") {
             if (val._isScope) {
-              return val._originalFunction;
+              return val._originalFunction; 
             } else {
               return "undefined";
             }
@@ -4536,16 +4565,15 @@ class Scope {
           }
           if (typeof val === "object" && val instanceof Map) {
             let result = "{";
-            for (let [k, v] of val) {
+            for (let [k,v] of val) {
               result += `"${k}":${toClientCode(v)},`;
             }
             return result + "}";
           }
           return JSON.stringify(val);
         }
-
-        clientCode = toClientCode(t);
-
+         clientCode = toClientCode(t);
+          
         let id = randStr(10);
         if (typeof t.render === "function") {
           let code = this.identifier(tag)._originalFunction;
@@ -4582,9 +4610,10 @@ class Scope {
               })
               render();
             });`;
-          return h("script", { id: id }, result);
+          return h("script", {id: id}, result);
         }
       }
+      */
       let voidElements = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
       function processStyle(m) {
         let style = "";
@@ -4643,9 +4672,10 @@ class Scope {
         }
         if (typeof val === "function") {
           let code = `scope.createScope(${val._originalFunction.toString()})`;
+          /*
           if (voidElements.indexOf(tag) === -1) {
             let event = a.toLowerCase().replace(/^on/, "");
-            let thisNodeId = randStr(10);
+            let thisNodeId= randStr(10);
             node.setAttribute("id", thisNodeId);
             val = `
             whenReady(function () {
@@ -4654,12 +4684,12 @@ class Scope {
                 ${code}
               );
             });`;
-            let script = this.xmlExpression("script", { "type": "text/JavaScript" }, val);
+            let script = this.xmlExpression("script", {"type": "text/JavaScript"}, val);
             node.appendChild(script);
             continue;
-          } else {
-            val = `${code}(event)`;
-          }
+          } else {*/
+          val = `${code}(event)`;
+          //}
         }
         node.setAttribute(a, val);
       }
@@ -4730,6 +4760,9 @@ class Scope {
         case "+=":
           id.set(name, self.binaryExpression("+", id.get(name), value));
           return id.get(name);
+        case "*=":
+          id.set(name, self.binaryExpression("*", id.get(name), value));
+          return id.get(name);
         default:
           throw new Error(`Assignment Operator '${op}' is not implemented`);
       }
@@ -4763,7 +4796,7 @@ class Scope {
         if ((typeof a === "string" || typeof a === "number") && (typeof b === "string" || typeof b === "number")) {
           return a + b;
         } else if (a instanceof NumericMap) {
-          let newA = new NumericMap(a.array);
+          let newA = this.arrayExpression(...a.array);
           newA.set(newA.size, b);
           return newA;
         }
@@ -4771,7 +4804,27 @@ class Scope {
       case "-":
         return a - b;
       case "*":
-        return a * b;
+        if (typeof b !== "number") {
+          b = 1;
+        }
+        if (typeof a === "number") {
+          return a * b;
+        } else if (typeof a === "string") {
+          let result = "";
+          for (let i = 0; i < b; i += 1) {
+            result += a;
+          }
+          return result;
+        } else if (a instanceof NumericMap) {
+          let newA = scope.arrayExpression();
+          for (let i = 0; i < b; i += 1) {
+            for (let j = 0; j < a.size; j += 1) {
+              newA.set(newA.size, a[j]);
+            }
+          }
+          return newA;
+        }
+        throw new Error(`Attempt to multiply incompatible types: '${a}' + '${b}'`);
       case "/":
         return a / b;
       case "^":
@@ -4951,6 +5004,7 @@ let path = require('path');
 let ScopeParser = require('./ScopeParser.js');
 
 module.exports = scope => {
+  let userTags = scope.userTags;
   const ScopeApi = {
     "print": value => {
       let result = [];
@@ -4963,7 +5017,15 @@ module.exports = scope => {
       }
       console.log(...result);
     },
-
+    createTag: (name, T) => {
+      userTags[name.toLowerCase()] = T;
+    },
+    getTag: name => {
+      return userTags[name.toLowerCase()];
+    },
+    getAllTags: () => {
+      return userTags;
+    },
     "debug": value => {
       value.forEach(val => {
         ScopeApi.print([ScopeApi.__debugReturn(val)]);
@@ -5029,14 +5091,24 @@ module.exports = scope => {
     "each": ([array, block = () => {}]) => {
       if (array.type === "numeric") {
         let result = [];
+        let cancelLoop = false;
+        let cancel = () => {
+          cancelLoop = true;
+        };
         for (let i = 0; i < array.size; i += 1) {
-          result.push(block(array.get(i), i));
+          result.push(block(array.get(i), i, cancel));
+          if (cancelLoop) {
+            break;
+          }
         }
-        return result;
+        return scope.arrayExpression(...result);
       }
       let result = scope.mapExpression();
       for (let [key, val] of array) {
-        result.set(key, block(val, key));
+        result.set(key, block(val, key, cancel));
+        if (cancelLoop) {
+          break;
+        }
       }
       return result;
     },
@@ -12640,6 +12712,120 @@ if (!window.ServedOnce) {
 			}
 		});
 
+		function attrToMap(attributes) {
+			let result = scope.mapExpression();
+			for (let i = 0; i < attributes.length; i += 1) {
+				let name = attributes[i].name;
+				let value = attributes[i].value;
+				result[name] = value;
+			}
+			return result;
+		}
+		function randStr (len=16) {
+			let result = "";
+			let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+			for (let i = 0; i < len; i += 1) {
+				result += chars[Math.floor(Math.random() * chars.length)];
+			}
+			return result;
+		}
+
+		
+
+		function stateProxy (instance, element) {
+			let state = instance.state;
+			let stateProxyTraps = {
+				get (target, prop, receiver) {
+					//console.log("get state-proxy:", prop, target[prop]);
+					if (typeof target[prop] !== "undefined") {
+						if (prop === "set") {
+							return function (name, val) {
+								//console.log("set state-proxy(2):", name, val);
+								let result = target[prop](name, val);
+								let newElement = instance.render();
+								$(element).replaceWith(newElement);
+								element = newElement;
+								scope.identifier("renderEngine").triggerPaint();
+								return result;
+							};
+						}
+						if (typeof target[prop] === "object") {
+							return new Proxy(target[prop], stateProxyTraps);
+						}
+						return target[prop];
+					}
+					return undefined;
+				},
+				set (target, prop, val) {
+					//console.log("set state-proxy:", prop, target[prop], val);
+					target[prop] = val;
+					let newElement = instance.render();
+					$(element).replaceWith(newElement);
+					element = newElement;
+					scope.identifier("renderEngine").triggerPaint();
+					return val;
+				}
+			}
+			instance.state = new Proxy(state, stateProxyTraps);
+			instance.setState = (newState) => {
+				instance.state = new Proxy(newState, stateProxyTraps);
+				let newElement = instance.render();
+				$(element).replaceWith(newElement);
+				element = newElement;
+				scope.identifier("renderEngine").triggerPaint();
+				return instance.state;
+			}
+		}
+
+		scope.declarationExpression({
+			type: "let",
+			name: "userTagStates",
+			value: scope.mapExpression()
+		});
+		let lastPaint = 0;
+		let minPaintInterval = 150;
+		scope.declarationExpression({
+			type: "let",
+			name: "renderEngine",
+			value: {
+				triggerPaint () {
+					return window.requestAnimationFrame(scope.identifier("renderEngine").paint);
+				},
+				paint() {
+					let self = this;
+					let userTags = ScopeApi.getAllTags();
+					//console.log(...userTags);
+					for (let [tagName, sc] of userTags) {
+						$(document).find(tagName).each(function (i, element) {
+							//console.log("tag found:", tagName);
+							let attr = $(element).data("rawAttributes") || scope.mapExpression();
+							let id = randStr();
+							let tClass = sc(attr, element.childNodes);
+							if (typeof tClass.render === "function") {
+								let node = tClass.render();
+								//$(node).attr("id", id);
+								scope.identifier("userTagStates").set(id, tClass);
+								if (tClass.state && tClass.state instanceof Map) {
+									//console.log("creating state proxy");
+									stateProxy(tClass, node);
+								}
+								if (tClass.listeners && tClass.listeners instanceof Map) {
+									//console.log("found listeners:");
+									for (let [event, func] of tClass.listeners) {
+										//console.log(event);
+										//console.log(func);
+										$(node).on(event, func);
+									}
+								}
+								element.replaceWith(node);
+								scope.identifier("renderEngine").triggerPaint();
+							}
+						});
+					}
+				}
+			}
+		});
+		whenReady(scope.identifier("renderEngine").triggerPaint);
 		$('[bind-in]').each(function () {
 			var binder = $(this).attr('bind-in').split(':');
 			var event = binder[0];

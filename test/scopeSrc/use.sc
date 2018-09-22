@@ -12,5 +12,6 @@ let user2 = {
 	use usee only ("foo");
 	public bar = foo;
 };
-
-return [user1(), user2()];
+print(user1());
+print(user2());
+//return [user1(), user2()];

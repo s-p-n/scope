@@ -18,6 +18,120 @@ if (!window.ServedOnce) {
 			}
 		});
 
+		function attrToMap(attributes) {
+			let result = scope.mapExpression();
+			for (let i = 0; i < attributes.length; i += 1) {
+				let name = attributes[i].name;
+				let value = attributes[i].value;
+				result[name] = value;
+			}
+			return result;
+		}
+		function randStr (len=16) {
+			let result = "";
+			let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+			for (let i = 0; i < len; i += 1) {
+				result += chars[Math.floor(Math.random() * chars.length)];
+			}
+			return result;
+		}
+
+		
+
+		function stateProxy (instance, element) {
+			let state = instance.state;
+			let stateProxyTraps = {
+				get (target, prop, receiver) {
+					//console.log("get state-proxy:", prop, target[prop]);
+					if (typeof target[prop] !== "undefined") {
+						if (prop === "set") {
+							return function (name, val) {
+								//console.log("set state-proxy(2):", name, val);
+								let result = target[prop](name, val);
+								let newElement = instance.render();
+								$(element).replaceWith(newElement);
+								element = newElement;
+								scope.identifier("renderEngine").triggerPaint();
+								return result;
+							};
+						}
+						if (typeof target[prop] === "object") {
+							return new Proxy(target[prop], stateProxyTraps);
+						}
+						return target[prop];
+					}
+					return undefined;
+				},
+				set (target, prop, val) {
+					//console.log("set state-proxy:", prop, target[prop], val);
+					target[prop] = val;
+					let newElement = instance.render();
+					$(element).replaceWith(newElement);
+					element = newElement;
+					scope.identifier("renderEngine").triggerPaint();
+					return val;
+				}
+			}
+			instance.state = new Proxy(state, stateProxyTraps);
+			instance.setState = (newState) => {
+				instance.state = new Proxy(newState, stateProxyTraps);
+				let newElement = instance.render();
+				$(element).replaceWith(newElement);
+				element = newElement;
+				scope.identifier("renderEngine").triggerPaint();
+				return instance.state;
+			}
+		}
+
+		scope.declarationExpression({
+			type: "let",
+			name: "userTagStates",
+			value: scope.mapExpression()
+		});
+		let lastPaint = 0;
+		let minPaintInterval = 150;
+		scope.declarationExpression({
+			type: "let",
+			name: "renderEngine",
+			value: {
+				triggerPaint () {
+					return window.requestAnimationFrame(scope.identifier("renderEngine").paint);
+				},
+				paint() {
+					let self = this;
+					let userTags = ScopeApi.getAllTags();
+					//console.log(...userTags);
+					for (let [tagName, sc] of userTags) {
+						$(document).find(tagName).each(function (i, element) {
+							//console.log("tag found:", tagName);
+							let attr = $(element).data("rawAttributes") || scope.mapExpression();
+							let id = randStr();
+							let tClass = sc(attr, element.childNodes);
+							if (typeof tClass.render === "function") {
+								let node = tClass.render();
+								//$(node).attr("id", id);
+								scope.identifier("userTagStates").set(id, tClass);
+								if (tClass.state && tClass.state instanceof Map) {
+									//console.log("creating state proxy");
+									stateProxy(tClass, node);
+								}
+								if (tClass.listeners && tClass.listeners instanceof Map) {
+									//console.log("found listeners:");
+									for (let [event, func] of tClass.listeners) {
+										//console.log(event);
+										//console.log(func);
+										$(node).on(event, func);
+									}
+								}
+								element.replaceWith(node);
+								scope.identifier("renderEngine").triggerPaint();
+							}
+						});
+					}
+				}
+			}
+		});
+		whenReady(scope.identifier("renderEngine").triggerPaint);
 		$('[bind-in]').each(function () {
 			var binder = $(this).attr('bind-in').split(':');
 			var event = binder[0];
