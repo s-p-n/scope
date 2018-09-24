@@ -117,17 +117,18 @@ createTag("Game", {
 		let history = state.history;
 		let current = history[state.stepNumber];
 		let winner = getWinner(current.squares);
-		let moves = <ol></ol>;
-		each(history, (val: [], move: 0) {
-			let desc = if(move, {
-				return "Go to move #" + move;
-			}, {
-				return "Go to game start";
+		let moves = <ol>
+			each(history, (val: [], move: 0) {
+				let desc = if(move, {
+					return "Go to move #" + move;
+				}, {
+					return "Go to game start";
+				});
+				return <li>
+					<jumpTo onClick={jumpTo(move);}>desc;</jumpTo>;
+				</li>;
 			});
-			moves.appendChild(<li>
-				<jumpTo onClick={jumpTo(move);}>desc;</jumpTo>;
-			</li>);
-		});
+		</ol>;
 		let status = if (winner isnt "", {
 			return "Winner: " + winner;
 		}, {

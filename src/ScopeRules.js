@@ -193,12 +193,45 @@ class ScopeRules {
 		return self.sn(bool.toString());
 	}
 
+	bracketExpression (expression) {
+		let self = this;
+		return self.sn(['[', expression, ']']);
+	}
+
+	bracketSelectorExpression (a, b) {
+		let self = this;
+		return [a + "", b + ""]
+	}
+
 	controlCode (controlCode="", expression) {
 		let self = this;
 		if (expression === undefined) {
 			return self.sn("");
 		}
 		return self.sn([controlCode, expression, ';']);
+	}
+
+	declarationId (identifier) {
+		return `"${identifier}"`;
+	}
+
+	declarationIdList (idList) {
+		let node = idList;
+		//console.log(JSON.stringify(idList));
+		while(node.children.length === 3) {
+			for (let i = 0; i < node.children.length; i += 1) {
+				if (typeof node.children[i] === "string") {
+					if (node.children[i] !== ",") {
+						node.children[i] = '"' + node.children[i] + '"';
+					}
+				} else {
+					node = node.children[i];
+				}
+			}
+		}
+		node.children[0] = '"' + node.children[0] + '"';
+		//console.log(JSON.stringify(idList));
+		return `[${idList}]`;
 	}
 
 	declarationExpression (type, name, value) {
@@ -223,7 +256,7 @@ class ScopeRules {
 		}
 		return 'scope.declarationExpression({' +
 				'type:"' + type + '",' +
-				'name:"' + name + '",' +
+				'name:' + name + ',' +
 				'value:' + value +
 			'})';
 	}
@@ -250,6 +283,9 @@ class ScopeRules {
 				return self.sn([name, ',"', children, '"'], `${name}.${children}`);
 			}
 			if (notation === "bracket") {
+				if (children instanceof Array) {
+					return self.sn([name, ',', children[0], ',', children[1]], `${name}[${children[0]}:${children[1]}]`);
+				}
 				return self.sn([name, ',', children], `${name}[${children}]`);
 			}
 			return self.sn(['"', name, '"'], `${name}`);
@@ -271,6 +307,9 @@ class ScopeRules {
 		if (notation === 'dot') {
 			return self.sn([name, '["', children, '"]'], `${name}.${children}`);
 		} else {
+			if (children instanceof Array) {
+				return self.sn([name, `.slice(${children[0]},${children[1]})`], `${name}[${children[0]}:${children[1]}]`);
+			}
 			return self.sn([name, '[', children, ']'], `${name}[${children}]`);
 		}
 
@@ -309,7 +348,10 @@ class ScopeRules {
 		if (notation === 'dot') {
 			return self.sn([invokeExpression, '["', identifier, '"]'], `<map>.${identifier}`);
 		} else {
-			return self.sn([invokeExpression, '[', identifier, ']'], `<map>[${identifier}]`);
+			if (identifier instanceof Array) {
+				return self.sn([name, `.slice(${identifier[0]},${identifier[1]})`], `${name}[${identifier[0]}:${identifier[1]}]`);
+			}
+			return self.sn([name, '[', identifier, ']'], `${name}[${identifier}]`);
 		}
 	}
 

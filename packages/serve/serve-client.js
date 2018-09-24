@@ -48,10 +48,9 @@ if (!window.ServedOnce) {
 							return function (name, val) {
 								//console.log("set state-proxy(2):", name, val);
 								let result = target[prop](name, val);
-								let newElement = instance.render();
+								let newElement = scope.identifier("renderEngine").renderChildren(instance.render());
 								$(element).replaceWith(newElement);
 								element = newElement;
-								scope.identifier("renderEngine").triggerPaint();
 								return result;
 							};
 						}
@@ -65,20 +64,24 @@ if (!window.ServedOnce) {
 				set (target, prop, val) {
 					//console.log("set state-proxy:", prop, target[prop], val);
 					target[prop] = val;
-					let newElement = instance.render();
+					let newElement = scope.identifier("renderEngine").renderChildren(instance.render());
 					$(element).replaceWith(newElement);
 					element = newElement;
-					scope.identifier("renderEngine").triggerPaint();
 					return val;
 				}
 			}
 			instance.state = new Proxy(state, stateProxyTraps);
 			instance.setState = (newState) => {
+				for (let [key, val] of state) {
+					if (!newState.has(key)) {
+						newState.set(key, val);
+					}
+				}
+				state = newState;
 				instance.state = new Proxy(newState, stateProxyTraps);
-				let newElement = instance.render();
+				let newElement = scope.identifier("renderEngine").renderChildren(instance.render());
 				$(element).replaceWith(newElement);
 				element = newElement;
-				scope.identifier("renderEngine").triggerPaint();
 				return instance.state;
 			}
 		}
@@ -97,37 +100,45 @@ if (!window.ServedOnce) {
 				triggerPaint () {
 					return window.requestAnimationFrame(scope.identifier("renderEngine").paint);
 				},
-				paint() {
+				renderUserTag (tagName, sc, element) {
+					let attr = $(element).data("rawAttributes") || scope.mapExpression();
+					let id = randStr();
+					let tClass = sc(attr, element.childNodes);
+					if (typeof tClass.render === "function") {
+						let node = tClass.render();
+						scope.identifier("userTagStates").set(id, tClass);
+						if (tClass.state && tClass.state instanceof Map) {
+							stateProxy(tClass, node);
+						}
+						if (tClass.listeners && tClass.listeners instanceof Map) {
+							for (let [event, func] of tClass.listeners) {
+								$(node).on(event, func);
+							}
+						}
+						return node;
+					}
+					// No render function found, so return original element.
+					return element;
+				},
+				renderChildren (n) {
 					let self = this;
 					let userTags = ScopeApi.getAllTags();
-					//console.log(...userTags);
+					if(document.contains(n)) {
+						console.log("render after paint");
+					} else {
+						console.log("render before paint");
+					}
 					for (let [tagName, sc] of userTags) {
-						$(document).find(tagName).each(function (i, element) {
-							//console.log("tag found:", tagName);
-							let attr = $(element).data("rawAttributes") || scope.mapExpression();
-							let id = randStr();
-							let tClass = sc(attr, element.childNodes);
-							if (typeof tClass.render === "function") {
-								let node = tClass.render();
-								//$(node).attr("id", id);
-								scope.identifier("userTagStates").set(id, tClass);
-								if (tClass.state && tClass.state instanceof Map) {
-									//console.log("creating state proxy");
-									stateProxy(tClass, node);
-								}
-								if (tClass.listeners && tClass.listeners instanceof Map) {
-									//console.log("found listeners:");
-									for (let [event, func] of tClass.listeners) {
-										//console.log(event);
-										//console.log(func);
-										$(node).on(event, func);
-									}
-								}
-								element.replaceWith(node);
-								scope.identifier("renderEngine").triggerPaint();
-							}
+						$(n).find(tagName).each(function (i, element) {
+							let node = self.renderUserTag(tagName, sc, element);
+							element.replaceWith(self.renderChildren(node));
 						});
 					}
+					return n;
+				},
+				paint() {
+					let self = scope.identifier("renderEngine");
+					self.renderChildren(document);
 				}
 			}
 		});

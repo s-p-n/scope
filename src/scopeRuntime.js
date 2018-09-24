@@ -7,6 +7,81 @@ let randStr = (len=16) => {
   return result;
 }
 
+let indexRange = (begin, end, size) => {
+  if (typeof size !== "number") {
+    return [0,0];
+  }
+
+  if (typeof begin !== "number") {
+    begin = 0;
+  }
+
+  if (typeof end !== "number") {
+    end = size;
+  }
+
+  if (begin < 0) {
+    begin = size + begin;
+    if (begin < 0) {
+      begin = 0;
+    }
+  }
+  
+  if (end < 0) {
+    end = size + end;
+    if (end < 0) {
+      end = 0;
+    }
+  }
+
+  if (end > size) {
+    end = size;
+  }
+
+  if (begin >= end) {
+    return [0,0];
+  }
+
+  return [begin, end];
+}
+
+Map.prototype.slice = function slice (begin=0, end=this.size) {
+  let iterator = this.entries();
+  let arr = [];
+
+  if (begin < 0) {
+    begin = this.size + begin;
+    if (begin < 0) {
+      begin = 0;
+    }
+  }
+  
+  if (end < 0) {
+    end = this.size + end;
+    if (end < 0) {
+      end = 0;
+    }
+  }
+
+  if (end > this.size) {
+    end = this.size;
+  }
+
+  if (begin >= end) {
+    return scope.mapExpression();
+  }
+
+  for (let i = 0; i < begin; i += 1) {
+    iterator.next();
+  }
+
+  for (let i = begin; i < end; i += 1) {
+    arr.push(iterator.next().value);
+  }
+
+  return scope.mapExpression(...arr);
+}
+
 const createProxy = (function () {
   const priv = new WeakMap();
   const intRegexp = /^\-?\d+$/
@@ -178,6 +253,10 @@ const NumericMap = (function () {
       return this.array[index] = value;
     }
 
+    slice (begin = 0, end = this.size) {
+      return scope.arrayExpression(...this.array.slice(begin, end));
+    }
+
     delete (index) {
       if (this.has(index)) {
         this.array.splice(index, 1);
@@ -244,6 +323,18 @@ class Scope {
     let h = require("hyperscript");
     this.xmlExpression = (tag, attr, ...children) => {
       let node;
+      if (tag !== "style" && tag !== "script") {
+        let newChildren = [];
+        for (let i = 0; i < children.length; i += 1) {
+          let child = children[i];
+          if (child instanceof NumericMap || child instanceof Map) {
+            newChildren.push(...child.values());
+          } else {
+            newChildren.push(child);
+          }
+        }
+        children = newChildren;
+      }
       if (this.userTags.has(tag.toLowerCase())) {
         if (typeof window !== "undefined") {
           let attrMap = this.mapExpression();
@@ -459,7 +550,31 @@ class Scope {
     let [op, value] = valParts;
     let id;
     if (names.length > 1) {
-      [id, name] = names;
+      if (names.length === 2) {
+        [id, name] = names;
+      } else if (names.length === 3) {
+        id = names[0];
+        let [begin, end] = indexRange(names[1], names[2], id.size);
+        if (id instanceof NumericMap) {
+          let values = self.arrayExpression();
+          for (let i = begin; i < end; i += 1) {
+            values.array.push(self.assignmentExpression([id, i], valParts, ctx));
+          }
+          return values;
+        } else if (id instanceof Map) {
+          let values = self.mapExpression();
+          let keys = id.keys();
+          for (let i = 0; i < begin; i += 1) {
+            keys.next();
+          }
+          for (let i = begin; i < end; i += 1) {
+            let key = keys.next().value;
+            values.set(key, self.assignmentExpression([id, key], valParts, ctx));
+          }
+          return values;
+        }
+        throw new Error(`Unexpected Range Assignment \`[:]\` on non-map.`);
+      }
       //return names[0].set(names[1], value);
     } else {
       name = names[names.length - 1];
@@ -566,35 +681,53 @@ class Scope {
 
   declarationExpression({ type, name, value }) {
     const self = this;
+    let ctx;
+
+    if(name instanceof Array) {
+      if (value !== null && typeof value[Symbol.iterator] === 'function') {
+        let result = [];
+        for (let i = 0; i < name.length; i += 1) {
+          let val;
+          if (value.length <= i) {
+            val = undefined;
+          } else {
+            val = value[i];
+          }
+          result.push(self.declarationExpression({type: type, name: name[i], value: val}));
+        }
+        return self.arrayExpression(...result);
+      } else {
+        throw new Error("Attempt to iterate over non-iterable during declaration");
+      }
+    }
+
     if (type === 'let') {
       if (self._scoping.let.has(name)) {
         throw new Error(`Identifier '${name}' has already been declared`);
       }
-      self._scoping.let.set(name, value);
-      return value;
+      ctx = self._scoping.let;
     }
     if (type === 'private') {
       if (self._scoping.private.has(name)) {
         throw new Error(`Identifier '${name}' has already been declared`);
       }
-      self._scoping.private.set(name, value);
-      return value;
+      ctx = self._scoping.private;
     }
     if (type === 'protected') {
       if (self._scoping.protected.has(name)) {
         throw new Error(`Identifier '${name}' has already been declared`);
       }
-      self._scoping.protected.set(name, value);
-      return value;
+      ctx = self._scoping.protected;
     }
     if (type === 'public') {
       if (self._scoping.public.has(name)) {
         throw new Error(`Identifier '${name}' has already been declared`);
       }
-      self._scoping.public.set(name, value);
-      return value;
+      ctx = self._scoping.public;
     }
-    throw new Error("A problem occurred - unknown declaration type.");
+
+    ctx.set(name, value);
+    return value;
   }
 
   dereferenceIdentifier (name, ctx=this._scoping) {
@@ -634,6 +767,12 @@ class Scope {
     }
     if (ctx.parent) {
       return self.identifier(name, ctx.parent);
+    }
+    if (typeof window !== "undefined") {
+      return window[name];
+    }
+    if (typeof global !== "undefined") {
+      return global[name];
     }
     return undefined;
   }
@@ -726,5 +865,5 @@ class Scope {
     });
   }
 }
-
-module.exports = new Scope({});
+let scope = new Scope({});
+module.exports = scope;

@@ -55,7 +55,7 @@
 "||"                      return 'OR';
 "or"                      return 'OR';
 "!"                       return '!';
-[0-9]+(?:.[0-9]+)?        return 'NUMBER';
+[0-9]+(?:\.[0-9]+)?       return 'NUMBER';
 [a-zA-Z_-][a-zA-Z0-9_-]*  return 'IDENTIFIER';
 <<EOF>>                   return 'EOF';
 
@@ -157,6 +157,19 @@ binaryExpression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
     ;
 
+bracketExpression
+    : '[' expression ':' expression ']'
+        {$$ = new yy.scopeAst(yy, 'bracketSelectorExpression', [$2, $4]);}
+    | '[' ':' expression ']'
+        {$$ = new yy.scopeAst(yy, 'bracketSelectorExpression', [0, $3]);}
+    | '[' expression ':' ']'
+        {$$ = new yy.scopeAst(yy, 'bracketSelectorExpression', [$2, undefined]);}
+    | '[' ':' ']'
+        {$$ = new yy.scopeAst(yy, 'bracketSelectorExpression', [0, undefined]);}
+    | '[' expression ']'
+        {$$ = new yy.scopeAst(yy, 'bracketExpression', [$expression]);}
+    ;
+
 controlCode
     : 
         {$$ = new yy.scopeAst(yy, 'controlCode', []);}
@@ -164,15 +177,22 @@ controlCode
         {$$ = new yy.scopeAst(yy, 'controlCode', [$1, $2]);}
     ;
 
+declarationId
+    : IDENTIFIER
+        {$$ = new yy.scopeAst(yy, 'declarationId', [$1]);}
+    | '[' idList ']'
+        {$$ = new yy.scopeAst(yy, 'declarationIdList', [$idList]);}
+    ;
+
 declarationExpression
-    : LET IDENTIFIER '=' expression
-        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['let', $2, $4]);}
-    | PRIVATE IDENTIFIER '=' expression
-        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['private', $2, $4]);}
-    | PROTECTED IDENTIFIER '=' expression
-        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['protected', $2, $4]);}
-    | PUBLIC IDENTIFIER '=' expression
-        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['public', $2, $4]);}
+    : LET declarationId '=' expression
+        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['let', $declarationId, $expression]);}
+    | PRIVATE declarationId '=' expression
+        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['private', $declarationId, $expression]);}
+    | PROTECTED declarationId '=' expression
+        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['protected', $declarationId, $expression]);}
+    | PUBLIC declarationId '=' expression
+        {$$ = new yy.scopeAst(yy, 'declarationExpression', ['public', $declarationId, $expression]);}
     ;
 
 expression
@@ -213,9 +233,9 @@ id
     : IDENTIFIER
         {$$ = new yy.scopeAst(yy, 'identifier', [$1]);}
     | id '.' IDENTIFIER
-        {$$ = new yy.scopeAst(yy, 'identifier', [$1, 'dot', $3]);}
-    | id '[' expression ']'
-        {$$ = new yy.scopeAst(yy, 'identifier', [$1, 'bracket', $3]);}
+        {$$ = new yy.scopeAst(yy, 'identifier', [$id, 'dot', $3]);}
+    | id bracketExpression
+        {$$ = new yy.scopeAst(yy, 'identifier', [$id, 'bracket', $bracketExpression]);}
     ;
 
 idList
@@ -239,15 +259,15 @@ invoke
     : invokeTracker invokeArguments ')'
         {$$ = new yy.scopeAst(yy, 'invokeExpression', [$invokeTracker, $invokeArguments]);}
     | scope '(' invokeArguments ')'
-        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
+        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$scope, $invokeArguments]);}
     | import '(' invokeArguments ')'
-        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
+        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$import, $invokeArguments]);}
     | invoke '.' id
-        {$$ = new yy.scopeAst(yy, 'invokeId', [$1, 'dot', $3]);}
-    | invoke '[' expression ']'
-        {$$ = new yy.scopeAst(yy, 'invokeId', [$1, 'bracket', $3]);}
+        {$$ = new yy.scopeAst(yy, 'invokeId', [$invoke, 'dot', $id]);}
+    | invoke bracketExpression
+        {$$ = new yy.scopeAst(yy, 'invokeId', [$invoke, 'bracket', $bracketExpression]);}
     | invoke '(' invokeArguments ')'
-        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$1, $3]);}
+        {$$ = new yy.scopeAst(yy, 'invokeExpression', [$invoke, $invokeArguments]);}
     ;
 
 invokeArguments
