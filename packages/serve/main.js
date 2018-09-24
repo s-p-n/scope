@@ -9,26 +9,6 @@ const libUtils = new ScopeParser().libraryUtils();
 const scope = libUtils.runtime;
 const ScopeApi = libUtils.api(scope);
 const h = require('hyperscript');
-/*
-function scopify (item, ctx = null) {
-	if (item !== null && typeof item === "object") {
-		if (item instanceof Map) {
-			return item;
-		}
-		let result = new Map();
-		for (let i in item) {
-			result.set(i, scopify(item[i], item));
-		}
-		return result;
-	} else if (typeof item === "function") {
-		return (args) => {
-			return item.apply(args, ctx);
-		}
-	} else {
-		return item;
-	}
-}
-*/
 
 function mapToObj (m) {
 	if (m instanceof Map) {
@@ -46,10 +26,11 @@ function get (id) {
 }
 
 function Serve (options = {}) {
-	let self = new Map();
 	let app = express();
+	let self = {app: app};
 	let spdyOpts = mapToObj(options);
 	let server;
+	let cache = {};
 	if (spdyOpts.key && spdyOpts.cert) {
 		if (spdyOpts.key[0] !== "/") {
 			spdyOpts.key = path.resolve(__scopedir, spdyOpts.key);
@@ -68,11 +49,12 @@ function Serve (options = {}) {
 		server = http.createServer(app);
 	}
 	let io = socketIo(server);
-	let clients = new Map();
+	let clients = scope.mapExpression();
 	let clientScope = true;
-	let ioListeners = new Map();
+	let ioListeners = scope.mapExpression();
+	let Node = scope.xmlExpression("div").__proto__.constructor;
 
-	self.set("listen", (props, callback) => {
+	self.listen = (props, callback) => {
 		if (!props.has('port')) {
 			// TODO: set to random available port
 			props.set('port', 8000);
@@ -92,82 +74,139 @@ function Serve (options = {}) {
 		} else {
 			clientScope = false;
 		}
-	});
-
-	self.set('on', (channel, data) => {
-		ioListeners.set(channel, data);
-	});
+	};
+	
+	self.on = (channel, handle) => {
+		ioListeners.set(channel, handle);
+	};
 	
 	io.on("connection", function (client) {
-		let scClient = new Map();
-		scClient.set("emit", (args) => {
-			let channel = args[0];
-			let data = args[1];
+		let scClient = {};
+		scClient.emit = (channel, data) => {
+			if (data instanceof Node) {
+				data = data.toString();
+			}
 			client.emit(channel, data);
-		});
-		scClient.set("broadcast", (args) => {
-			let channel = args[0];
-			let data = args[1];
+		};
+		scClient.broadcast = (channel, data) => {
+			if (data instanceof Node) {
+				data = data.toString();
+			}
 			client.broadcast(channel, data);
-		});
+		};
 		for (let [channel, handle] of ioListeners) {
 			client.on(channel, function (data) {
-				scope.invokeExpression(handle, [scClient, data]);
+				let result;
+				try {
+					result = ScopeApi.BSONtoMap(JSON.parse(data));
+				} catch (e) {
+					result = scope.mapExpression(["error", e], ["input", data]);
+				}
+				handle(scClient, result);
 			});
 		}
-		scClient.get("emit")._isScope = true;
-		scClient.get("broadcast")._isScope = true;
 	});
 
-	self.set("get", (url, handle) => {
+	self.get = (url, handle) => {
 		app.get(url, (req, res, next) => {
-			let client = new Map();
-			let request = new Map();
-			let response = new Map();
-			req.get = get;
-			res.get = get;
-			req.params.get = get;
-			request.set("params", req.params);
+			let client = {};
+			let request = req;
+			let response = res;
+			let userTags = null;
 
-			response.set("status", res.status.bind(res));
-			response.set("sendStyle", (stylesheet) => {
+			client.setUserTags = function (tags) {
+				if (tags && typeof tags === "object" && tags instanceof Map) {
+					console.log("set user tags");
+					userTags = tags;
+					return true;
+				}
+				console.log("did not set user tags.");
+				return false;
+			}
+
+			response.sendStyle = (stylesheet) => {
 				let css = scope.xmlExpression('style', {}, stylesheet).childNodes[0].value;
 				res.type('css').end(css);
-			});
-			response.set("render", (xmlType) => {
-				if (clientScope && xmlType.tagName === "html") {
-					xmlType.childNodes.forEach((node) => {
-						if (node.tagName === 'body') {
-							node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}, ["JavaScript needed for full functionality"]));
-							node.appendChild(h('script', {src: '/socket.io/socket.io.js'}, ["JavaScript needed for full functionality"]));
-							node.appendChild(h('script', {'src': "Serve/client.js"}, ["JavaScript needed for full functionality"]));
-						}
-					});
+			};
+			response.render = (xmlType, useCache = true) => {
+				let userTagDefinitions = "";
+				if (
+					userTags && 
+					typeof userTags === "object" && 
+					userTags instanceof Map
+				) {
+					for (let [tagName, sc] of userTags) {
+						userTagDefinitions += `
+						ScopeApi.createTag("${tagName}", scope.createScope(${sc._originalFunction}));`
+					}
+					//console.log(userTagDefinitions);
+					//userTagDefinitions += `scope.identifier("renderEngine").triggerPaint();`
 				}
-				res.send(xmlType.toString());
-			});
-
-			response.set("redirect", (status, path) => {
-				if (!path) {
-					path = status;
-					status = 302;
+				console.time("render: "+request.url);
+				let result = "";
+				if (!useCache || !(request.url in cache)) {
+					if (clientScope && xmlType.tagName === "html") {
+						xmlType.childNodes.forEach((node) => {
+							if (node.tagName === 'head') {
+								node.appendChild(scope.xmlExpression('script', {}, `
+									window.whenReady = (function () {
+										let queue = [];
+										let interval = setInterval(function () {
+											if (document.readyState === "complete") {
+												clearInterval(interval);
+												for (let i = 0; i < queue.length; i += 1) {
+													queue[i]();
+												}
+												queue.length = 0;
+											}
+										},15);
+										return function (f) {
+											if (document.readyState === "complete") {
+												f();
+											} else {
+												queue.push(f);
+											}
+										}
+									}());
+								`));
+							}
+							if (node.tagName === 'body') {
+								node.appendChild(h('script', {src: 'https://code.jquery.com/jquery-3.3.1.min.js'}, ["JavaScript needed for full functionality"]));
+								node.appendChild(h('script', {src: '/socket.io/socket.io.js'}, ["JavaScript needed for full functionality"]));
+								node.appendChild(h('script', {'src': "Serve/client.js"}, ["JavaScript needed for full functionality"]));
+								
+								if (userTagDefinitions.length > 0) {
+									node.appendChild(scope.xmlExpression('script', {}, userTagDefinitions));
+								}
+							}
+						});
+					}
+					if (useCache) {
+						cache[request.url] = xmlType.toString();
+						result = cache[request.url];
+					} else {
+						result = xmlType.toString();
+					}
+				} else {
+					result = cache[request.url];
 				}
-				res.redirect(status, path);
-			});
-
-			client.set("request", request);
-			client.set("response", response);
-			client.set("next", next);
-			scope.invokeExpression(handle, [client]);
+				console.timeEnd("render: "+request.url);
+				res.send(result);
+			};
+			client.request = request;
+			client.response = response;
+			//client.response.userTags = scope.mapExpression();
+			client.next = next;
+			handle(client);
 		});
-	});
+	};
 
-	self.set("manifest", (m) => {
+	self.manifest = (m) => {
 		let o = mapToObj(m);
 		app.get("/manifest.webmanifest", (req, res) => {
 			res.send(JSON.stringify(o));
 		});
-	});
+	};
 	return self;
 }
 

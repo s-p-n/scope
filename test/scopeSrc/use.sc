@@ -12,5 +12,4 @@ let user2 = {
 	use usee only ("foo");
 	public bar = foo;
 };
-
 return [user1(), user2()];

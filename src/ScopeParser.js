@@ -110,16 +110,15 @@ class ScopeParser {
 		let astJSON = JSON.stringify(ast, null, '  ');
 		let scopeRuntime = "";
 		if (typeof window === "undefined") {
-			scopeRuntime += `#!/usr/bin/env node
-\	\	\	\	"use strict";
-\	\	\	\	global.__scopedir = __dirname;
-\	\	\	\	require('source-map-support').install();
-\	\	\	\	const scope = require("${path.join(__dirname, "scopeRuntime.js")}");
-\	\	\	\	const ScopeApi = require("${path.join(__dirname, "scopeRuntimeApi.js")}")(scope);`;
+			scopeRuntime += '#!/usr/bin/env node\n' +
+				'"use strict";' +
+				'global.__scopedir=__dirname;' +
+				'require("source-map-support").install();' +
+				'const scope=require("' + path.join(__dirname, "scopeRuntime.js") + '");' +
+				'const ScopeApi=require("' + path.join(__dirname, "scopeRuntimeApi.js") + '")(scope);';
 		} else {
-			scopeRuntime += `"use strict";\n`;
+			scopeRuntime += '"use strict";';
 		}
-	scopeRuntime += ``;
 		//let scopeRuntimeErrorHandler = fs.readFileSync(path.join(__dirname, "scopeRuntimeErrorHandler.js"), "utf8");
 		let result;
 		let traversal;

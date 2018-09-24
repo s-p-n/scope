@@ -33,7 +33,6 @@ public generate = (data: [
 				<a class="nav-link" href=link>title;</a>;
 			</li>);
 		});
-			
 	});
 	return 
 	<html lang="en">

@@ -2,6 +2,47 @@ let server = import "serve"(/*[
 	key: "lib/server.key",
 	cert: "lib/server.cert"
 ]*/);
+
+let db = import "inc/db.sc";
+let users = db.collection("users");
+
+// for some reason.. this actually works ??? Cool! =D
+let makeUser = {
+	let newUser = [
+		username: "bar",
+		password: "123",
+		email: "bar@example.com"
+	];
+
+	users.insert(newUser, (err: "", value: "") {
+		if(err, {
+			print("insert error:", err);
+		}, {
+			print("insert successful:", value);
+		});
+	});
+};
+
+let findUsers = {
+	users.find().toArray((err: false, docs: []) {
+		if (err, {
+			print("Find Error:", err);
+		}, {
+			print(BSONtoMap(docs));
+		});
+	});
+};
+//makeUser(); // <-- works
+//findUsers(); // <-- works
+
+db.on("error", (err: "") {
+	print("DB Error:", err);
+});
+
+db.on("connect", {
+	print("DB Connected!");
+});
+
 let template = import "inc/template.sc";
 let loadPages = import "inc/loadPages.sc";
 
@@ -61,7 +102,7 @@ promise.all(loader.promises).then((pages: []) {
 		each(pages, (sc: {}, name: "") {
 			if (name is client.request.params.page, {
 				use sc;
-				client.response.render(page(template.generate));
+				client.response.render(page(template.generate), false);
 				renderred = true;
 			});
 		});

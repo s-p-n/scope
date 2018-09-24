@@ -1,6 +1,6 @@
 {
   "name": "scope-lang",
-  "version": "1.1.0-groundhog",
+  "version": "1.1.2-groundhog",
   "description": "Programming language for developing on the back-end and the front-end in the same project.",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "build": "npm-run-all --sequential generate babel",
     "start": "babel-node index.js",
     "sc": "node index.js",
-    "test": "mocha"
+    "test": "mocha",
+    "debug": "node inspect ./bin/cli.js"
   },
   "bin": {
     "scope": "./bin/cli.js"

@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"author": "Spencer A. Lockhart",
 	"license": "MIT",
-	"description": "MongoDB library for Scope",
+	"description": "Scope Wrapper for mongojs module",
 	"main": "main.js",
 	"dependencies": {
 		"node": {
