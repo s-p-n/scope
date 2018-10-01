@@ -36,8 +36,6 @@ if (!window.ServedOnce) {
 			return result;
 		}
 
-		
-
 		function stateProxy (instance, element) {
 			let state = instance.state;
 			let stateProxyTraps = {
@@ -123,11 +121,11 @@ if (!window.ServedOnce) {
 				renderChildren (n) {
 					let self = this;
 					let userTags = ScopeApi.getAllTags();
-					if(document.contains(n)) {
+					/*if(document.contains(n)) {
 						console.log("render after paint");
 					} else {
 						console.log("render before paint");
-					}
+					}*/
 					for (let [tagName, sc] of userTags) {
 						$(n).find(tagName).each(function (i, element) {
 							let node = self.renderUserTag(tagName, sc, element);

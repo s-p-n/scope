@@ -4,6 +4,9 @@
 	"author": "Spencer A. Lockhart",
 	"license": "MIT",
 	"description": "Official server library for Scope",
+	"scripts":{
+		"build": "browserify -d ./serve-client.js -o ./client.js"
+	},
 	"main": "main.js",
 	"dependencies": {
 		"node": {

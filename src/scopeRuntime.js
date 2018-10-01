@@ -1,3 +1,4 @@
+let XRegExp = require("xregexp");
 let randStr = (len=16) => {
   let result = "";
   let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -87,6 +88,7 @@ const createProxy = (function () {
   const intRegexp = /^\-?\d+$/
   const mapProxyHandler = {
     get: function (target, prop, receiver) {
+      const self = this;
       if (typeof prop === "string" && intRegexp.test(prop)) {
         prop = parseInt(prop);
         return target.get(prop);
@@ -118,7 +120,31 @@ const createProxy = (function () {
         }
         return target[prop];
       }
-      return undefined;
+
+      // Query each instance who has the prop with type: function
+      // Return a function that returns an array with values
+      // corresponding to the results of each instance calling
+      // the prop method.
+      let vals = target.entries();
+      let valsWithFunc = [];
+      for (let [key, val] of vals) {
+        if (typeof val[prop] === "function") {
+          valsWithFunc.push([key, val]);
+        }
+      }
+      if (valsWithFunc.length === 0) {
+        return undefined;
+      }
+      return function (...args) {
+        if (priv.get(self).type === "numeric") {
+          return scope.arrayExpression(...valsWithFunc.map(item => {
+            return item[1][prop](...args);
+          }));
+        }
+        return scope.mapExpression(...valsWithFunc.map(item => {
+            return [item[0], item[1][prop](...args)];
+        }));
+      }
     },
     has: function (target, prop) {
       return target.has(prop);
