@@ -235,14 +235,15 @@ class ScopeParser {
 		let self = this;
 		let scopeRuntime = "";
 		if (typeof window === "undefined") {
-			scopeRuntime += '#!/usr/bin/env node\n' +
+			scopeRuntime = require("./predefs.js")(__dirname);
+			/*scopeRuntime += '#!/usr/bin/env node\n' +
 				'"use strict";' +
 				'global.__scopedir=__dirname;' +
 				'require("source-map-support").install();' +
 				'const scope=require("' + path.join(__dirname, "scopeRuntime.js") + '");' +
-				'const ScopeApi=require("' + path.join(__dirname, "scopeRuntimeApi.js") + '")(scope);';
+				'const ScopeApi=require("' + path.join(__dirname, "scopeRuntimeApi.js") + '")(scope);';*/
 		} else {
-			scopeRuntime += '"use strict";';
+			scopeRuntime = '"use strict";';
 		}
 		//let scopeRuntimeErrorHandler = fs.readFileSync(path.join(__dirname, "scopeRuntimeErrorHandler.js"), "utf8");
 		let result;
@@ -302,12 +303,8 @@ class ScopeParser {
 				self.rules.invokeArguments()
 			).sn;
 
-			traversal.prepend([
-				scopeRuntime,
-				//scopeRuntimeErrorHandler,
-				"module.exports="
-			]);
-			traversal.add([";"]);
+			traversal.prepend(scopeRuntime);
+			traversal.add(";");
 		}
 		sm = traversal.toStringWithSourceMap();
 		sm.map = JSON.parse(sm.map.toString());

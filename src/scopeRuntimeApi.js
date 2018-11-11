@@ -80,11 +80,17 @@ module.exports = (scope) => {
       return scope.dereferenceIdentifier(id);
     },
 
-    "if": ([condition, ifTrueScope = () => {}, ifFalseScope = () => {}]) => {
-    if (condition) {
-      return ifTrueScope();
-    }
-    return ifFalseScope();
+    "if": ([condition, ifTrueExpr = () => {}, ifFalseExpr = () => {}, executeScopes = true]) => {
+      if (condition) {
+        if (executeScopes && typeof ifTrueExpr === "function") {
+          return ifTrueExpr();
+        }
+        return ifTrueExpr;
+      }
+      if (executeScopes && typeof ifFalseExpr === "function") {
+        return ifFalseExpr();
+      }
+      return ifFalseExpr;
     },
 
     "each": ([array, block = () => {}]) => {

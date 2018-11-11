@@ -72,45 +72,45 @@
   }
 */
 var test = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[6,10,13],$V2=[6,10,11,12],$V3=[2,5],$V4=[1,12],$V5=[1,14];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,8],$V1=[1,6],$V2=[1,10],$V3=[1,11],$V4=[10,12,15,18],$V5=[6,7,8];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"program":3,"btString":4,"EOF":5,"`":6,"btBody":7,"btPart":8,"btExpr":9,"BTCHAR":10,"{":11,"}":12,"${":13,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",6:"`",10:"BTCHAR",11:"{",12:"}",13:"${"},
-productions_: [0,[3,2],[4,3],[7,0],[7,2],[9,0],[9,2],[9,2],[9,4],[8,3],[8,1]],
+symbols_: {"error":2,"string":3,"OPEN_QUOTE":4,"stringBody":5,"CLOSE_QUOTE":6,"TEXT":7,"OPEN_STR_EXPR":8,"expr":9,"CLOSE_STR_EXPR":10,"binaryStmt":11,"OP":12,"literal":13,"functionStmt":14,"WS":15,"ATOM":16,"program":17,"EOF":18,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"OPEN_QUOTE",6:"CLOSE_QUOTE",7:"TEXT",8:"OPEN_STR_EXPR",10:"CLOSE_STR_EXPR",12:"OP",15:"WS",16:"ATOM",18:"EOF"},
+productions_: [0,[3,3],[5,0],[5,2],[5,4],[11,3],[9,1],[9,1],[9,1],[14,3],[13,1],[13,1],[17,2]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
-
-		console.log($$[$0-1]); 
-		return $$[$0-1]; 
-	
+this.$ = '`'+$$[$0-1]+'`';
 break;
 case 2:
-this.$ = '`' + $$[$0-1] + '`';
-break;
-case 3: case 5:
 this.$ = "";
 break;
-case 4: case 6: case 7:
+case 3:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 8:
-this.$ = $$[$0-3] + '{' + $$[$0-1] + '}'
+case 4:
+this.$ = $$[$0-3] + '${' + $$[$0-1] + '}';
+break;
+case 5:
+this.$ = $$[$0-2] + $$[$0-1] + $$[$0];
+break;
+case 6: case 7: case 8: case 10: case 11:
+this.$ = $$[$0];
 break;
 case 9:
-this.$ = '${' + $$[$0-1] + '}';console.log("expr:", $$[$0-1]);
+this.$ = `${$$[$0-2]}(${$$[$0]})`;
 break;
-case 10:
-this.$ = $$[$0];
+case 12:
+return $$[$0-1];
 break;
 }
 },
-table: [{3:1,4:2,6:$V0},{1:[3]},{5:[1,4]},o($V1,[2,3],{7:5}),{1:[2,1]},{6:[1,6],8:7,10:[1,9],13:[1,8]},o([5,6,10,11,12],[2,2]),o($V1,[2,4]),o($V2,$V3,{9:10}),o($V1,[2,10]),{4:13,6:$V0,10:$V4,11:$V5,12:[1,11]},o($V1,[2,9]),o($V2,[2,6]),o($V2,[2,7]),o($V2,$V3,{9:15}),{4:13,6:$V0,10:$V4,11:$V5,12:[1,16]},o($V2,[2,8])],
-defaultActions: {4:[2,1]},
+table: [{3:7,4:$V0,9:2,11:4,13:3,14:5,16:$V1,17:1},{1:[3]},{12:$V2,15:$V3,18:[1,9]},o($V4,[2,6]),o($V4,[2,7]),o($V4,[2,8]),o($V4,[2,10]),o($V4,[2,11]),o($V5,[2,2],{5:12}),{1:[2,12]},{3:7,4:$V0,9:13,11:4,13:3,14:5,16:$V1},{3:7,4:$V0,9:14,11:4,13:3,14:5,16:$V1},{6:[1,15],7:[1,16],8:[1,17]},o($V4,[2,5]),o($V4,[2,9]),o($V4,[2,1]),o($V5,[2,3]),{3:7,4:$V0,9:18,11:4,13:3,14:5,16:$V1},{10:[1,19],12:$V2,15:$V3},o($V5,[2,4])],
+defaultActions: {9:[2,12]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -583,24 +583,33 @@ stateStackSize:function stateStackSize() {
     },
 options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
+	yy.result = "";
+
+
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 6;
+case 0: this.popState(); return "CLOSE_QUOTE"; 
 break;
-case 1:return 13;
+case 1: this.pushState("inStringExpr"); return "OPEN_STR_EXPR"; 
 break;
-case 2:return 11;
+case 2: return "TEXT"; 
 break;
-case 3:return 12;
+case 3: this.popState(); return "CLOSE_STR_EXPR"; 
 break;
-case 4:return 10;
+case 4: return "ATOM"; 
 break;
-case 5:return 5;
+case 5: return "WS"; 
+break;
+case 6: this.pushState("inString"); return "OPEN_QUOTE"; 
+break;
+case 7: return "OP"; 
+break;
+case 8: return "EOF"; 
 break;
 }
 },
-rules: [/^(?:`)/,/^(?:\$\{)/,/^(?:\{)/,/^(?:\})/,/^(?:(\\`|[^\`]))/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5],"inclusive":true}}
+rules: [/^(?:")/,/^(?:\$\{)/,/^(?:(\\"|[^\"\$]|\$[^\"\{])+)/,/^(?:\})/,/^(?:[a-zA-Z]+)/,/^(?:[\s\n]+)/,/^(?:")/,/^(?:[^a-zA-Z0-9]+)/,/^(?:$)/],
+conditions: {"inStringExpr":{"rules":[3,4,5,6,7,8],"inclusive":true},"inString":{"rules":[0,1,2],"inclusive":false},"INITIAL":{"rules":[4,5,6,7,8],"inclusive":true}}
 });
 return lexer;
 })();

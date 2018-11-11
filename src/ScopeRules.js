@@ -611,13 +611,19 @@ class ScopeRules {
 		});
 	}
 
-	regexLiteral (regex, modifiers) {
+	regexLiteral (regex) {
 		const self = this;
-		let result = `XRegExp(${JSON.stringify(regex.substr(1,regex.length - 2))},"${modifiers}")`
+		//console.log(regex);
+		let matches = /^\/(.*)\/([a-zA-Z]*)$/s.exec(regex);
+		let body = matches[1];
+		let modifiers = matches[2];
+		let str = "`" + body.replace(/\\\//g, "/").replace(/\\/g, "\\\\") + "`";
+		let result = `XRegExp(${str},"${modifiers}")`
+		//console.log(result);
 		return self.mapAndParse({
-			source: `${regex}${modifiers}`,
-			translation: `${r}`,
-			sn: self.sn([`${r}`])
+			source: `${regex}`,
+			translation: result,
+			sn: self.sn([result])
 		});
 	}
 
@@ -683,16 +689,20 @@ class ScopeRules {
 		});
 	}
 
-	scopeArguments (scopeArgumentsList) {
+	scopeArguments (scopeArgumentsList, scopeArgumentSpread) {
 		const self = this;
+		console.log("scopeArguments:");
+		console.log(scopeArgumentsList, scopeArgumentSpread);
+		
 		return self.mapAndParse({
 			source: `(${scopeArgumentsList.source})`,
 			translation: `${scopeArgumentsList.translation}`,
 			sn: self.sn([scopeArgumentsList.sn]),
 			values: scopeArgumentsList.values
 		});
+		
 	}
-
+	
 	scopeArgumentsList (scopeArgumentsListDeclaration, scopeArgumentsList) {
 		const self = this;
 		if (scopeArgumentsList === undefined) {
@@ -712,7 +722,7 @@ class ScopeRules {
 			values: scopeArgValues
 		});
 	}
-
+	
 	scopeArgumentsListDeclaration (identifier, expression) {
 		const self = this;
 		return self.mapAndParse({
@@ -720,6 +730,16 @@ class ScopeRules {
 			translation: "",
 			sn: "",
 			value: [identifier, expression.translation]
+		});
+	}
+
+	scopeArgumentSpread (identifier) {
+		const self = this;
+		return self.mapAndParse({
+			source: `...${identifier}`,
+			translation: "",
+			sn: "",
+			value: [identifier]
 		});
 	}
 
@@ -731,9 +751,12 @@ class ScopeRules {
 		let parsedStr = str.
 			replace(/\\\r\n|\\\n/mg, "").
 			replace(/\n/mg, "\\n").
-			replace(/\r/mg, "\\r")
+			replace(/\r/mg, "\\r");
+		console.log(`
+	str: ${str}
+	parsedStr: ${parsedStr}`);
 		return self.mapAndParse({
-			source: str,
+			source: `${str}`,
 			translation: parsedStr,
 			sn: self.sn([parsedStr])
 		});

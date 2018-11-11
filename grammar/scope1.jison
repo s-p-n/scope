@@ -7,12 +7,15 @@
 "//".*                    /* one line comment */
 "/*"(.|\n|\r)*?"*/"       /* block comment */
 
+"..."                     return '...';
 "+="                      return '+=';
 "="                       return '=';
 "</"                      return '</';
 "/>"                      return '/>';
 "<="                      return '<=';
 ">="                      return '>=';
+"<&"                      return '<&';
+"&>"                      return '&>';
 "<"                       return '<';
 ">"                       return '>';
 "{"                       return '{';
@@ -68,10 +71,10 @@
 "!"                       return '!';
 [0-9]+(?:\.[0-9]+)?       return 'NUMBER';
 
-/*[a-zA-Z]+                 return 'REGEXPMODIFIER';*/
-\/(\\\/|[^\/])+\/         return 'REGEXPBODY'
-[a-zA-Z_$][a-zA-Z0-9_\-$]*    return 'IDENTIFIER';
-"/"                       return '/';
+
+[a-zA-Z_$][a-zA-Z0-9_\-$]*   return 'IDENTIFIER';
+\/(?:\\\/|[^\/])+\/[a-zA-Z]* return 'REGEXPBODY';
+"/"                          return '/';
 
 /* Backtick Tokens: */
 '`'             return '`';
@@ -87,20 +90,23 @@
 %right RETURN
 %left ONLY INTO AS
 %left '=' ':' '+='
-%left AND OR
 %left IS ISNT GT LT GTEQ LTEQ
+%left AND OR
+%left '...'
+%left '<&' '&>'
 %left '+' '-'
 %left '*' '/' DIVIDE
 %left '^' '%'
 %left '.'
 %left ','
+%right REGEXP
 %right '${' '{' '}'
 %right '[' ']'
 %right '(' ')'
 %right '</' '/>'
 %right '<' '>'
 %right '!'
-%right UMINUS REGEXP REGEXPMODIFIER
+%right UMINUS
 %right ';'
 
 
@@ -132,6 +138,8 @@ assignmentValue
         {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
     | '+=' expression
         {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
+    | '[' ']' '=' expression
+        {$$ = new yy.scopeAst(yy, 'assignmentValue', ['[]=', $expression]);}
     ;
 
 associativeDeclaration
@@ -181,6 +189,10 @@ binaryExpression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '&&', $3]);}
     | expression OR expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '||', $3]);}
+    | expression '<&' expression
+        {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '<&', $3]);}
+    | expression '&>' expression
+        {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '&>', $3]);}
     | expression IS expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '===', $3]);}
     | expression ISNT expression
@@ -336,8 +348,8 @@ literal
         {$$ = new yy.scopeAst(yy, 'numericLiteral', Number($1));}
     | string
         {$$ = new yy.scopeAst(yy, 'stringLiteral', [$string]);}
-    /*| REGEXPBODY ([a-zA-Z]*) %prec REGEXP
-        {$$ = new yy.scopeAst(yy, 'regexLiteral', [$1, $2])}*/
+    | REGEXPBODY %prec REGEXP
+        {$$ = new yy.scopeAst(yy, 'regexLiteral', [$1])}
     | xml
         {$$ = $1}
     | scope
@@ -364,8 +376,20 @@ scopeStart
     ;
 
 scopeArguments
-    : '(' scopeArgumentsList ')'
-        {$$ = new yy.scopeAst(yy, 'scopeArguments', [$2]);}
+    : '(' scopeArgumentsList scopeArgumentSpread ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [$scopeArgumentsList, $scopeArgumentSpread]);}
+    | '(' scopeArgumentsList ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [$scopeArgumentsList, "remainingArguments"]);}
+    | '(' scopeArgumentSpread ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [undefined, $scopeArgumentSpread]);}
+    | '(' ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [undefined, undefined])}
+
+    ;
+
+scopeArgumentSpread
+    : '...' IDENTIFIER
+        {$$ = new yy.scopeAst(yy, 'scopeArgumentSpread', [$2]);}
     ;
 
 scopeArgumentsList

@@ -3,7 +3,7 @@ let result = `
 
 	This is an inline-expression.
 
-	Here's a multi-line expression too!
+	Here's a depthy expression.
 `;
 module.exports = (assert, test) => {
 	describe('interpolation.sc', () => {

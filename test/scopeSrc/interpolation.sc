@@ -8,8 +8,9 @@ let foo = `
 	This is an ${expression}.
 
 	Here's a ${
-		{ return "multi-line expression"; }()
-	} too!
+		{
+			return `depthy ${expr()}`; 
+		}()
+	}.
 `;
-print(foo);
 return foo;

@@ -1,10 +1,10 @@
 if (!window.ServedOnce) {
 	(function () {
 		window.ServedOnce = true;
+		window.XRegExp = require("xregexp");
 		window.scope = require('../../lib/scopeRuntime.js');
 		window.ScopeApi = require('../../lib/scopeRuntimeApi.js')(scope);
 		window.socket = io.connect();
-
 		scope.declarationExpression({
 			type: "let", 
 			name: "socket", 
