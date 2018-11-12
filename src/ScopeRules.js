@@ -58,7 +58,7 @@ class ScopeRules {
 				line: 0,
 				column: 0
 			},
-			name: "<scope:anonymouse>"
+			name: "root"
 		}
 		state.errorTail = () => `[${self.state.loc.start.line}:${self.state.loc.start.column}-${self.state.loc.end.line}:${self.state.loc.end.column}]`;
 		//state.idBubble = ["this"];
@@ -66,6 +66,7 @@ class ScopeRules {
 		state.root = state.context;
 	    state.context = state.context;
 	    state.context.args = [];
+	    state.context.name = "root";
 	    state.newChildContext = () => {
 	    	let parent = state.context;
 	    	let newContext = {
@@ -81,7 +82,22 @@ class ScopeRules {
 	    	};
 	    	newContext.args = [];
 	    	newContext.inArrayDefinition = false;
+	    	newContext.name = state.loc.name;
 	    	state.context = newContext;
+	    };
+
+	    state.setName = (name) => {
+	    	state.loc.name = name;
+	    };
+
+	    state.getName = () => {
+	    	let name = state.loc.name;
+	    	let ctx = state.context;
+	    	while (ctx && ctx.scoping) {
+	    		name = `${ctx.name}->${name}`;
+	    		ctx = ctx.scoping.parent;
+	    	}
+	    	return name;
 	    };
 
 	    state.setParentContext = () => {
@@ -130,117 +146,260 @@ class ScopeRules {
 	}
 
 	arrayExpression (start, expressionList="") {
-		let self = this;
-		this.state.setParentContext();
-		return self.sn(['scope.arrayExpression(', expressionList, ')']);
+		const self = this;
+		self.state.setParentContext();
+		return self.mapAndParse({
+			source: start.source + expressionList.source + "]", 
+			translation: start.translation + expressionList.translation + ")",
+			sn: self.sn([start.sn, expressionList.sn, ")"])
+		});
 	}
 
 	arrayStart () {
-		this.state.newChildContext();
-		this.state.context.inArrayDefinition = true;
+		const self = this;
+		self.state.newChildContext();
+		self.state.context.inArrayDefinition = true;
+		return self.mapAndParse({
+			source: "[", 
+			translation: "scope.arrayExpression(",
+			sn: self.sn(["scope.arrayExpression("])
+		});
 	}
 
 	assignmentExpression (name, assignmentValue) {
 		let self = this;
-		return self.sn(['scope.assignmentExpression([', name, '],', assignmentValue, ')']);
+		return self.mapAndParse({
+			source: name.source + "=" + assignmentValue.source,
+			translation: `scope.assignmentExpression([${name.translation}],${assignmentValue.translation})`,
+			sn: self.sn(["scope.assignmentExpression([", name.sn, "],", assignmentValue.sn, ")"])
+		});
 	}
 
 	assignmentValue (op, expression) {
 		let self = this;
-		return self.sn(['["', op, '", ', expression, ']']);
+		return self.mapAndParse({
+			source: op + expression.source,
+			translation: `["${op}",${expression.translation}]`,
+			sn: self.sn(['["', op, '",', expression.sn, ']'])
+		});
 	}
 
 	associativeDeclaration (name, type, expression) {
-		const state = this.state;
-		return {
-			name: name,
-			type: type,
-			expression: expression
-		};
+		const self = this;
+		let translatedName = name;
+		if (type === "id") {
+			translatedName = `"${name}"`;
+		}
+		return self.mapAndParse({
+			source: `${name}:${expression.source}`,
+			translation: `[${translatedName},${expression.translation}]`,
+			sn: self.sn(["[", translatedName, ",", expression.sn, "]"])
+		});
 	}
 
 	associativeList (associativeList, associativeDeclaration) {
-		const state = this.state;
-		let result = '';
+		const self = this;
+		let result = null;
 		let name = '';
-		let self = this;
 		if (associativeDeclaration === undefined) {
 			associativeDeclaration = associativeList;
-			result =  buildArgPartFromAssocPart(associativeDeclaration);
+			result = {
+				source: associativeDeclaration.source,
+				translation: associativeDeclaration.translation,
+				sn: self.sn([associativeDeclaration.sn])
+			};
 		} else {
-			result = associativeList + buildArgPartFromAssocPart(associativeDeclaration, true);
+			result = {
+				source: associativeList.source + "," + associativeDeclaration.source,
+				translation: associativeList.translation + "," + associativeDeclaration.translation,
+				sn: self.sn([associativeList.sn, ",", associativeDeclaration.sn])
+			}
 		}
-		if (associativeDeclaration.type === 'id') {
-			name = associativeDeclaration.name;
-		} else {
-			name = associativeDeclaration.name.substr(1,associativeDeclaration.name.length - 2);
-		}
-		if (!state.context.inArrayDefinition) {
-			state.context.scoping.let.set(name, true);
-			state.context.args.push({name: name, default: associativeDeclaration.expression});
-		}
-		return self.sn(result);
+		return self.mapAndParse(result);
 	}
 
 	binaryExpression (a, op, b) {
 		let self = this;
-		return self.sn([`scope.binaryExpression('${op}', ${a}, ${b})`]);
-		//return self.sn([a, op, b]);
+		let srcOp = "";
+		switch (op) {
+			case "&&":
+				srcOp = ' and ';
+				break;
+			case "||":
+				srcOp = ' or ';
+				break;
+			case "===":
+				srcOp = ' is ';
+				break;
+			case "!==":
+				srcOp = ' isnt ';
+				break;
+			case ">":
+				srcOp = ' gt ';
+				break;
+			case "<":
+				srcOp = ' lt ';
+				break;
+			case ">=":
+				srcOp = ' gteq ';
+				break;
+			case "<=":
+				srcOp = ' lteq ';
+				break;
+			default:
+				srcOp = op;
+				break;
+		}
+		return self.mapAndParse({
+			source: `${a.source}${srcOp}${b.source}`,
+			translation: `scope.binaryExpression("${op}",${a.translation},${b.translation})`,
+			sn: self.sn(['scope.binaryExpression("', op, '",', a.sn, ',', b.sn, ')'])
+		});
 	}
 
 	booleanLiteral (bool) {
 		let self = this;
-		return self.sn(bool.toString());
+		return self.mapAndParse({
+			source: `${bool}`,
+			translation: `${bool}`,
+			sn: self.sn([`${bool}`])
+		});
+	}
+/*
+	backtickBodyExpression (expression) {
+		const self = this;
+		return self.mapAndParse({
+			source: expression.source,
+			translation: expression.translation,
+			sn: self.sn([expression.sn])
+		});
+	}
+
+	backtickBodyString (char) {
+		const self = this;
+		return self.mapAndParse({
+			source: char,
+			translation: char,
+			sn: char
+		});
+	}
+
+	backtickBody (backtickBody, backtickBodyPart) {
+		const self = this;
+		if (backtickBody === undefined) {
+			return self.mapAndParse({
+				source: "",
+				translation: "",
+				sn: ""
+			});
+		}
+		return self.mapAndParse({
+			source: backtickBody.source + backtickBodyPart.source,
+			translation: backtickBody.translation + backtickBodyPart.translation,
+			sn: self.sn([backtickBody.sn, backtickBodyPart.sn])
+		});
+	}
+
+	backtickString (backtickBody) {
+		const self = this;
+		return self.mapAndParse({
+			source: '`' + backtickBody.source + '`',
+			translation: '`' + backtickBody.translation + '`',
+			sn: self.sn(['`', backtickBody.sn, '`'])
+		});
+	}
+*/
+	btString (backtickString) {
+		const self = this;
+		return self.mapAndParse({
+			source: backtickString,
+			translation: backtickString,
+			sn: self.sn([backtickString]),
+			isBString: true
+		});
 	}
 
 	bracketExpression (expression) {
 		let self = this;
-		return self.sn(['[', expression, ']']);
+		return self.mapAndParse({
+			source: `[${expression.source}]`,
+			translation: `[${expression.translation}]`,
+			sn: self.sn(["[", expression.sn, "]"]),
+			value: expression.translation
+		});
 	}
 
 	bracketSelectorExpression (a, b) {
 		let self = this;
-		return [a + "", b + ""]
+		if (typeof a !== "object") {
+			a = self.mapAndParse({
+				source: "",
+				translation: "0",
+				sn: "0"
+			});
+		}
+		if (typeof b !== "object") {
+			b = self.mapAndParse({
+				source: "",
+				translation: "undefined",
+				sn: "undefined"
+			});
+		}
+		return self.mapAndParse({
+			source: `[${a.source}:${b.source}]`,
+			translation: `.slice(${a.translation},${b.translation})`,
+			sn: self.sn([".slice(", a.sn, ",", b.sn, ")"]),
+			values: [a.translation, b.translation]
+		});
 	}
 
 	controlCode (controlCode="", expression) {
 		let self = this;
+		self.state.loc.name = self.state.context.name;
 		if (expression === undefined) {
-			return self.sn("");
+			return self.mapAndParse();
 		}
-		return self.sn([controlCode, expression, ';']);
+		return self.mapAndParse({
+			source: `${controlCode.source}${expression.source};`,
+			translation: `${controlCode.translation}${expression.translation};`,
+			sn: self.sn([controlCode.sn, expression.sn, ";"])
+		});
 	}
 
 	declarationId (identifier) {
-		return `"${identifier}"`;
+		const self = this;
+		self.state.loc.name = identifier;
+		return self.mapAndParse({
+			source: `${identifier}`,
+			translation: `"${identifier}"`,
+			sn: self.sn(['"', identifier, '"'])
+		});
 	}
 
 	declarationIdList (idList) {
-		let node = idList;
-		//console.log(JSON.stringify(idList));
-		while(node.children.length === 3) {
-			for (let i = 0; i < node.children.length; i += 1) {
-				if (typeof node.children[i] === "string") {
-					if (node.children[i] !== ",") {
-						node.children[i] = '"' + node.children[i] + '"';
-					}
-				} else {
-					node = node.children[i];
-				}
+		const self = this;
+		let stringList = "";
+		idList.values.forEach((id, index) => {
+			if (index !== 0) {
+				stringList += ",";
 			}
-		}
-		node.children[0] = '"' + node.children[0] + '"';
-		//console.log(JSON.stringify(idList));
-		return `[${idList}]`;
+			stringList += `"${id}"`;
+		});
+		return self.mapAndParse({
+			source: `[${idList.source}]`,
+			translation: `[${stringList}]`,
+			sn: self.sn(["[", stringList, "]"])
+		});
 	}
 
 	declarationExpression (type, name, value) {
-		const state = this.state;
+		let self = this;
+		const state = self.state;
 		if (name in api) {
-			throw `Syntax Error: '${name}' is a reserved word ${this.state.errorTail()}`;
+			throw `Syntax Error: '${name}' is a reserved word ${state.errorTail()}`;
 		}
 		if (state.context.definedLocally(name)) {
-			throw `Syntax Error: '${name}' has already been defined in this context. ${this.state.errorTail()}`;
+			throw `Syntax Error: '${name}' has already been defined in this context. ${state.errorTail()}`;
 		}
 		if (type === "let") {
 			state.context.scoping.let.set(name, true);
@@ -254,239 +413,466 @@ class ScopeRules {
 		if (type === "public") {
 			state.context.scoping.public.set(name, true);
 		}
-		return 'scope.declarationExpression({' +
-				'type:"' + type + '",' +
-				'name:' + name + ',' +
-				'value:' + value +
-			'})';
+		return self.mapAndParse({
+			source: `${type} ${name.source} = ${value.source}`,
+			translation: `scope.declarationExpression({type:"${type}",name:${name.translation},value:${value.translation}})`,
+			sn: self.sn(['scope.declarationExpression({type:"', type, '",name:', name.sn, ',value:', value.sn, '})'])
+		});
 	}
 
-	emptyMapExpression () {
-		this.state.setParentContext();
-		return this.sn(["scope.mapExpression()"]);
+	emptyMapExpression (arrayStart) {
+		const self = this;
+		self.state.setParentContext();
+		return self.mapAndParse({
+			source: `${arrayStart.source}]`,
+			translation: `${arrayStart.translation})`,
+			sn: self.sn([arrayStart.sn, ')'])
+		});
 	}
 
 	expressionList (expression, expressionList) {
 		let self = this;
 		if (expressionList === undefined) {
-			return self.sn(expression);
+			return self.mapAndParse({
+				source: expression.source, 
+				translation: expression.translation,
+				sn: self.sn([expression.sn])
+			});
 		}
-		return self.sn([expression, ',', expressionList]);
+		return self.mapAndParse({
+			source: `${expression.source},${expressionList.source}`,
+			translation: `${expression.translation},${expressionList.translation}`,
+			sn: self.sn([expression.sn, ",", expressionList.sn])
+		});
 	}
 	
 	identifier (name, notation, children) {
-		const state = this.state;
-		let self = this;
+		const self = this;
+		const state = self.state;
 
-		if (this.parentNode === "assignmentExpression") {
+		if (self.parentNode === "assignmentExpression") {
 			if (notation === 'dot') {
-				return self.sn([name, ',"', children, '"'], `${name}.${children}`);
+				return self.mapAndParse({
+					source: `${name.source}.${children}`,
+					translation: `${name.translation},"${children}"`,
+					sn: self.sn([name.sn, ',"', children, '"'])
+				});
 			}
 			if (notation === "bracket") {
-				if (children instanceof Array) {
-					return self.sn([name, ',', children[0], ',', children[1]], `${name}[${children[0]}:${children[1]}]`);
+				if (children.values) {
+					//self.state.loc.name = `${self.state.loc.name}[${children[0]}:${children[1]}]`;
+					return self.mapAndParse({
+						source: `${name.source}${children.source}`,
+						translation: `${name.translation},${children.values[0]},${children.values[1]}`,
+						sn: self.sn([name.sn, ",", children.values[0], ",", children.values[1]])
+					});
 				}
-				return self.sn([name, ',', children], `${name}[${children}]`);
+				//self.state.loc.name = `${self.state.loc.name}[${children}]`;
+				return self.mapAndParse({
+					source: `${name.source}[${children.source}]`,
+					translation: `${name.translation},${children.value}`,
+					sn: self.sn([name.sn, ",", children.value])
+				});
 			}
-			return self.sn(['"', name, '"'], `${name}`);
+			//self.state.loc.name = `${name}`;
+			return self.mapAndParse({
+				source: `${name}`,
+				translation: `"${name}"`,
+				sn: self.sn(['"', name, '"'])
+			});
 		}
 
 		if (children === undefined) {
+			//self.state.loc.name = `${name}`;
 			if (name in api) {
-				return self.sn(api[name], name);
+				return self.mapAndParse({
+					source: `${name}`,
+					translation: `${api[name]}`,
+					sn: self.sn([api[name]])
+				});
 			}
 			if (allowedUndefinedIdExpressions.indexOf(this.parentNode) !== -1) {
-				return self.sn(name, name);
+				return self.mapAndParse({
+					source: `${name}`,
+					translation: `${name}`,
+					sn: self.sn([name])
+				});
 			}
-			return self.sn(['scope.identifier("', name, '")'], name);
+			return self.mapAndParse({
+				source: `${name}`,
+				translation: `scope.identifier("${name}")`,
+				sn: self.sn(['scope.identifier("', name, '")'])
+			});
 		}
-		/*if (this.parentNode === "invokeTracker") {
-			self.state.idBubble.push(name);
-		}*/
 		
 		if (notation === 'dot') {
-			return self.sn([name, '["', children, '"]'], `${name}.${children}`);
+			//self.state.loc.name = `${self.state.loc.name}.${children}`;
+			return self.mapAndParse({
+				source: `${name.source}.${children}`,
+				translation: `${name.translation}["${children}"]`,
+				sn: self.sn([name.sn, '["', children, '"]'])
+			});
 		} else {
-			if (children instanceof Array) {
-				return self.sn([name, `.slice(${children[0]},${children[1]})`], `${name}[${children[0]}:${children[1]}]`);
-			}
-			return self.sn([name, '[', children, ']'], `${name}[${children}]`);
+			return self.mapAndParse({
+				source: `${name.source}${children.source}`,
+				translation: `${name.translation}${children.translation}`,
+				sn: self.sn([name.sn, children.sn])
+			});
 		}
-
 	}
 
 	idList (identifier, idList) {
-		let self = this;
+		const self = this;
 		if (idList === undefined) {
-			return self.sn([identifier]);
+			return self.mapAndParse({
+				source: `${identifier}`,
+				translation: `${identifier}`,
+				sn: self.sn([identifier]),
+				values: [identifier]
+			});
 		}
-		return self.sn([identifier, ",", idList]);
+		let idListValues = idList.values.slice();
+		idListValues.unshift(identifier);
+		return self.mapAndParse({
+			source: `${identifier},${idList.source}`,
+			translation: `${identifier},${idList.translation}`,
+			sn: self.sn([identifier, ",", idList.sn]),
+			values: idListValues
+		});
 	}
 
 	importExpression (string) {
-		let self = this;
-		return self.sn([self.state.newImportExpression(string)]);
+		const self = this;
+		return self.mapAndParse({
+			source: `import ${string}`,
+			translation: self.state.newImportExpression(string),
+			sn: self.sn([self.state.newImportExpression(string)])
+		});
 	}
 
-	invokeArguments (expression="") {
-		let self = this;
-		return self.sn(expression);
+	invokeArguments (expressionList) {
+		const self = this;
+		if (expressionList === undefined) {
+			return self.mapAndParse();
+		}
+		return self.mapAndParse({
+			source: `${expressionList.source}`,
+			translation: `${expressionList.translation}`,
+			sn: self.sn([expressionList.sn])
+		});
 	}
 
 	invokeExpression (name, invokeArguments) {
-		let self = this;
-		/*let thisContext = "this";
-		if (name instanceof Array) {
-			[name, thisContext] = name;
-		}*/
-		return self.sn([name, '(', invokeArguments, ')'], 'invokeExpression');
-		//return self.sn(['scope.invokeExpression({arguments:[', invokeArguments, '],context:', thisContext, 'function:', name, '})'], "<scope>");
+		const self = this;
+		return self.mapAndParse({
+			source: `${name.source}(${invokeArguments.source})`,
+			translation: `${name.translation}(${invokeArguments.translation})`,
+			sn: self.sn([name.sn, '(', invokeArguments.sn, ')'])
+		});
 	}
 
 	invokeId (invokeExpression, notation, identifier) {
-		let self = this;
+		const self = this;
 		if (notation === 'dot') {
-			return self.sn([invokeExpression, '["', identifier, '"]'], `<map>.${identifier}`);
+			return self.mapAndParse({
+				source: `${invokeExpression.source}.${identifier.source}`,
+				translation: `${invokeExpression.translation}["${identifier.translation}"]`,
+				sn: self.sn([invokeExpression.sn, '["', identifier.sn, '"]'])
+			});
 		} else {
-			if (identifier instanceof Array) {
-				return self.sn([name, `.slice(${identifier[0]},${identifier[1]})`], `${name}[${identifier[0]}:${identifier[1]}]`);
-			}
-			return self.sn([name, '[', identifier, ']'], `${name}[${identifier}]`);
+			return self.mapAndParse({
+				source: `${invokeExpression.source}${identifier.source}`,
+				translation: `${invokeExpression.translation}${identifier.translation}`,
+				sn: self.sn([invokeExpression.sn, identifier.sn])
+			});
 		}
 	}
 
 	invokeTracker (id) {
-		/*if (this.state.idBubble.length > 1) {
-			return [id, this.state.idBubble.pop()];
-		}*/
 		return id;
 	}
 
 	mapExpression (arrayStart, associativeList) {
-		this.state.setParentContext();
-		return this.sn(["scope.mapExpression(", associativeList, ")"]);
+		const self = this;
+		self.state.setParentContext();
+		return self.mapAndParse({
+			source: `${arrayStart.source}${associativeList.source}]`,
+			translation: `scope.mapExpression(${associativeList.translation})`,
+			sn: self.sn(["scope.mapExpression(", associativeList.sn, ")"])
+		});
 	}
 	
 	numericLiteral (n) {
-		return this.sn(n.toString());
+		const self = this;
+		return self.mapAndParse({
+			source: `${n}`,
+			translation: `${n}`,
+			sn: self.sn([`${n}`])
+		});
 	}
 
-	regexLiteral (r) {
-		return this.sn(r);
+	regexLiteral (regex) {
+		const self = this;
+		//console.log(regex);
+		let matches = /^\/(.*)\/([a-zA-Z]*)$/s.exec(regex);
+		let body = matches[1];
+		let modifiers = matches[2];
+		let str = "`" + body.replace(/\\\//g, "/").replace(/\\/g, "\\\\") + "`";
+		let result = `XRegExp(${str},"${modifiers}")`
+		//console.log(result);
+		return self.mapAndParse({
+			source: `${regex}`,
+			translation: result,
+			sn: self.sn([result])
+		});
 	}
 
 	returnExpression (expression) {
-		let self = this;
-		return self.sn(["return ", expression]);
+		const self = this;
+		return self.mapAndParse({
+			source: `return ${expression.source}`,
+			translation: `return ${expression.translation}`,
+			sn: self.sn(["return ", expression.sn])
+		});
 	}
 
 	scopeStart () {
-		let self = this;
+		const self = this;
 		self.state.newChildContext();
-		return true;
+		return self.mapAndParse({
+			source: "{",
+			translation: "scope.createScope(function(args){",
+			sn: self.sn(["scope.createScope(function(args){"])
+		});
 	}
 
 	scopeExpression (scopeStart, scopeArguments, controlCode) {
-		const state = this.state;
-		let self = this;
+		const self = this;
+		const state = self.state;
 		let argDeclarations = "";
-		if (scopeStart !== true) {
+		if (scopeStart.source !== "{") {
 			controlCode = scopeArguments;
 			scopeArguments = scopeStart;
 		}
 		if (controlCode === undefined) {
 			controlCode = scopeArguments;
-			scopeArguments = "[]";
+			scopeArguments = {
+				source: "",
+				translation: "[]",
+				sn: self.sn(["[]"]),
+				values: []
+			};
 		}
 
 		if (scopeArguments === undefined) {
-			scopeArguments = "[]";
+			scopeArguments = {
+				source: "",
+				translation: "[]",
+				sn: self.sn(["[]"]),
+				values: []
+			};
 		}
 
-
-		state.context.args.forEach((arg, index) => {
+		scopeArguments.values.forEach((arg, index) => {
 			argDeclarations += 'scope.declarationExpression({' +
 				'type:"let",' +
-				'name:"' + arg.name + '",' +
-				'value:args[' + index + ']===undefined?' + arg.default + ':args[' + index + ']' +
+				`name:"${arg[0]}",` +
+				`value:args[${index}]===undefined?${arg[1]}:args[${index}]` +
 			'});';
 		});
 
 		state.setParentContext();
-
-		return self.sn(['scope.createScope(function(args){',
-			argDeclarations,
-			controlCode,
-			"})"
-		]);
+		return self.mapAndParse({
+			source: `${scopeArguments.source}${scopeStart.source}${controlCode.source}}`,
+			translation: `${scopeStart.translation}${argDeclarations}${controlCode.translation}})`,
+			sn: self.sn([scopeStart.sn, argDeclarations, controlCode.sn, "})"])
+		});
 	}
 
-	scopeArguments (associativeList) {
-		const state = this.state;
-		let self = this;
+	scopeArguments (scopeArgumentsList, scopeArgumentSpread) {
+		const self = this;
+		console.log("scopeArguments:");
+		console.log(scopeArgumentsList, scopeArgumentSpread);
+		
+		return self.mapAndParse({
+			source: `(${scopeArgumentsList.source})`,
+			translation: `${scopeArgumentsList.translation}`,
+			sn: self.sn([scopeArgumentsList.sn]),
+			values: scopeArgumentsList.values
+		});
+		
+	}
+	
+	scopeArgumentsList (scopeArgumentsListDeclaration, scopeArgumentsList) {
+		const self = this;
+		if (scopeArgumentsList === undefined) {
+			return self.mapAndParse({
+				source: `${scopeArgumentsListDeclaration.source}`,
+				translation: `${scopeArgumentsListDeclaration.translation}`,
+				sn: self.sn([scopeArgumentsListDeclaration.sn]),
+				values: [scopeArgumentsListDeclaration.value]
+			});
+		}
+		let scopeArgValues = scopeArgumentsList.values.slice();
+		scopeArgValues.unshift(scopeArgumentsListDeclaration.value);
+		return self.mapAndParse({
+			source: `${scopeArgumentsListDeclaration.source},${scopeArgumentsList.source}`,
+			translation: "",
+			sn: "",
+			values: scopeArgValues
+		});
+	}
+	
+	scopeArgumentsListDeclaration (identifier, expression) {
+		const self = this;
+		return self.mapAndParse({
+			source: `${identifier}:${expression.source}`,
+			translation: "",
+			sn: "",
+			value: [identifier, expression.translation]
+		});
+	}
 
-		return self.sn(['[', associativeList, ']']);
+	scopeArgumentSpread (identifier) {
+		const self = this;
+		return self.mapAndParse({
+			source: `...${identifier}`,
+			translation: "",
+			sn: "",
+			value: [identifier]
+		});
 	}
 
 	stringLiteral (str) {
-		let self = this;
-		return self.sn(JSON.stringify(str));
+		const self = this;
+		if (str.isBString) {
+			return self.mapAndParse(str);
+		}
+		let parsedStr = str.
+			replace(/\\\r\n|\\\n/mg, "").
+			replace(/\n/mg, "\\n").
+			replace(/\r/mg, "\\r");
+		console.log(`
+	str: ${str}
+	parsedStr: ${parsedStr}`);
+		return self.mapAndParse({
+			source: `${str}`,
+			translation: parsedStr,
+			sn: self.sn([parsedStr])
+		});
 	}
 
 	unaryExpression (operator, expression) {
-		let self = this;
-		return self.sn([operator, expression]);
+		const self = this;
+		return self.mapAndParse({
+			source: `${operator} ${expression.source}`,
+			translation: `${operator}${expression.translation}`,
+			sn: self.sn([operator, expression.sn])
+		});
 	}
 
 	useExpression (usable, useOnly) {
-		let self = this;
+		const self = this;
 		if (useOnly === undefined) {
-			return self.sn([`scope.use([${usable}])`]);
+			return self.mapAndParse({
+				source: `use ${usable.source}`,
+				translation: `scope.use([${usable.translation}])`,
+				sn: self.sn(["scope.use([", usable.sn, "])"])
+			})
 		}
-		return self.sn([`scope.use([${usable}], [${useOnly}])`]);
+		return self.mapAndParse({
+			source: `use ${usable.source} only ${useOnly.source}`,
+			translation: `scope.use([${usable.translation}],[${useOnly.translation}])`,
+			sn: self.sn(["scope.use([", usable.sn, "],[", useOnly.sn, "])"])
+		});
 	}
 
 	usable (usable1, usable2) {
-		let self = this;
+		const self = this;
 		if (usable2 === undefined) {
-			return usable1;
+			return self.mapAndParse({
+				source: `${usable1.source}`,
+				translation: `${usable1.translation}`,
+				sn: self.sn([usable1.sn])
+			});
 		}
-		return self.sn([usable1, ",", usable2]);
+		return self.mapAndParse({
+			source: `${usable1.source},${usable2.source}`,
+			translation: `${usable1.translation},${usable2.translation}`,
+			sn: self.sn([usable1.sn, ",", usable2.sn])
+		});
 	}
 
 	useOnly (expressionList) {
-		let self = this;
-		return expressionList;
+		const self = this;
+		return self.mapAndParse({
+			source: `${expressionList.source}`,
+			translation: `${expressionList.translation}`,
+			sn: self.sn([expressionList.sn])
+		});
 	}
 
 	xmlControlCode (xmlControlCode="", expression) {
-		let self = this;
+		const self = this;
 		if (expression === undefined) {
-			return "";
+			return self.mapAndParse({
+				source: "",
+				translation: "",
+				sn: "",
+				first: true
+			});
 		}
-		if (xmlControlCode !== "") {
-			xmlControlCode.add(",");
+		if (!xmlControlCode.first) {
+			xmlControlCode.translation += ",";
+			xmlControlCode.sn.add([","]);
 		}
-		return self.sn([xmlControlCode, expression]);
+		return self.mapAndParse({
+			source: `${xmlControlCode.source}${expression.source};`,
+			translation: `${xmlControlCode.translation}${expression.translation}`,
+			sn: self.sn([xmlControlCode.sn, expression.sn]),
+			first: false
+		});
 	}
 
-	xmlAttributes (xmlAttributes="", name, value) {
-		let self = this;
+	xmlAttributes (xmlAttributes="", name, expression) {
+		const self = this;
 		if (name === undefined) {
-			return "";
+			return self.mapAndParse({
+				source: "",
+				translation: "",
+				sn: "",
+				first: true
+			});
 		}
-		if (xmlAttributes !== "") {
-			xmlAttributes.add(", ");
+		if (!xmlAttributes.first) {
+			xmlAttributes.translation += ",";
+			xmlAttributes.sn.add([","]);
 		}
-		return self.sn([xmlAttributes, '"', name, '"', ":", value]);
+		return self.mapAndParse({
+			source: `${xmlAttributes.source} ${name}=${expression.source}`,
+			translation: `${xmlAttributes.translation}"${name}":${expression.translation}`,
+			sn: self.sn([xmlAttributes.sn, '"', name, '":', expression.sn]),
+			first: false
+		});
 	}
 
-	xmlExpression (name, xmlAttributes, xmlControlCode) {
-		let self = this;
+	xmlExpression (name, xmlAttributes, xmlControlCode, closeName) {
+		const self = this;
 		if (xmlControlCode === undefined) {
-			return self.sn(['scope.xmlExpression("', name, '",{', xmlAttributes, '})']);
+			return self.mapAndParse({
+				source: `<${name.source} ${xmlAttributes.source}/>`,
+				translation: `scope.xmlExpression("${name.translation}",{${xmlAttributes.translation}})`,
+				sn: self.sn(['scope.xmlExpression("', name.sn, '",{', xmlAttributes.sn, '})'])
+			});
 		}
-		return self.sn(['scope.xmlExpression("', name, '",{', xmlAttributes, '},', xmlControlCode, ')']);
+		if (name.source !== closeName.source) {
+			throw `Syntax Error: Unmatching XML Tags: <${name.source}>...</${closeName.source}> ${state.errorTail()}`;
+		}
+		return self.mapAndParse({
+			source: `<${name.source} ${xmlAttributes.source}>${xmlControlCode.source}</${closeName.source}>`,
+			translation: `scope.xmlExpression("${name.translation}",{${xmlAttributes.translation}},${xmlControlCode.translation})`,
+			sn: self.sn(['scope.xmlExpression("', name.sn, '",{', xmlAttributes.sn, '},', xmlControlCode.sn, ')'])
+		});
 	}
 }
 

@@ -1,18 +1,126 @@
+require("source-map-support").install();
 import * as fs from "fs";
 import * as path from "path";
 import * as Module from "module";
 import * as parser from "./parser.js";
 import ScopeAst from "./ScopeAst.js";
 import ScopeRules from "./ScopeRules.js";
+import BacktickProcessor from "./BacktickProcessor.js";
 import * as sourceMap from "source-map";
 import * as combine from "combine-source-map";
 import * as convert from "convert-source-map";
 
 class ScopeParser {
 	constructor () {
-		this.parser = new parser.Parser();
-		this.parser.yy.scopeAst = ScopeAst;
-		this.rules = new ScopeRules();
+		const self = this;
+		self.parser = new parser.Parser();
+		self.rules = new ScopeRules();
+		//console.log(self.parser.lexer.lex.toString());
+		//console.log(self.parser.lexer.next.toString());
+		/*
+		let jisonLexer = self.parser.lexer.lex;
+		self.parser.yy.scopeState = {
+			inBacktick: false,
+			inBacktickExpr: false
+		};
+		let once = false;
+		
+		self.parser.lexer.lex = function () {
+			if (!once) {
+				once = !once;
+				//console.log(this);
+				//console.log(this.rules);
+			}
+			//console.log("intercepted lex");
+			//console.log("in backtick:", this.yy.scopeState.inBacktick);
+			//console.log("yytext:", JSON.stringify(this.yytext));
+			//console.log("input:", this.input());
+			if (this.yytext === "`") {
+				//console.log("switched backtick state");
+				this.yy.scopeState.inBacktick = !this.yy.scopeState.inBacktick
+			
+			} else if (this.yy.scopeState.inBacktick) {
+				//console.log ("attempting skip");
+				//let next = this.next();
+				let inputMatch, testMatch;
+				let finalMatch = "";
+				let btExprRegex = /^(?:(\s*)\$\{([^\}]*)\}(.*))/gus;
+				let btBodyRegex = /^((?:\\`|[^`](?!\{))*)(.*)/gus;
+
+				this._input = this.yytext + this._input;
+				//console.log("btExprRegex:", btExprRegex);
+				//console.log("btBodyRegex:", btBodyRegex);
+				//console.log("match:", this.match);
+				//console.log("matched:", this.matched);
+				do {
+					const btBody = 57;
+					const btExprStart = 56;
+					//const btExprEnd = ???
+					//console.log("bt-input:", this._input);
+					if (inputMatch = this._input.match(btExprRegex)) {
+						let btExprMatch = btExprRegex.exec(this._input);
+						let [
+							btExprOriginal,
+							btExprSpaces,
+							btExprSrc,
+							btExprLeftovers
+						] = btExprMatch;
+						//console.log("btExprMatch:", btExprMatch);
+						//console.log("btExprOriginal:", btExprOriginal);
+						//console.log("btExprSrc:", btExprSrc);
+						//console.log("btExprLeftovers:", btExprLeftovers);
+						this.yy.scopeState.inBacktick = false;
+						this.yy.scopeState.inBacktickExpr = true;
+						let newExprSrc = self.traverse(self.parse(btExprSrc + ";")).translation.replace(/;$/, "");
+						//console.log("parse result:");
+						//console.log(newExprSrc);
+						this.yy.scopeState.inBacktick = true;
+						this._input = this._input.replace(btExprRegex, () => {
+							let prevChar = this.match.substr(this.match.length -1);
+							this.match = btExprSpaces + '${' + newExprSrc + "}";
+							return prevChar + btExprLeftovers;
+						});
+						finalMatch += this.match;
+						//console.log("a: this.match after replacement:", this.match);
+						//console.log("a: this._input after replacement:", this._input);
+						//process.exit();
+						continue;
+					} else if (inputMatch = this._input.match(btBodyRegex)) {
+						if (this._input[0] === "`") {
+							break;
+							//this.input();
+							//this.yytext = "`";
+							//return this.lex();
+						}
+						let match = btBodyRegex.exec(this._input);
+						this._input = this._input.replace(btBodyRegex, (original, match, leftovers) => {
+							let prevChar = this.match.substr(this.match.length - 1);
+							this.match = match;
+							finalMatch += match;
+							return prevChar + leftovers;
+						});
+						//console.log("b: this.match after replacement:", this.match);
+						//console.log("b: this._input after replacement:", this._input);
+						//process.exit();
+						continue;
+					} else {
+						testMatch = this.next();
+						break;
+					}
+				} while((testMatch !== false) && this.input());
+				//console.log("match:", this.match);
+				//console.log("matched:", this.matched);
+				//console.log("lastMatch:", "`" + finalMatch + "`");
+				this.yy.scopeState.btString = "`" + finalMatch + "`";
+				return testMatch?testMatch:jisonLexer.call(this);
+			}
+			let result = jisonLexer.call(this);
+			//console.log("result:");
+			//console.log(result);
+			return result;
+		};
+		*/
+		self.parser.yy.scopeAst = ScopeAst;
 	}
 
 	libraryUtils () {
@@ -23,6 +131,21 @@ class ScopeParser {
 	}
 
 	parse (code) {
+		const self = this;
+		let jisonLexer = self.parser.lexer.lex;
+		self.parser.yy.scopeState = {};
+		let btProcessor = new BacktickProcessor(self);
+
+		self.parser.lexer.lex = function () {
+			let code;
+
+			code = btProcessor.lex(this);
+			if (code !== false) {
+				return code;
+			}
+			return jisonLexer.call(this);
+		}
+
 		return this.parser.parse(code);
 	}
 
@@ -39,7 +162,9 @@ class ScopeParser {
 			return obj;
 		}
 		if (obj.loc !== undefined) {
+			let name = self.rules.state.loc.name;
 			self.rules.state.loc = obj.loc;
+			self.rules.state.loc.name = name;
 		}
 
 		if (obj.body instanceof Array) {
@@ -52,9 +177,11 @@ class ScopeParser {
 			self.rules.parentNode = lastParent;
 		}
 		if (self.rules[obj.type]) {
+			self.rules.state.setName(obj.type);
 			if (obj.body instanceof Array) {
 				return self.rules[obj.type](...obj.traversedBody);
 			} else {
+				self.rules.state.loc.sourceCode = obj.body;
 				return self.rules[obj.type](obj.body);
 			}
 		}
@@ -106,42 +233,44 @@ class ScopeParser {
 
 	translate (code, srcFilename="NO SOURCE FILE", libFilename="NO LIB FILE", asInclude=false) {
 		let self = this;
-		let ast = this.parse(code);
-		let astJSON = JSON.stringify(ast, null, '  ');
 		let scopeRuntime = "";
 		if (typeof window === "undefined") {
-			scopeRuntime += '#!/usr/bin/env node\n' +
+			scopeRuntime = require("./predefs.js")(__dirname);
+			/*scopeRuntime += '#!/usr/bin/env node\n' +
 				'"use strict";' +
 				'global.__scopedir=__dirname;' +
 				'require("source-map-support").install();' +
 				'const scope=require("' + path.join(__dirname, "scopeRuntime.js") + '");' +
-				'const ScopeApi=require("' + path.join(__dirname, "scopeRuntimeApi.js") + '")(scope);';
+				'const ScopeApi=require("' + path.join(__dirname, "scopeRuntimeApi.js") + '")(scope);';*/
 		} else {
-			scopeRuntime += '"use strict";';
+			scopeRuntime = '"use strict";';
 		}
 		//let scopeRuntimeErrorHandler = fs.readFileSync(path.join(__dirname, "scopeRuntimeErrorHandler.js"), "utf8");
 		let result;
 		let traversal;
-		let locsMapped = [];
-		self.sn = (chunk, name="<anonymouse>") => {
+		//let sourceNodes = [];
+		//let locsMapped = [];
+		self.mapAndParse = (data = {source:"", translation:"", sn: ""}) => {
+			//console.log(data.source);
+			//let loc = self.rules.state.loc.start;
+			//console.log(self.rules.state.getName());
+			if (typeof data.sn !== "string") {
+				data.sn.setSourceContent(srcFilename, data.source);
+			}
+			//sourceNodes.push(sn);
+			//console.log(data.source, loc);
+			return data;
+		};
+		self.sn = (chunk, name=self.rules.state.getName()) => {
 			let loc = self.rules.state.loc.start;
-			let alreadyMapped = false;
-			locsMapped.forEach((val) => {
-				if (val.line === loc.line && val.column === loc.column) {
-					alreadyMapped = true;
-				}
-			});
-				locsMapped.push({
-					line: loc.line,
-					column: loc.column
-				});
-				return new sourceMap.SourceNode(
-					loc.line, 
-					loc.column, 
-					srcFilename, 
-					chunk,
-					name
-				);
+			//console.log("chunk:", chunk);
+			return new sourceMap.SourceNode(
+				loc.line, 
+				loc.column, 
+				srcFilename, 
+				chunk,
+				name
+			);
 		};
 		let node = self.sn("");
 		let sm;
@@ -152,30 +281,30 @@ class ScopeParser {
 		self.rules.libFilename = libFilename;
 		self.rules.node = node;
 		self.rules.sn = self.sn;
+		self.rules.mapAndParse = self.mapAndParse;
+		let ast = this.parse(code);
+		let astJSON = JSON.stringify(ast, null, '  ');
+		let parseResult = self.traverse(ast);
 		//scopeRuntime = babelCore.transform(scopeRuntime, {presets: ['minify-es2015']});
 		//console.log(scopeRuntime);
 		if (asInclude) {
-			return self.sn([
-				self.rules.invokeExpression(
+			return self.rules.invokeExpression(
 					self.rules.scopeExpression(
-						self.traverse(ast)
+						parseResult
 					),
-					[]
-				)
-			]);
+					self.rules.invokeArguments()
+				).sn
 		} else {
-			traversal = self.sn([
-				scopeRuntime,
-				//scopeRuntimeErrorHandler,
-				"module.exports=", 
-				self.rules.invokeExpression(
-					self.rules.scopeExpression(
-						self.traverse(ast)
-					),
-					[]
+			traversal = self.rules.invokeExpression(
+				self.rules.scopeExpression(
+					self.rules.scopeStart(),
+					parseResult
 				),
-				";"
-			]);
+				self.rules.invokeArguments()
+			).sn;
+
+			traversal.prepend(scopeRuntime);
+			traversal.add(";");
 		}
 		sm = traversal.toStringWithSourceMap();
 		sm.map = JSON.parse(sm.map.toString());

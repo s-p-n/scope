@@ -6,7 +6,7 @@
 <body>
 	<h1>Associative-Map Implementation Benchmark</h1>
 	<div>
-		Size: <input type="number" id="size" value="100000" />
+		Size: <input type="number" id="size" value="1000" /><button id="init">Init</button>
 		<br>
 		<button id="get">Get</button>
 		<button id="set">Set</button>
@@ -222,16 +222,19 @@
 			}
 		}
 
-		let mapSize = 100000;
+		let mapSize = parseInt(document.getElementById('size').value);
 		let b = new Benchmark();
 		let m = new Map();
 		let fm = new AssociativeMap();
+		let o1 = {};
+		let o2 = Object.create(null);
+		let arr = [];
 		let keys = [];
 		function createPsuedoObjKeys (size) {
 			let allowedChars = "abcdefghijklmnopkrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
 			let len = allowedChars.length;
 			let keySize = [5, 15];
-			let result = new Array(size);
+			let result = [];
 			while(result.length < size) {
 				let s = Math.floor(Math.random() * (keySize[1] - keySize[0] + 1)) + keySize[0];
 				let key = "";
@@ -247,10 +250,18 @@
 
 		function initMap () {
 			keys = createPsuedoObjKeys(mapSize);
+			//console.log(keys);
+			o1 = {};
+			o2 = Object.create(null);
+			arr = [];
 			let mapArr = new Array(mapSize);
 			for (let i = 0; i < mapSize; i += 1) {
 				mapArr[i] = [keys[i], i + 1];
+				o1[keys[i]] = i + 1;
+				o2[keys[i]] = i + 1;
+				arr[keys[i]] = i + 1;
 			}
+			//console.log(mapArr);
 			fm = new AssociativeMap(mapArr);
 			m = new Map(mapArr);
 		}
@@ -278,7 +289,11 @@
 		}
 		
 		function fmDeletion (id) {
-			fm.delete(id);
+			return fm.delete(id);
+		}
+
+		function oDeletion (o, id) {
+			return delete o[id];
 		}
 		
 		let stop = true;
@@ -302,7 +317,7 @@
 			stop = false;
 		}
 		function runDelete () {
-			let step = 10000;
+			let step = mapSize / 100;
 			let innerStep = 0;
 			function intervalFunc(id) {
 				if (id >= mapSize || stop) {
@@ -312,26 +327,44 @@
 				let key = keys[id]; 
 				switch (innerStep) {
 					case 0:
-						b.start('map');
+						b.start('m');
 						mapDeletion(key);
-						b.end('map');
+						b.end('m');
 						break;
 					case 1:
-						b.start('array');
+						b.start('fm');
 						fmDeletion(key);
-						b.end('array');
+						b.end('fm');
+						break;
+					case 2:
+						b.start('o1');
+						oDeletion(o1, key);
+						b.end('o1');
+						break;
+					case 3:
+						b.start('o2');
+						oDeletion(o2, key);
+						b.end('o2');
+						break;
+					case 4:
+						b.start('arr');
+						oDeletion(arr, key);
+						b.end('arr');
 						break;
 					default:
 						let result = b.report();
-						chartDatasets[0].data.push({x: id, y: result.array.difference});
-						chartDatasets[1].data.push({x: id, y: result.map.difference});
+						chartDatasets[0].data.push({x: id, y: result.m.difference});
+						chartDatasets[1].data.push({x: id, y: result.fm.difference});
+						chartDatasets[2].data.push({x: id, y: result.o1.difference});
+						chartDatasets[3].data.push({x: id, y: result.o2.difference});
+						chartDatasets[4].data.push({x: id, y: result.arr.difference});
 						myChart.data.labels.push(id);
 						myChart.update({duration: 0});
 						initMap();
 						id += step;
 				}
 				innerStep += 1;
-				if (innerStep > 2) {
+				if (innerStep > 5) {
 					innerStep = 0;
 				}
 				//console.log("updated:", newData, iterData);
@@ -341,25 +374,43 @@
 			};
 			postStart();
 			chartDatasets.push({
-				label: "Array Wrapper",
+				label: "new Map()",
 				borderColor: "#0000FF",
 				backgroundColor: "rgba(0, 0, 255, 0.1)",
 				data: []
 			},
 			{
-				label: "Builtin Map",
+				label: "new AssociativeMap()",
 				borderColor: "#00FF00",
 				backgroundColor: "rgba(255, 0, 0, 0.1)",
 				data: []
+			},
+			{
+				label: "{}",
+				borderColor: "#FF0000",
+				backgroundColor: "rgba(0, 255, 0, 0.1)",
+				data: []
+			},
+			{
+				label: "Object.create(null)",
+				borderColor: "#000000",
+				backgroundColor: "rgba(255,255,255,0.1)",
+				data: []
+			},
+			{
+				label: "[]",
+				borderColor: "#FFFF00",
+				backgroundColor: "rgba(255,255,0,0.1)",
+				data: []
 			});
-			initMap();
+			//initMap();
 			window.requestAnimationFrame(() => {
 				intervalFunc(0);
 			});
 		}
 
 		function runGet () {
-			let step = 10000;
+			let step = mapSize / 100;
 			let innerStep = 0;
 			function intervalFunc (id) {
 				if (id >= mapSize || stop) {
@@ -368,58 +419,100 @@
 				}
 				switch(innerStep) {
 					case 0:
-						b.start('map');
+						b.start('m');
 						for (let i = id; i < id + step; i += 1) {
 							m.get(keys[i]);
 						}
-						b.end('map');
+						b.end('m');
 						break;
 					case 1:
-						b.start('array');
+						b.start('fm');
 						for (let i = id; i < id + step; i += 1) {
 							fm.get(keys[i]);
 						}
-						b.end('array');
+						b.end('fm');
+						break;
+					case 2:
+						b.start('o1');
+						for (let i = id; i < id + step; i += 1) {
+							o1[keys[i]];
+						}
+						b.end('o1');
+						break;
+					case 3:
+						b.start('o2');
+						for (let i = id; i < id + step; i += 1) {
+							o2[keys[i]];
+						}
+						b.end('o2');
+						break;
+					case 4:
+						b.start('arr');
+						for (let i = id; i < id + step; i += 1) {
+							arr[keys[i]];
+						}
+						b.end('arr');
 						break;
 					default:
 						let result = b.report();
-						chartDatasets[0].data.push({x: id, y: result.array.difference});
-						chartDatasets[1].data.push({x: id, y: result.map.difference});
+						chartDatasets[0].data.push({x: id, y: result.m.difference});
+						chartDatasets[1].data.push({x: id, y: result.fm.difference});
+						chartDatasets[2].data.push({x: id, y: result.o1.difference});
+						chartDatasets[3].data.push({x: id, y: result.o2.difference});
+						chartDatasets[4].data.push({x: id, y: result.arr.difference});
 						myChart.data.labels.push(id);
 						myChart.update({duration: 0});
 						initMap();
 						id += step;
 				}
 				innerStep += 1;
-				if (innerStep > 2) {
+				if (innerStep > 5) {
 					innerStep = 0;
 				}
-				//console.log("updated:", newData, iterData);
 				window.requestAnimationFrame(() => {
+					console.log(id);
 					intervalFunc(id);
 				});
 			}
 			postStart();
 			chartDatasets.push({
-				label: "Array Wrapper",
+				label: "new Map()",
 				borderColor: "#0000FF",
 				backgroundColor: "rgba(0, 0, 255, 0.1)",
 				data: []
 			},
 			{
-				label: "Builtin Map",
+				label: "new AssociativeMap()",
 				borderColor: "#00FF00",
 				backgroundColor: "rgba(255, 0, 0, 0.1)",
 				data: []
+			},
+			{
+				label: "{}",
+				borderColor: "#FF0000",
+				backgroundColor: "rgba(0, 255, 0, 0.1)",
+				data: []
+			},
+			{
+				label: "Object.create(null)",
+				borderColor: "#000000",
+				backgroundColor: "rgba(255,255,255,0.1)",
+				data: []
+			},
+			{
+				label: "[]",
+				borderColor: "#FFFF00",
+				backgroundColor: "rgba(255,255,0,0.1)",
+				data: []
 			});
-			initMap();
+			//initMap();
 			window.requestAnimationFrame(() => {
 				intervalFunc(0);
 			});
 		}
 
 		function runSet () {
-			let step = 10000;
+			let step = mapSize / 100;
 			let innerStep = 0;
 			function intervalFunc (id) {
 				if (id >= mapSize || stop) {
@@ -428,30 +521,54 @@
 				}
 				switch(innerStep) {
 					case 0:
-						b.start('map');
+						b.start('m');
 						for (let i = id; i < id + step; i += 1) {
 							m.set(keys[i], "a");
 						}
-						b.end('map');
+						b.end('m');
 						break;
 					case 1:
-						b.start('array');
+						b.start('fm');
 						for (let i = id; i < id + step; i += 1) {
 							fm.set(keys[i], "a");
 						}
-						b.end('array');
+						b.end('fm');
+						break;
+					case 2:
+						b.start('o1');
+						for (let i = id; i < id + step; i += 1) {
+							o1[keys[i]] = 'a';
+						}
+						b.end('o1');
+						break;
+					case 3:
+						b.start('o2');
+						for (let i = id; i < id + step; i += 1) {
+							o2[keys[i]] = 'a';
+						}
+						b.end('o2');
+						break;
+					case 4:
+						b.start('arr');
+						for (let i = id; i < id + step; i += 1) {
+							arr[keys[i]] = 'a';
+						}
+						b.end('arr');
 						break;
 					default:
 						let result = b.report();
-						chartDatasets[0].data.push({x: id, y: result.array.difference});
-						chartDatasets[1].data.push({x: id, y: result.map.difference});
+						chartDatasets[0].data.push({x: id, y: result.m.difference});
+						chartDatasets[1].data.push({x: id, y: result.fm.difference});
+						chartDatasets[2].data.push({x: id, y: result.o1.difference});
+						chartDatasets[3].data.push({x: id, y: result.o2.difference});
+						chartDatasets[4].data.push({x: id, y: result.arr.difference});
 						myChart.data.labels.push(id);
 						myChart.update({duration: 0});
 						initMap();
 						id += step;
 				}
 				innerStep += 1;
-				if (innerStep > 2) {
+				if (innerStep > 5) {
 					innerStep = 0;
 				}
 				//console.log("updated:", newData, iterData);
@@ -461,15 +578,33 @@
 			}
 			postStart();
 			chartDatasets.push({
-				label: "Array Wrapper",
+				label: "new Map()",
 				borderColor: "#0000FF",
 				backgroundColor: "rgba(0, 0, 255, 0.1)",
 				data: []
 			},
 			{
-				label: "Builtin Map",
+				label: "new AssociativeMap()",
 				borderColor: "#00FF00",
 				backgroundColor: "rgba(255, 0, 0, 0.1)",
+				data: []
+			},
+			{
+				label: "{}",
+				borderColor: "#FF0000",
+				backgroundColor: "rgba(0, 255, 0, 0.1)",
+				data: []
+			},
+			{
+				label: "Object.create(null)",
+				borderColor: "#000000",
+				backgroundColor: "rgba(255,255,255,0.1)",
+				data: []
+			},
+			{
+				label: "[]",
+				borderColor: "#FFFF00",
+				backgroundColor: "rgba(255,255,0,0.1)",
 				data: []
 			});
 			initMap();
@@ -480,7 +615,7 @@
 
 		function runIterate () {
 			let originalSize = mapSize;
-			let step = 10000;
+			let step = mapSize / 100;
 			let innerStep = 0;
 
 			function intervalFunc () {
@@ -492,31 +627,44 @@
 				}
 
 				switch (innerStep) {
-					/*case 0:
-						b.start("map1");
-						for (let [index, val] = [0, m.get(0)]; index < m.size; index += 1, val = m.get(key));
-						b.end("map1");
-						break;*/
 					case 0:
-						b.start("map");
+						b.start("m");
 						for (let [key, val] of m);
-						b.end("map");
+						b.end("m");
 						break;
 					case 1:
-						b.start("array1");
+						b.start("fm1");
 						for (let index = 0, key = fm.getKey(0), val = fm.get(key); index < fm.size; index += 1, key = fm.getKey(index), val = fm.get(key));
-						b.end("array1");
+						b.end("fm1");
 						break;
 					case 2:
-						b.start("array2");
+						b.start("fm2");
 						for (let [key, val] of fm);
-						b.end("array2");
+						b.end("fm2");
+						break;
+					case 3:
+						b.start('o1');
+						for (let key in o1) {let val = o1[key];}
+						b.end('o1');
+						break;
+					case 4:
+						b.start('o2');
+						for (let key in o2) {let val = o2[key];}
+						b.end('o2');
+						break;
+					case 5:
+						b.start('arr');
+						for (let key in arr) {let val = arr[key];}
+						b.end('arr');
 						break;
 					default:
 						let result = b.report();
-						chartDatasets[0].data.push({x: id, y: result.array1.difference});
-						chartDatasets[1].data.push({x: id, y: result.array2.difference});
-						chartDatasets[2].data.push({x: id, y: result.map.difference});
+						chartDatasets[0].data.push({x: id, y: result.m.difference});
+						chartDatasets[1].data.push({x: id, y: result.fm1.difference});
+						chartDatasets[2].data.push({x: id, y: result.fm2.difference});
+						chartDatasets[3].data.push({x: id, y: result.o1.difference});
+						chartDatasets[4].data.push({x: id, y: result.o2.difference});
+						chartDatasets[5].data.push({x: id, y: result.arr.difference});
 						//chartDatasets[2].data.push({x: id, y: result.map1.difference});
 						//chartDatasets[3].data.push({x: id, y: result.map2.difference});
 						myChart.data.labels.push(id);
@@ -525,7 +673,7 @@
 						initMap();
 				}
 				innerStep += 1;
-				if (innerStep > 3) {
+				if (innerStep > 6) {
 					innerStep = 0;
 				}
 				//console.log("updated:", newData, iterData);
@@ -534,25 +682,37 @@
 
 			postStart();
 			chartDatasets.push({
-				label: "Array Wrapper for(;;)",
+				label: "new Map() for(of)",
 				borderColor: "#0000FF",
 				backgroundColor: "rgba(0, 0, 255, 0.1)",
 				data: []
 			}, {
-				label: "Array Wrapper for(of)",
+				label: "new AssociativeMap() for(of)",
 				borderColor: "#00FFFF",
 				backgroundColor: "rgba(0, 255, 255, 0.1)",
 				data: []
-			},
-			/*{
-				label: "Builtin Map for(;;)",
-				borderColor: "#FF0000",
-				backgroundColor: "rgba(255, 0, 0, 0.1)",
+			}, {
+				label: "new AssociativeMap() for(of)",
+				borderColor: "#00FF00",
+				backgroundColor: "rgba(0, 255, 0, 0.1)",
 				data: []
-			},*/ {
-				label: "Builtin Map Wrapper for(of)",
+			},
+			{
+				label: "{} for(in)",
+				borderColor: "#FF0000",
+				backgroundColor: "rgba(0, 255, 0, 0.1)",
+				data: []
+			},
+			{
+				label: "Object.create(null) for(in)",
+				borderColor: "#000000",
+				backgroundColor: "rgba(255,255,255,0.1)",
+				data: []
+			},
+			{
+				label: "[] for(in)",
 				borderColor: "#FFFF00",
-				backgroundColor: "rgba(255, 255, 0, 0.1)",
+				backgroundColor: "rgba(255,255,0,0.1)",
 				data: []
 			});
 			mapSize = 0;
@@ -563,6 +723,7 @@
 		}
 
 		let sizeInput = document.getElementById('size');
+		let initBtn = document.getElementById('init');
 		let getBtn = document.getElementById('get');
 		let setBtn = document.getElementById('set');
 		let deleteBtn = document.getElementById('delete');
@@ -576,6 +737,7 @@
 		sizeInput.addEventListener('keyup', function (e) {
 			mapSize = parseInt(this.value);
 		});
+		initBtn.addEventListener('click', initMap)
 		getBtn.addEventListener('click', runGet);
 		setBtn.addEventListener('click', runSet);
 		deleteBtn.addEventListener('click', runDelete);

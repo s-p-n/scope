@@ -1,15 +1,21 @@
 %lex
 
+%options flex case-insensitive
+
 %%
 \s+                       /* skip whitespace */
 "//".*                    /* one line comment */
 "/*"(.|\n|\r)*?"*/"       /* block comment */
+
+"..."                     return '...';
 "+="                      return '+=';
 "="                       return '=';
 "</"                      return '</';
 "/>"                      return '/>';
 "<="                      return '<=';
 ">="                      return '>=';
+"<&"                      return '<&';
+"&>"                      return '&>';
 "<"                       return '<';
 ">"                       return '>';
 "{"                       return '{';
@@ -22,16 +28,24 @@
 "."                       return '.';
 ","                       return ',';
 ";"                       return ';';
-\/(\\\/|[^\/])*\/(i(gm|mg|m|g)?|m(ig|gi|i|g)?|g(im|mi|i|m)?)?     return 'REGEXP';
 "+"                       return '+';
 "-"                       return '-';
 "*"                       return '*';
-"/"                       return '/';
+
+/*
+\/(\\[\/]|[^\/\r\n])+\/(i(gm|mg|m|g)?|m(ig|gi|i|g)?|g(im|mi|i|m)?)?     return 'REGEXP';
+*/
+
+
 "%"                       return '%';
 "^"                       return '^';
-\'[^\']*\'                return 'ASTRING';
-\"[^\"]*\"                return 'QSTRING';
-\`[^\`]*\`                return 'BSTRING';
+/*
+    "`"                     return '`';
+    (\\\`|[^\`])            return 'BACKTICKCHAR';
+    "${"                    return '${';
+*/
+\'(\\\'|[^\'])*\'         return 'ASTRING';
+\"(\\\"|[^\"])*\"         return 'QSTRING';
 "import"                  return 'IMPORT';
 "use"                     return 'USE';
 "only"                    return 'ONLY';
@@ -56,28 +70,42 @@
 "or"                      return 'OR';
 "!"                       return '!';
 [0-9]+(?:\.[0-9]+)?       return 'NUMBER';
-[a-zA-Z_-][a-zA-Z0-9_-]*  return 'IDENTIFIER';
+
+
+[a-zA-Z_$][a-zA-Z0-9_\-$]*   return 'IDENTIFIER';
+\/(?:\\\/|[^\/])+\/[a-zA-Z]* return 'REGEXPBODY';
+"/"                          return '/';
+
+/* Backtick Tokens: */
+'`'             return '`';
+'${'            return '${';
+(\\\`|[^\`])    return 'BTCHAR';
+
 <<EOF>>                   return 'EOF';
 
 /lex
-%left USE
-%left IMPORT
+
+%right USE
+%right IMPORT
+%right RETURN
 %left ONLY INTO AS
-%left RETURN
 %left '=' ':' '+='
-%left AND OR
 %left IS ISNT GT LT GTEQ LTEQ
-%left '!'
+%left AND OR
+%left '...'
+%left '<&' '&>'
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' DIVIDE
 %left '^' '%'
 %left '.'
 %left ','
-%right '{' '}'
+%right REGEXP
+%right '${' '{' '}'
 %right '[' ']'
 %right '(' ')'
 %right '</' '/>'
 %right '<' '>'
+%right '!'
 %right UMINUS
 %right ';'
 
@@ -110,6 +138,8 @@ assignmentValue
         {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
     | '+=' expression
         {$$ = new yy.scopeAst(yy, 'assignmentValue', [$1, $expression]);}
+    | '[' ']' '=' expression
+        {$$ = new yy.scopeAst(yy, 'assignmentValue', ['[]=', $expression]);}
     ;
 
 associativeDeclaration
@@ -126,11 +156,43 @@ associativeList
         {$$ = new yy.scopeAst(yy, 'associativeList', [$1, $3]);}
     ;
 
+btOpStart
+    : '`'
+    ;
+
+btOpEnd
+    : btBody '`'
+        {$$ = yy.scopeState.btString;}
+    ;
+
+btString
+    : btOpStart btOpEnd
+        {$$ = $btOpEnd;}
+    ;
+
+btBody
+    : 
+        {$$ = "";}
+    | btBody btPart
+        {$$ = $btBody + $btPart;}
+    ;
+
+btPart
+    : '${' expression '}'
+        {$$ = '${' + $expression.translation + '}';}
+    | BTCHAR                                         %prec BTEXPR
+        {$$ = $BTCHAR;}
+    ;
+
 binaryExpression
     : expression AND expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '&&', $3]);}
     | expression OR expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '||', $3]);}
+    | expression '<&' expression
+        {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '<&', $3]);}
+    | expression '&>' expression
+        {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '&>', $3]);}
     | expression IS expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, '===', $3]);}
     | expression ISNT expression
@@ -149,7 +211,7 @@ binaryExpression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
     | expression '*' expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
-    | expression '/' expression
+    | expression '/' expression                                         %prec DIVIDE
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
     | expression '^' expression
         {$$ = new yy.scopeAst(yy, 'binaryExpression', [$1, $2, $3]);}
@@ -285,8 +347,8 @@ literal
     | NUMBER
         {$$ = new yy.scopeAst(yy, 'numericLiteral', Number($1));}
     | string
-        {$$ = new yy.scopeAst(yy, 'stringLiteral', $1.substr(1,$1.length-2));}
-    | REGEXP
+        {$$ = new yy.scopeAst(yy, 'stringLiteral', [$string]);}
+    | REGEXPBODY %prec REGEXP
         {$$ = new yy.scopeAst(yy, 'regexLiteral', [$1])}
     | xml
         {$$ = $1}
@@ -314,8 +376,32 @@ scopeStart
     ;
 
 scopeArguments
-    : '(' associativeList ')'
-        {$$ = new yy.scopeAst(yy, 'scopeArguments', [$2]);}
+    : '(' scopeArgumentsList scopeArgumentSpread ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [$scopeArgumentsList, $scopeArgumentSpread]);}
+    | '(' scopeArgumentsList ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [$scopeArgumentsList, "remainingArguments"]);}
+    | '(' scopeArgumentSpread ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [undefined, $scopeArgumentSpread]);}
+    | '(' ')'
+        {$$ = new yy.scopeAst(yy, 'scopeArguments', [undefined, undefined])}
+
+    ;
+
+scopeArgumentSpread
+    : '...' IDENTIFIER
+        {$$ = new yy.scopeAst(yy, 'scopeArgumentSpread', [$2]);}
+    ;
+
+scopeArgumentsList
+    : scopeArgumentsListDeclaration
+        {$$ = new yy.scopeAst(yy, 'scopeArgumentsList', [$scopeArgumentsListDeclaration])}
+    | scopeArgumentsListDeclaration ',' scopeArgumentsList
+        {$$ = new yy.scopeAst(yy, 'scopeArgumentsList', [$scopeArgumentsListDeclaration, $scopeArgumentsList])}
+    ;
+
+scopeArgumentsListDeclaration
+    : IDENTIFIER ':' expression
+        {$$ = new yy.scopeAst(yy, 'scopeArgumentsListDeclaration', [$IDENTIFIER, $expression])}
     ;
 
 string
@@ -323,8 +409,8 @@ string
         {$$ = $1}
     | ASTRING
         {$$ = $1}
-    | BSTRING
-        {$$ = $1}
+    | btString
+        {$$ = new yy.scopeAst(yy, 'btString', [$btString]);}
     ;
 
 use
@@ -356,7 +442,7 @@ useOnly
 
 xml
     : '<' id xmlAttributes '>' xmlControlCode '</' id '>'
-        {$$ = new yy.scopeAst(yy, 'xmlExpression', [$2, $3, $5]);}
+        {$$ = new yy.scopeAst(yy, 'xmlExpression', [$2, $3, $5, $7]);}
     | '<' id xmlAttributes '/>'
         {$$ = new yy.scopeAst(yy, 'xmlExpression', [$2, $3]);}
     ;

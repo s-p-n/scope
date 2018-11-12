@@ -1,3 +1,153 @@
+if (typeof window !== "undefined") {
+  if (typeof global === "undefined") {
+    window["global"] = window;
+  }
+}
+
+function hasType(id, type="") {
+  if (typeof id === "undefined") {
+    return false;
+  }
+  function spotError (i) {
+    let dashes = "";
+    let str = 'hasType(.., "';
+    let start = 0;
+    let end = type.length;
+    let charIndex = i + 12;
+    if (i > 10) {
+      start = i - 10;
+      str += "..";
+      charIndex += 2 - start;
+    }
+    if ((i + 5) < type.length) {
+      end = i + 5;
+      str += type.substr(start, end) + '..")';
+    } else {
+      str += type.substr(start, end) + '")';
+    }
+    for (let i = 0; i < charIndex; i += 1) {
+      dashes += "-";
+    }
+    dashes += "^";
+      return `
+      ${str}
+      ${dashes}`;
+  }
+  let types = [];
+  types.parent = null;
+  let word = "";
+  let space = /\s/;
+  for (let i = 0; i < type.length; i += 1) {
+    let char = type[i];
+    if(space.test(char)) {
+      continue;
+    }
+    switch (char) {
+      case "&":
+        types.push(word);
+        types.push("and");
+        word = "";
+        break;
+      case "|":
+        types.push(word);
+        types.push("or");
+        word = "";
+        break;
+      case "(":
+        let child = [];
+        if (word.length > 0) {
+          console.log("Word before starting Paren at char:", i, "\nSolution: Use | or & before this group.");
+          console.log(spotError(i));
+          process.exit();
+        }
+        child.parent = types;
+        types.push(child);
+        types = child;
+        break;
+      case ")":
+        if (types.parent === null) {
+          console.log("Extra Closing Paren at char:", i);
+          console.log(spotError(i));
+          process.exit();
+        }
+        if (word.length > 0) {
+          types.push(word);
+          word = "";
+        }
+        types = types.parent;
+        break;
+      default:
+        word += char;
+    }
+  }
+  if (word.length > 0) {
+    types.push(word);
+  }
+  function checkType (type = "") {
+    if (id == null) {
+      if (type === "null") {
+        return true;
+      }
+      return false;
+    }
+    if (type instanceof Array) {
+      return checkAllTypes(type);
+    }
+    if (type === "object") {
+      return true;
+    }
+    if (type === "map") {
+     return (id instanceof Map || id instanceof NumericMap);
+    }
+    if (type === "associative" || type === "numeric") {
+      return (id.type === type);
+    }
+    if (type === "regex") {
+      return (id instanceof XRegExp || id instanceof RegEXP);
+    }
+    if (type === "xregex") {
+      return (id instanceof XRegExp);
+    }
+    if (type === "scope") {
+      return (id._isScope === true);
+    }
+    if (type === "js") {
+      return (
+        id.type === undefined && 
+        id._isScope === undefined &&
+        !(id instanceof XRegExp)
+      );
+    }
+    return (typeof id === type);
+  }
+  function checkAllTypes (types = []) {
+    if (types.length === 1) {
+      return checkType(type);
+    }
+    let state = false;
+    let sign = "|";
+    for (let i = 0; i < types.length; i += 1) {
+      let type = types[i];
+      if (type === "&" || type === "|") {
+        sign = type;
+        continue;
+      }
+      if (sign === "&") {
+        if (state) {
+          state = state && checkType(type);
+          continue;
+        }
+        return false;
+      }
+      if (sign === "|") {
+        state = state || checkType(type); 
+      }
+    }
+    return state;
+  }
+  return checkAllTypes(types);
+}
+
 let randStr = (len=16) => {
   let result = "";
   let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -44,71 +194,78 @@ let indexRange = (begin, end, size) => {
 
   return [begin, end];
 }
+Object.defineProperty(Map.prototype, "slice", {
+  value: function slice (begin=0, end=this.size) {
+    let iterator = this.entries();
+    let arr = [];
 
-Map.prototype.slice = function slice (begin=0, end=this.size) {
-  let iterator = this.entries();
-  let arr = [];
-
-  if (begin < 0) {
-    begin = this.size + begin;
     if (begin < 0) {
-      begin = 0;
+      begin = this.size + begin;
+      if (begin < 0) {
+        begin = 0;
+      }
     }
-  }
-  
-  if (end < 0) {
-    end = this.size + end;
+    
     if (end < 0) {
-      end = 0;
+      end = this.size + end;
+      if (end < 0) {
+        end = 0;
+      }
     }
-  }
 
-  if (end > this.size) {
-    end = this.size;
-  }
+    if (end > this.size) {
+      end = this.size;
+    }
 
-  if (begin >= end) {
-    return scope.mapExpression();
-  }
+    if (begin >= end) {
+      return scope.mapExpression();
+    }
 
-  for (let i = 0; i < begin; i += 1) {
-    iterator.next();
-  }
+    for (let i = 0; i < begin; i += 1) {
+      iterator.next();
+    }
 
-  for (let i = begin; i < end; i += 1) {
-    arr.push(iterator.next().value);
-  }
+    for (let i = begin; i < end; i += 1) {
+      arr.push(iterator.next().value);
+    }
 
-  return scope.mapExpression(...arr);
-}
+    return scope.mapExpression(...arr);
+  }
+});
 
 const createProxy = (function () {
   const priv = new WeakMap();
   const intRegexp = /^\-?\d+$/
   const mapProxyHandler = {
     get: function (target, prop, receiver) {
+      const self = this;
       if (typeof prop === "string" && intRegexp.test(prop)) {
         prop = parseInt(prop);
         return target.get(prop);
       }
       if (prop === "toString") {
-        return () => {
-          let result = `map:${priv.get(this).type} {`;
-          let first = true;
-          for (let [key, val] of target) {
-            if (!first) {
-              result += ",";
-            } else {
-              first = false;
+        if (priv.get(self).type === "associative") {
+          return () => {
+            let result = `map:${priv.get(self).type} {`;
+            let first = true;
+            for (let [key, val] of target) {
+              if (!first) {
+                result += ",";
+              } else {
+                first = false;
+              }
+              result += ` ${key} => ${val}`;
             }
-            result += ` ${key} => ${val}`;
+            return result + " }";
           }
-          return result + " }";
+        } else {
+          return target.toString;
         }
       }
       if (prop === "type") {
-        return priv.get(this).type;
+        return priv.get(self).type;
       }
+
       if (target.has(prop)) {
         return target.get(prop);
       }
@@ -118,14 +275,65 @@ const createProxy = (function () {
         }
         return target[prop];
       }
-      return undefined;
+      
+
+
+
+
+
+
+
+      if (hasType(receiver, "numeric")) {
+        if (prop in target.array) {
+          console.log("found array operation:", prop);
+          return target.array[prop];
+        }
+      }
+
+
+
+
+
+
+
+
+
+
+      // Query each instance who has the prop with type: function
+      // Return a function that returns an array with values
+      // corresponding to the results of each instance calling
+      // the prop method.
+      let vals = target.entries();
+      let valsWithFunc = [];
+      for (let [key, val] of vals) {
+        if (typeof val[prop] === "function") {
+          valsWithFunc.push([key, val]);
+        }
+      }
+      if (valsWithFunc.length === 0) {
+        return undefined;
+      }
+      return function (...args) {
+        if (priv.get(self).type === "numeric") {
+          return scope.arrayExpression(...valsWithFunc.map(item => {
+            return item[1][prop](...args);
+          }));
+        }
+        return scope.mapExpression(...valsWithFunc.map(item => {
+            return [item[0], item[1][prop](...args)];
+        }));
+      }
     },
     has: function (target, prop) {
       return target.has(prop);
     },
     set: function (target, prop, val) {
+      const self = this;
       if (prop === "type") { //disallow setting 'type'
         return priv.get(this).type;
+      }
+      if (priv.get(self).type === "associative") {
+        target[prop] = val;
       }
       return target.set(prop, val);
     }
@@ -211,14 +419,14 @@ const NumericMap = (function () {
     }
 
     toString () {
-      let result = "NumericMap {";
+      let result = "[";
       for (let i = 0; i < this.size; i += 1) {
         if (i !== 0) {
-          result += ","
+          result += ", "
         }
-        result += ` ${i} => ${this.get(i)}`;
+        result += `${this.get(i)}`;
       }
-      return result + " }";
+      return result + "]";
     }
 
     get type () {
@@ -237,20 +445,25 @@ const NumericMap = (function () {
     }
 
     get (index) {
-      //console.log(index);
       if (this.size === 0) {
         return undefined;
       }
       // Allow reverse indexing like Python. foo[-1] === foo[foo.size - 1];
-      while (index < 0) { // TODO optimize using modulus operator
-        index = this.size + index;
+      if (index < 0) { // (-1 % 5) is -1
+        index = (index % this.size) + this.size;
+        if (index === this.size) {
+          index = 0;
+        }
       }
-      //console.log(index);
       return this.array[index];
     }
 
     set (index, value) {
       return this.array[index] = value;
+    }
+
+    push (...values) {
+      return this.array.push(...values);
     }
 
     slice (begin = 0, end = this.size) {
@@ -338,8 +551,6 @@ class Scope {
       if (this.userTags.has(tag.toLowerCase())) {
         if (typeof window !== "undefined") {
           let attrMap = this.mapExpression();
-          //console.log("found user tag:", tag);
-          //console.log(attr);
           for (let name in attr) {
             attrMap[name] = attr[name];
           }
@@ -348,77 +559,6 @@ class Scope {
           return html;
         }
       }
-      /*
-      if (this.identifier(tag) && this.identifier(tag)._isScope) {
-        let t = this.identifier(tag)(attr, children);
-        let clientCode = {};
-        function toClientCode (val) {
-          if (typeof val === "function") {
-            if (val._isScope) {
-              return val._originalFunction; 
-            } else {
-              return "undefined";
-            }
-          }
-          if (typeof val === "object" && val instanceof NumericMap) {
-            let result = "[";
-            for (let i = 0; i < val.length; i += 1) {
-              result += toClientCode(val[i]) + ",";
-            }
-            return result + "]";
-          }
-          if (typeof val === "object" && val instanceof Map) {
-            let result = "{";
-            for (let [k,v] of val) {
-              result += `"${k}":${toClientCode(v)},`;
-            }
-            return result + "}";
-          }
-          return JSON.stringify(val);
-        }
-
-        clientCode = toClientCode(t);
-          
-        let id = randStr(10);
-        if (typeof t.render === "function") {
-          let code = this.identifier(tag)._originalFunction;
-          code = code.toString().replace(/scope\.identifier\(\"([^\"]*)\"\)/g, function (match, a) {
-            return `window._STATE${id}["${a}"]`;
-          });
-          let result = `
-            whenReady(function () {
-              let thisScript = document.getElementById("${id}");
-              let state = {};
-              let node = null;
-              function render() {
-                if (node === null) {
-                  node = thisScript.parentNode.appendChild(_STATE${id}.render());
-                } else {
-                  newNode = _STATE${id}.render();
-                  node.replaceWith(newNode);
-                  node = newNode;
-                }
-              }
-              window._STATE${id} = scope.createScope(${code})(${toClientCode(attr)}, ${toClientCode(children)});
-              for (let [key,val] of _STATE${id}.state) {
-                state[key] = val;
-              }
-              _STATE${id}.state = new Proxy(state, {
-                get (target, prop) {
-                  return target[prop];
-                },
-                set (target, prop, value) {
-                  target[prop] = value;
-                  render();
-                  return true;
-                }
-              })
-              render();
-            });`;
-          return h("script", {id: id}, result);
-        }
-      }
-      */
       let voidElements = [
         "area",
         "base",
@@ -492,24 +632,7 @@ class Scope {
         }
         if (typeof val === "function") {
           let code = `scope.createScope(${val._originalFunction.toString()})`;
-          /*
-          if (voidElements.indexOf(tag) === -1) {
-            let event = a.toLowerCase().replace(/^on/, "");
-            let thisNodeId= randStr(10);
-            node.setAttribute("id", thisNodeId);
-            val = `
-            whenReady(function () {
-              document.getElementById("${thisNodeId}").addEventListener(
-                "${event}", 
-                ${code}
-              );
-            });`;
-            let script = this.xmlExpression("script", {"type": "text/JavaScript"}, val);
-            node.appendChild(script);
-            continue;
-          } else {*/
             val = `${code}(event)`;
-          //}
         }
         node.setAttribute(a, val);
       }
@@ -541,7 +664,11 @@ class Scope {
   }
 
   mapExpression(...items) {
-    return createProxy(new Map(items), "associative");
+    let m = new Map(items);
+    for (let [key, val] of items) {
+      m[key] = val;
+    }
+    return createProxy(m, "associative");
   }
 
   assignmentExpression(names, valParts, ctx=this._scoping) {
@@ -575,7 +702,6 @@ class Scope {
         }
         throw new Error(`Unexpected Range Assignment \`[:]\` on non-map.`);
       }
-      //return names[0].set(names[1], value);
     } else {
       name = names[names.length - 1];
     
@@ -604,6 +730,8 @@ class Scope {
         case "+=":
           id.set(name, self.binaryExpression("+", id.get(name), value));
           return id.get(name);
+        case "[]=":
+          return self.binaryExpression("<&", id.get(name), value);
         case "*=":
           id.set(name, self.binaryExpression("*", id.get(name), value));
           return id.get(name);
@@ -636,13 +764,29 @@ class Scope {
         return a >= b;
       case "<=":
         return a <= b;
+      case "&>":
+          console.log("&>:", a, b);
+        if (hasType(b, "numeric")) {
+          b.push(a);
+          return b;
+        } else if (hasType(b, "string")) {
+
+        }
+        throw new Error(`Attempt to push on incompatible type: '${a}' &> '${b}'`);
+        break;
+      case "<&":
+        if (hasType(a, "numeric")) {
+          a.push(b);
+          return a;
+        }
+        throw new Error(`Attempt to push on incompatible type: '${a}' <& '${b}'`);
+        break;
       case "+":
-        if ((typeof a === "string" || typeof a === "number") && 
-            (typeof b === "string" || typeof b === "number")) {
+        if (hasType(a, "string|number") && hasType(b, "string|number")) {
           return a + b;
-        } else if (a instanceof NumericMap) {
+        } else if (hasType(a, "numeric")) {
           let newA = this.arrayExpression(...a.array);
-          newA.set(newA.size, b);
+          newA.push(b);
           return newA;
         }
         throw new Error(`Attempt to add incompatible types: '${a}' + '${b}'`);
@@ -664,7 +808,7 @@ class Scope {
           let newA = scope.arrayExpression();
           for (let i = 0; i < b; i += 1) {
             for (let j = 0; j < a.size; j += 1) {
-              newA.set(newA.size, a[j]);
+              newA.push(a[j]);
             }
           }
           return newA;
@@ -768,31 +912,32 @@ class Scope {
     if (ctx.parent) {
       return self.identifier(name, ctx.parent);
     }
-    if (typeof window !== "undefined") {
-      return window[name];
-    }
-    if (typeof global !== "undefined") {
-      return global[name];
-    }
-    return undefined;
+    return global[name];
   }
 
   createScope(f) {
-    let self = this;
-    f._isScope = true;
-    f._parent = this._scoping;
-    f._beingUsed = false;
-    f._originalFunction = f;
-    return new Proxy(f, {
-      apply: function (target, thisArg, args) {
-          return self.invokeExpression({
-            function: target,
-            arguments: args,
-            context: thisArg,
-            isExtension: target._beingUsed
-          });
-      }
-    });
+    const self = this;
+    let result = function Scope(...args) {
+      const thisArg = this;
+      return self.invokeExpression({
+        function: f,
+        arguments: args,
+        context: thisArg,
+        isExtension: f._beingUsed
+      });
+    };
+    const define = function (prop, val) {
+      Object.defineProperty(result, prop, {
+        get: () => f[prop],
+        set: newVal => f[prop] = newVal
+      });
+      return result[prop] = val;
+    };
+    define("_isScope", true);
+    define("_parent", self._scoping);
+    define("_beingUsed", false);
+    define("_originalFunction", f);
+    return result;
   }
 
   invokeExpression(config = {
