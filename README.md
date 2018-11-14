@@ -1,27 +1,25 @@
-# Scope
-A programming language for web development. Scope transpiles to CommonJS JavaScript, and relies on Nodejs.
+# arini
+A programming language for web developers. Arini becomes Node.js.
 
 ## Philosophy
-A scope is any code inside `{` and `}`, and the idea of this language is, that's all you need. A scope can be a simple block of code, a function/method, a class, an interface, or any encapsolation you need. If you write code like I do, you might start out by writing a simple bit of code, then refactor some of that code into a function, then maybe later even create a class or two with several methods. The Scope programming language makes migrating and merging paradigms easy by utilizing a single scope type.
+A scope is any code inside `{` and `}`, and the idea of arini is, that's all you need. A scope can be a simple block of code, a function/method, a class, an interface, or any encapsolation you need. If you write code like I do, you might start out by writing a simple bit of code, then refactor some of that code into a function, then maybe later even create a class or two with several methods. The arini programming language makes migrating and merging paradigms easy by utilizing a single scope type.
 
-As a bonus, using a single first-class scope type makes the language easier to learn and remember.
-
-To keep things understandable, I'll refer to the language as "Scope" (capital 'S'), and the type 'scope' (all lowercase).
+As a bonus, using a single first-class scope type makes arini easy to learn and remember.
 
 ## Getting Started
 ### Option 1: Global Install
->Scope can be installed with npm:
+>Arini can be installed with npm:
 >
-	npm i -g scope-lang
+	npm i -g arini
 >
->Scope uses the package `source-map-support` as an attempt to make runtime-errors debuggable.
+>Arini uses the package `source-map-support` as an attempt to make runtime-errors debuggable.
 >Scope also has a Tag type (as in XML tag), to make front-end web development easier. So `hyperscript` is also required to run your transpiled Scope programs.
 >	
 	npm i source-map-support hyperscript
 >
 >Once you have all that installed, you can *compile* your Scope code into JavaScript.
 >	
-	scope myProgram.sc
+	arini myProgram.ari
 
 ### Option 2: Dev Dependency
 >Scope can be installed as a dev dependency:

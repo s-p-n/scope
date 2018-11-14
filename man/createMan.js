@@ -1,16 +1,17 @@
 const Man = require('man-api');
 const fs = require('fs');
+const path = require('path');
 const dateformat = require('dateformat');
-let out = fs.createWriteStream('arini.1');
+let out = fs.createWriteStream(path.join(__dirname, 'arini.1'));
 
 let man = new Man();
 man.on('data', (str) => {
 	out.write(str);
 });
-
-let version = require("../package.json").version;
+let packageJson = require('../package.json');
+let version = packageJson.version;
 let date = dateformat('yyyy-mm-dd')
-man.header('arini', 1, date, version, "GNU")
+man.header('arini', 1, date, version, "User Commands")
 	.name('arini', 'Transpile or run arini programs.').
 
 section('Synopsis').
@@ -95,12 +96,12 @@ section('Conforming To').
 
 section('Bugs').
 	paragraph().
-		write("Report bugs to: https://github.com/s-p-n/arini/issues").
+		write(`Report bugs to: ${packageJson.bugs.url}`).
 
 section('See Also').
 	subSection("Github").
-		write("https://github.com/s-p-n/arini").
-	subSection("Wiki").
-		write("https://github.com/s-p-n/arini/wiki").
+		write(packageJson.repository.url).
+	subSection("Homepage").
+		write(packageJson.homepage).
 	subSection("npm").
-		write("https://www.npmjs.com/package/arini");
+		write("https://www.npmjs.com/package/" + packageJson.name);
