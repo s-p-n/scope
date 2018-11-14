@@ -1,27 +1,28 @@
 {
-  "name": "scope-lang",
-  "version": "1.1.3-groundhog",
-  "description": "Programming language for developing on the back-end and the front-end in the same project.",
+  "name": "arini",
+  "version": "1.0.0",
+  "description": "The way web-apps are supposed to be made.",
   "main": "index.js",
   "scripts": {
-    "generate": "jison grammar/scope1.jison -o src/parser.js",
+    "generate": "jison src/grammar/arini.jison src/grammar/arini.jisonlex -o src/grammar/parser.js",
     "babel": "babel src --out-dir lib --source-maps inline",
     "buildServe": "browserify -d packages/serve/serve-client.js -o packages/serve/client.js",
-    "build": "npm-run-all --sequential generate babel buildServe",
+    "buildMan": "node ./man/createMan.js",
+    "build": "npm-run-all --sequential generate babel buildServe buildMan",
     "start": "babel-node index.js",
     "sc": "node index.js",
     "test": "mocha",
     "debug": "node inspect ./bin/cli.js"
   },
   "bin": {
-    "scope": "./bin/cli.js"
+    "arini": "./lib/bin/runFile.js"
   },
   "man": [
-    "./man/scope.1"
+    "./man/arini.1"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/s-p-n/scope.git"
+    "url": "git+https://github.com/s-p-n/arini.git"
   },
   "keywords": [
     "programming",
@@ -30,9 +31,9 @@
   "author": "Spencer A. Lockhart",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/s-p-n/scope/issues"
+    "url": "https://github.com/s-p-n/arini/issues"
   },
-  "homepage": "https://github.com/s-p-n/scope#readme",
+  "homepage": "https://github.com/s-p-n/arini#readme",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "@babel/runtime": "^7.0.0",
